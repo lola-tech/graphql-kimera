@@ -1,8 +1,8 @@
 module.exports = {
   title: 'Mirage',
   tagline: 'A tool for building mock servers with precision',
-  url: 'https://lola-tech.github.io/graphql-mirage',
-  baseUrl: '/',
+  url: 'https://lola-tech.github.io',
+  baseUrl: '/graphql-mirage',
   favicon: 'img/favicon.ico',
   organizationName: 'lola-tech', // Usually your GitHub org/user name.
   projectName: 'graphql-mirage', // Usually your repo name.
