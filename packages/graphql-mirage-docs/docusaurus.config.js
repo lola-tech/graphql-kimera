@@ -5,7 +5,7 @@ module.exports = {
   baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'lola-tech', // Usually your GitHub org/user name.
-  projectName: 'graphql-mirage/packages/graphql-mirage-docs/', // Usually your repo name.
+  projectName: 'graphql-mirage', // Usually your repo name.
   themeConfig: {
     navbar: {
       title: 'Mirage',
