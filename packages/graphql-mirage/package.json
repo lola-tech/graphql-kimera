@@ -1,7 +1,7 @@
 {
   "name": "@lola-tech/graphql-mirage",
   "version": "1.0.0",
-  "description": "graphql mocking tool",
+  "description": "Automocking GraphQL Engine. Name inspired from EmberCLI Mirage.",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
