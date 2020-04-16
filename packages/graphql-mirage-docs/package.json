@@ -1,0 +1,19 @@
+{
+  "name": "@lola-tech/graphql-mirage-docs",
+  "version": "1.0.0",
+  "description": "documentation for mirage graphql auto-mocking took",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lola-tech/graphql-mirage.git"
+  },
+  "author": "Lucian Samson <sickmav@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lola-tech/graphql-mirage/issues"
+  },
+  "homepage": "https://github.com/lola-tech/graphql-mirage#readme"
+}

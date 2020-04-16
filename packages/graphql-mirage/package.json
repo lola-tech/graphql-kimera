@@ -1,0 +1,19 @@
+{
+  "name": "@lola-tech/graphql-mirage",
+  "version": "1.0.0",
+  "description": "graphql mocking tool",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lola-tech/graphql-mirage.git"
+  },
+  "author": "Alex Ciobica <alexandru.ciobica@lola.tech>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lola-tech/graphql-mirage/issues"
+  },
+  "homepage": "https://github.com/lola-tech/graphql-mirage#readme"
+}
