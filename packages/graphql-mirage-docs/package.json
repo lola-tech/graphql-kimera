@@ -4,7 +4,18 @@
   "description": "documentation for mirage graphql auto-mocking took",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.50",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.50",
+    "classnames": "^2.2.6",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
   },
   "repository": {
     "type": "git",
@@ -15,5 +26,17 @@
   "bugs": {
     "url": "https://github.com/lola-tech/graphql-mirage/issues"
   },
-  "homepage": "https://github.com/lola-tech/graphql-mirage#readme"
+  "homepage": "https://github.com/lola-tech/graphql-mirage#readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
