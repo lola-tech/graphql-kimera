@@ -1,11 +1,11 @@
 module.exports = {
   title: 'Mirage',
   tagline: 'A tool for building mock servers with precision',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
+  url: 'https://lola-tech.github.io',
+  baseUrl: '/graphql-mirage/',
   favicon: 'img/favicon.ico',
-  organizationName: 'lola-tech', // Usually your GitHub org/user name.
-  projectName: '@lola-tech/graphql-mirage', // Usually your repo name.
+  organizationName: 'lola-tech',
+  projectName: 'graphql-mirage',
   themeConfig: {
     navbar: {
       title: 'Mirage',
@@ -15,7 +15,7 @@ module.exports = {
       },
       links: [
         {
-          to: 'docs/introduction',
+          to: '/docs/introduction',
           activeBasePath: 'docs',
           label: 'Docs',
           position: 'left',
