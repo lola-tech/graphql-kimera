@@ -4,7 +4,7 @@ title: Scenarios
 sidebar_label: 6. Scenarios
 ---
 
-Alternate between different shapes of data with [Scenarios](/docs/scenarios)
+Alternate between different shapes of data with [Scenarios](/graphql-mirage/docs/scenarios)
 
 Lets take a look at our current schema.
 
@@ -72,4 +72,4 @@ Now running `node index.js personas` will run scenario 2, and omitting the argum
 
 Links:
 
-- Read more on [how Scenarios work](/docs/scenarios)
+- Read more on [how Scenarios work](/graphql-mirage/docs/scenarios)
