@@ -17,13 +17,13 @@ getExecutableSchema(
 
 ## `typeDefs`\*
 
-_Required_. A [GraphQL schema language string](/docs/glossary#schema-definition-language) that contains the schema definition. Putting it another way, it's what usally resides in your `schema.graphql` file.
+_Required_. A [GraphQL schema language string](/graphql-mirage/docs/glossary#schema-definition-language) that contains the schema definition. Putting it another way, it's what usally resides in your `schema.graphql` file.
 
 ---
 
 ## `getDefaultDataSources(context)`
 
-_Optional_. A function that receives the [resolver context](/docs/glossary#resolver) as an argument and needs to return an object containing the available data sources that will be used to generate data for the type fields in the schema.
+_Optional_. A function that receives the [resolver context](/graphql-mirage/docs/glossary#resolver) as an argument and needs to return an object containing the available data sources that will be used to generate data for the type fields in the schema.
 
 ```javascript
 function getDefaultDataSources(context) {
@@ -37,7 +37,7 @@ function getDefaultDataSources(context) {
 
 > **Note**
 >
-> Read more about how data sources work in the [Data Sources](/docs/data-sources) part of the docs.
+> Read more about how data sources work in the [Data Sources](/graphql-mirage/docs/data-sources) part of the docs.
 
 ---
 
@@ -137,7 +137,7 @@ function getMutationResolvers(cache, buildMocks, context) {
 
 A reference to the generated `Query` tree. This is the persistence layer of our mocks, so this where changes need to be made as a result of the mutation. In a real server, this would be replace with access to a database.
 
-Read more on [the `cache` documentation page](/docs/api-cache).
+Read more on [the `cache` documentation page](/graphql-mirage/docs/api-cache).
 
 ### `buildMocks(type, scenario)`
 
@@ -146,8 +146,8 @@ A function that allows us to generate data for a specific Object Type. Useful wh
 - `type` (Required): The type of the node we want to generate data for.
 - `scenario` (Optional): A specific scenario relevant to the current generation of the node.
 
-Read more on [the `buildMocks` documentation page](/docs/build-mocks).
+Read more on [the `buildMocks` documentation page](/graphql-mirage/docs/build-mocks).
 
 ### `context`
 
-The resolver [context](/docs/glossary#context).
+The resolver [context](/graphql-mirage/docs/glossary#context).

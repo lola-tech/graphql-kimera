@@ -48,7 +48,7 @@ The `personasResolver` function needs access to the list of available `personas`
 
 > **Note**
 >
-> You can read more about the fields resolvers syntax on the [Object Type Builders concepts page](/docs/object-type-builders#fields-with-arguments).
+> You can read more about the fields resolvers syntax on the [Object Type Builders concepts page](/graphql-mirage/docs/object-type-builders#fields-with-arguments).
 
 We have our resolver in place, but there seems to be a problem. Inspecting the result of the query that returns all cities and all personas...
 
@@ -98,4 +98,4 @@ const typeBuilders = {
 
 Links:
 
-- Read more on [how field resolvers work in Object Type Builders](/docs/object-type-builders#fields-with-arguments)
+- Read more on [how field resolvers work in Object Type Builders](/graphql-mirage/docs/object-type-builders#fields-with-arguments)

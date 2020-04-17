@@ -28,4 +28,4 @@ Some ideas:
   - Implement an `updateWithScenario` mutation that updates the cache for the test setup.
   - Execute the mutation in the setup phase of the test. Not yet sure if and how this would be done.
 
-Any other ideas? Please open a [github issue](https://github.com/lolaent/gql-oss/issues).
+Any other ideas? Please open a [github issue](https://github.com/lola-tech/graphql-mirage/issues).

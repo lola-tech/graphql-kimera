@@ -10,7 +10,7 @@ A Scenario is the highest priority data source you can provide to Mirage and it 
 
 > **Note**
 >
-> Scenarios are meant to help to set static values for specific fields. Anything that's dynamic should be set from a [builder](/docs/glossary#builder).
+> Scenarios are meant to help to set static values for specific fields. Anything that's dynamic should be set from a [builder](/graphql-mirage/docs/glossary#builder).
 
 ```graphql
 type Query {

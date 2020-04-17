@@ -18,4 +18,4 @@ _String_ The type of the node we want to generate data for.
 
 ## `scenario` (Optional)
 
-A specific scenario relevant to the current generation of the node. Read more about what they are in the [Scenario section](/docs/scenario).
+A specific scenario relevant to the current generation of the node. Read more about what they are in the [Scenario section](/graphql-mirage/docs/scenario).
