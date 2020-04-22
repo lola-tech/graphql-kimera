@@ -1,7 +1,7 @@
 ---
 id: enums
 title: Enums
-sidebar_label: 5. Enums
+sidebar_label: Enums
 ---
 
 A Scenario has the highest priority you can provide to Mirage and it represents a frugal description of the `Query` type response tree. Assuming a part of our schema looks like this:
