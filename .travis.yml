@@ -1,0 +1,34 @@
+git:
+  depth: 5
+language: node_js
+cache: yarn
+
+# https://github.com/nlola-tech/grapql-mirage
+node_js:
+  - node
+  
+before_install:
+  - nvm install && nvm use 
+
+install:
+  - yarn
+  - cd packages/graphql-mirage-docs && yarn build
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  on:
+    all_branches: true
+  local_dir: packages/graphql-mirage-docs/build
+  verbose: true
+
+
+# safelist
+branches:
+  only:
+  - master
+  - gh-pages
+  - deploy_config
+
