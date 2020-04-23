@@ -17,4 +17,4 @@ script: |
 jobs:
   include:
     - stage: deploy
-      script: cd packages/graphql-mirage-docs && GIT_USER=AndreiF8 USE_SSH=true yarn deploy
+      script: cd packages/graphql-mirage-docs && yarn deploy
