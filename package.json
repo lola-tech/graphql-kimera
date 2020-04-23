@@ -27,9 +27,7 @@
   },
   "scripts": {
     "release": "lerna publish",
-    "prerelease": "eslint . && lerna run test",
-    "testonly": " --full-trace src/**/__tests__/**/*-test.js",
-    "test:ci": "npm run build"
+    "prerelease": "eslint . && lerna run test"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
