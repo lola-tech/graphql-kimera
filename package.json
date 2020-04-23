@@ -2,6 +2,9 @@
   "name": "root",
   "description": "Lola.tech's collection of Open Source GraphQL projects",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "lint-staged": {
     "*.{js,json}": [
       "prettier --write",
