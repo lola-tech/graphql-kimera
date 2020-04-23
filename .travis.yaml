@@ -1,0 +1,20 @@
+git:
+  depth: 5
+language: node_js
+cache: yarn
+
+# https://github.com/nlola-tech/grapql-mirage
+node_js:
+  - node
+  
+script: |
+  if [[ "$(node -pe process.version)" == node ]]; then # Is latest LTS?
+    echo We have latest Node installed
+  else
+    echo We don't have latest Node installed
+  fi
+
+jobs:
+  include:
+    - stage: deploy
+      script: cd packages/graphql-mirage-docs && GIT_USER=AndreiF8 USE_SSH=true yarn deploy
