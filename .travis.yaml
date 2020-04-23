@@ -13,20 +13,3 @@ script: |
   else
     echo We don't have latest Node installed
   fi
-
-jobs:
-  include:
-    - stage: deploy
-      script: cd packages/graphql-mirage-docs && yarn deploy
-
-# blocklist
-branches:
-  except:
-  - legacy
-  - experimental
-
-# safelist
-branches:
-  only:
-  - master
-  - deploy_config
