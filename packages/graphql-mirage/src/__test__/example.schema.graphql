@@ -1,0 +1,66 @@
+type City {
+  id: ID!
+  name: String
+  population: Int
+  postalCodes: [String]
+}
+
+type Address {
+  id: ID!
+  line1: String
+  line2: String
+  city: City
+  postalCode: String
+  country: String
+  description: String
+}
+
+enum Technology {
+  JAVASCRIPT
+  GRAPHQL
+  NODEJS
+}
+
+scalar URL
+
+interface Persona {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  userName: String!
+  age: Int
+  address: Address
+  avatar: URL
+}
+
+type Contributor implements Persona {
+  yearOfExperience: Int
+  knowledge: [Technology!]
+}
+
+type Customer implements Persona {
+  budget: Float!
+  looksForInvesting: Boolean!
+}
+
+union User = Contributor | Customer
+
+input UserFiltersInput {
+  age: Int
+  city: String
+  country: String
+}
+
+type UserListSearchResult {
+  list: [User]
+}
+
+type Query {
+  userList(filters: UserFiltersInput): UserListSearchResult
+  user(name: String): [User]
+  viewer: User
+}
+
+schema {
+  query: Query
+}
