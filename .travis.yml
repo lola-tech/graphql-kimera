@@ -12,6 +12,12 @@ before_install:
 
 install:
   - yarn
+
+after-install:
+  - cd packages/graphql-mirage && yarn test
+  - cd ../..
+
+before-deploy:
   - cd packages/graphql-mirage-docs && yarn build
 
 deploy:
@@ -23,7 +29,6 @@ deploy:
     all_branches: true
   local_dir: packages/graphql-mirage-docs/build
   verbose: true
-
 
 # safelist
 branches:
