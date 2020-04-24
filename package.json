@@ -27,8 +27,7 @@
   },
   "scripts": {
     "release": "lerna publish",
-    "prerelease": "eslint . && yarn run test",
-    "test": "lerna run --no-bail test"
+    "prerelease": "eslint . && lerna run test"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
