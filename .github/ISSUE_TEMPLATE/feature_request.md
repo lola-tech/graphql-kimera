@@ -2,8 +2,8 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[feature title]"
-labels: ''
-assignees: ''
+labels: enhancement, needs review
+assignees: mavv
 
 ---
 
