@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: Bug report template
-labels: needs review
-assignees: roxanapopro, mavv
+title: "[reported bug title]"
+labels: bug, needs review
+assignees: mavv
 
 ---
 
