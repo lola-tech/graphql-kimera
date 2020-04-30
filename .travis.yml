@@ -11,14 +11,14 @@ before_install:
   - nvm install && nvm use 
 
 install:
-  - yarn
+  - npm install
 
 after-install:
-  - cd packages/graphql-mirage && yarn test
+  - cd packages/graphql-mirage && npm run test
   - cd ../..
 
 before-deploy:
-  - cd packages/graphql-mirage-docs && yarn build
+  - cd packages/graphql-mirage-docs && npm run build
 
 deploy:
   provider: pages
