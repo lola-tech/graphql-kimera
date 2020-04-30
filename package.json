@@ -1,10 +1,6 @@
 {
   "name": "root",
   "description": "Lola.tech's collection of Open Source GraphQL projects",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "lint-staged": {
     "*.{js,json}": [
       "prettier --write",
@@ -27,6 +23,7 @@
   },
   "scripts": {
     "release": "lerna publish",
+    "postinstall": "lerna bootstrap",
     "prerelease": "eslint .",
     "test": "lerna run test"
   },
