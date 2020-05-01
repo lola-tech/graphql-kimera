@@ -3,8 +3,6 @@ const path = require("path");
 const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
-const { defaultBuiltInScalarBuilders } = require("../engine");
-const { mergeDataSources } = require("../helpers");
 const { buildMocks, mergeScenario } = require("../index");
 
 const typeDefs = fs.readFileSync(
@@ -12,18 +10,6 @@ const typeDefs = fs.readFileSync(
   "utf8"
 );
 const schema = schemaParser(typeDefs);
-const testBuildMocks = (type, schema, defaults = {}, custom) =>
-  buildMocks(
-    type,
-    schema,
-    mergeDataSources(
-      {
-        typeBuilders: defaultBuiltInScalarBuilders,
-      },
-      defaults
-    ),
-    custom
-  );
 
 describe("Scenario", () => {
   it("SCENARIO: selectors allows to select subscenario for Object Type", () => {
@@ -36,7 +22,7 @@ describe("Scenario", () => {
       },
     };
 
-    const actual = testBuildMocks(
+    const actual = buildMocks(
       "Launch",
       schema,
       {
@@ -54,7 +40,7 @@ describe("Scenario", () => {
   });
 
   it("SCENARIO: works when selector cannot find subscenario", () => {
-    const actual = testBuildMocks(
+    const actual = buildMocks(
       "Launch",
       schema,
       {},

@@ -3,7 +3,7 @@ const path = require("path");
 const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
-const { mockType, defaultBuiltInScalarBuilders } = require("../engine");
+const { mockObjectType } = require("../engine");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -13,17 +13,10 @@ const typeDefs = fs.readFileSync(
 const DEFAULT_ARRAY_LENGTH = 3;
 
 const schema = schemaParser(typeDefs);
-const mockQueryType = ({
-  scenario = {},
-  typeBuilders = {},
-  nameBuilders = {},
-} = {}) => {
-  return mockType("Query", schema, {
+const mockQueryType = ({ scenario, typeBuilders, nameBuilders } = {}) => {
+  return mockObjectType("Query", schema, {
     scenario,
-    typeBuilders: {
-      ...defaultBuiltInScalarBuilders,
-      ...typeBuilders,
-    },
+    typeBuilders,
     nameBuilders,
   });
 };
