@@ -13,7 +13,7 @@ const typeDefs = fs.readFileSync(
 const DEFAULT_ARRAY_LENGTH = 3;
 
 const schema = schemaParser(typeDefs);
-const mockQueryType = ({ scenario, typeBuilders, nameBuilders } = {}) => {
+const mockQuery = ({ scenario, typeBuilders, nameBuilders } = {}) => {
   return mockObjectType("Query", schema, {
     scenario,
     typeBuilders,
@@ -21,11 +21,43 @@ const mockQueryType = ({ scenario, typeBuilders, nameBuilders } = {}) => {
   });
 };
 
+// describe("Validation", () => {
+//   it("SCENARIO: should be validated against the schema", () => {
+//     expect(
+//       mockQuery({
+//         scenario: {
+//           me: { email: null },
+//         },
+//       })
+//     ).toThrowError();
+//   });
+
+//   it("TYPE: should be validated against the schema", () => {
+//     expect(
+//       mockQuery({
+//         typeBuilders: {
+//           User: () => ({ email: null }),
+//         },
+//       })
+//     ).toThrowError();
+//   });
+
+//   it("NAME: should be validated agains the schema", () => {
+//     expect(
+//       mockQuery({
+//         nameBuilders: {
+//           id: () => null,
+//         },
+//       })
+//     ).toThrowError();
+//   });
+// });
+
 describe("Scenario", () => {
   it("SCENARIO: sets built-in scalar", () => {
     const EMAIL = "me@example.com";
 
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: { email: EMAIL, profileImage: null },
       },
@@ -36,7 +68,7 @@ describe("Scenario", () => {
   });
 
   it("SCENARIO: sets array of built-in scalars", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           allergies: ["Aspirin", "Peanuts"],
@@ -50,7 +82,7 @@ describe("Scenario", () => {
   });
 
   it("SCENARIO: sets deep Array of Object Types", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           trips: [
@@ -68,7 +100,7 @@ describe("Scenario", () => {
   });
 
   it("SCENARIO: sets deep Array of Object Types recursively", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           trips: [{ rockets: [{ name: "Falcon 9" }, {}] }, {}],
@@ -84,7 +116,7 @@ describe("Scenario", () => {
 
 describe("Type Builders", () => {
   it("TYPE: can set built-in scalar field value from Object Type Builder", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           trips: [
@@ -100,7 +132,7 @@ describe("Type Builders", () => {
   });
 
   it("TYPE: can set null values for *any* field from Object Type Builder", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           trips: [{ site: "Kennedy Space Center" }, {}],
@@ -117,7 +149,7 @@ describe("Type Builders", () => {
   });
 
   it("TYPE: Object Type builders can set the shape of Array Object Type fields", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       typeBuilders: {
         User: () => ({
           trips: times(5, () => ({
@@ -134,7 +166,7 @@ describe("Type Builders", () => {
   });
 
   it("TYPE: can set Type Builder for Built-in Scalar Types", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       typeBuilders: {
         ID: () => "GENERATED_ID",
       },
@@ -145,7 +177,7 @@ describe("Type Builders", () => {
   });
 
   it("TYPE: Object Type builder does not ovewrite Scenario", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           profileImage: null,
@@ -173,7 +205,7 @@ describe("Type Builders", () => {
   });
 
   it("TYPE: Object Type has arguments", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         launches: {
           list: times(5, (i) => ({
@@ -206,7 +238,7 @@ describe("Type Builders", () => {
 
 describe("Name Builders", () => {
   it("NAME: works when no Scenario or Object Type builder present", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       nameBuilders: {
         id: () => "NAME_BUILDER_ID",
       },
@@ -218,7 +250,7 @@ describe("Name Builders", () => {
   });
 
   it("NAME: does not overwrite Scenario", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: { me: { id: "SCENARIO_ID" } },
       nameBuilders: {
         id: () => "NAME_BUILDER_ID",
@@ -229,7 +261,7 @@ describe("Name Builders", () => {
   });
 
   it("NAME: does not overwrite Object Type builder", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       typeBuilders: {
         User: () => ({
           id: "OBJECT_BUILDER_ID",
@@ -246,7 +278,7 @@ describe("Name Builders", () => {
 
 describe("Enums", () => {
   it("ENUM: selects the first value of the enum", () => {
-    const actual = mockQueryType();
+    const actual = mockQuery();
     const enumValues = ["FEMALE", "MALE", "NON_BINARY"];
 
     expect(actual.me.gender).toBe(enumValues[0]);
@@ -256,7 +288,7 @@ describe("Enums", () => {
 describe("Scalars", () => {
   it("SCALAR: uses Type builder to generate scalar value", () => {
     const DATE = "1989-12-16";
-    const actual = mockQueryType({
+    const actual = mockQuery({
       typeBuilders: {
         Date: () => DATE,
       },
@@ -268,14 +300,14 @@ describe("Scalars", () => {
 
 describe("Interfaces", () => {
   it("INTERFACE: automatically selects the first concrete type when __typename is missing", () => {
-    const actual = mockQueryType();
+    const actual = mockQuery();
     const concreteTypes = ["Planet", "Star"];
 
     expect(actual.me.trips[0].destination.__typename).toBe(concreteTypes[0]);
   });
 
   it("INTERFACE: can set custom concrete type from scenario using __typename", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           trips: [
@@ -293,7 +325,7 @@ describe("Interfaces", () => {
 
 describe("Unions", () => {
   it("UNION: automatically selects the first concrete type when __typename is missing", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: { hobbies: [{}] },
       },
@@ -306,7 +338,7 @@ describe("Unions", () => {
   });
 
   it("UNION: uses Concrete Type instead of Interface Type when __typename is specified", () => {
-    const actual = mockQueryType({
+    const actual = mockQuery({
       scenario: {
         me: {
           hobbies: [

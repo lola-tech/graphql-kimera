@@ -12,6 +12,7 @@ const {
   isObjectType,
   isAbstractType,
   isBuiltInScalarType,
+  // getScenarioFn,
   // debugCacheDuplicates,
 } = require("./helpers");
 const constants = require("./constants");
@@ -115,13 +116,23 @@ cacheStore.getCacheKeyFromField = (field, arrayIndex) => {
     : field.type;
 };
 
-// Takes a schema type, and mocks data for each of its fields by using
-// the `mockField` function.
-function mockObjectType(type, schema, dataSources, arrayIndex = false) {
-  let { scenario, nameBuilders, typeBuilders } = dataSources;
+const getCache = (fieldKey, dataSources) => {
+  if (cacheStore.get([fieldKey, ...Object.values(dataSources)])) {
+    return cacheStore.get([fieldKey, ...Object.values(dataSources)]);
+  }
 
+  // Performance debugging
+  // debugCacheDuplicates(cacheStore, {
+  //   type,
+  //   scenario,
+  //   showDifferenceForType: 'ExpendableMenuItem',
+  // });
+  return undefined;
+};
+
+const getTypename = (type, schema, scenario) => {
   // Allow selecting concrete types for abstract types
-  type = (scenario && scenario.__typename) || type;
+  type = get(scenario, "__typename") || type;
 
   if (isAbstractType(type, schema)) {
     const concreteType = getConcreteType(type, schema);
@@ -131,129 +142,128 @@ function mockObjectType(type, schema, dataSources, arrayIndex = false) {
           `Either remove the unused interface "${type}", or add a concrete implementation of it to the schema.`
       );
     }
-    type = concreteType;
+    return concreteType;
   }
+
+  return type;
+};
+
+// Takes a schema type, and mocks data for each of its fields by using
+// the `mockField` function.
+function mockObjectType(type, schema, dataSources, arrayIndex = false) {
+  let { scenario, nameBuilders, typeBuilders } = dataSources;
+
+  const mockedObjectType = { __typename: getTypename(type, schema, scenario) };
 
   debug(`${type}`);
 
-  const mockedField = { __typename: type };
-
-  let typeFieldsBuilders =
+  const typeFieldsBuilders =
     typeBuilders && typeBuilders[type] && typeBuilders[type]();
 
-  if (schema[type].fields.length) {
-    schema[type].fields.forEach((field) => {
-      if (
-        hasProp(typeFieldsBuilders, field.name) &&
-        !hasProp(scenario, field.name) &&
-        // If function, this is meant to be a resolver
-        typeof typeFieldsBuilders[field.name] !== "function"
-      ) {
-        scenario = isUndefined(scenario) ? {} : scenario;
-        scenario[field.name] = typeFieldsBuilders[field.name];
-      }
-      let data = null;
-      let fieldScenario;
+  schema[type].fields.forEach((field) => {
+    // Dacă nu este scenario, dar este type builder,
+    // si nu-i resolver factory, muta valoarea in scenario
+    // ALTERNATIVA: compute scenario early on, do it using
+    // getScenarioFn
+    if (
+      hasProp(typeFieldsBuilders, field.name) &&
+      !hasProp(scenario, field.name) &&
+      // If function, this is meant to be a resolver
+      typeof typeFieldsBuilders[field.name] !== "function"
+    ) {
+      scenario = isUndefined(scenario) ? {} : scenario;
+      scenario[field.name] = typeFieldsBuilders[field.name];
+    }
 
-      if (
-        field.noNull ||
-        !hasProp(scenario, field.name) ||
-        scenario[field.name] !== null
-      ) {
-        if (field.isArray) {
-          debug(undefined, `${field.name}: [${field.type}]`);
-        } else {
-          debug(undefined, `${field.name}: ${field.type}`);
-        }
+    let data = null;
+    let fieldScenario;
 
-        const getCache = (fieldKey, dataSources) => {
-          if (cacheStore.get([fieldKey, ...Object.values(dataSources)])) {
-            return cacheStore.get([fieldKey, ...Object.values(dataSources)]);
-          }
+    // We should validate the scenario, which we compute above
+    // This validation should happen before merging the typeBuilder over it
+    // Validation should check wether the field is nullable and wether the scenario
+    // sets the field as null
+    // This validation should probably happen at the level of mockField
+    if (
+      field.noNull ||
+      // if no scenario, or scenario isn't null
+      !hasProp(scenario, field.name) ||
+      scenario[field.name] !== null
+    ) {
+      // if (field.isArray) {
+      //   debug(undefined, `${field.name}: [${field.type}]`);
+      // } else {
+      //   debug(undefined, `${field.name}: ${field.type}`);
+      // }
 
-          // Performance debugging
-          // debugCacheDuplicates(cacheStore, {
-          //   type,
-          //   scenario,
-          //   showDifferenceForType: 'ExpendableMenuItem',
-          // });
-          return undefined;
-        };
+      fieldScenario = get(scenario, field.name);
 
-        fieldScenario = hasProp(scenario, field.name)
-          ? scenario[field.name]
-          : undefined;
+      const cache = getCache(
+        cacheStore.getCacheKeyFromField(field, arrayIndex),
+        { ...dataSources, scenario: fieldScenario }
+      );
 
-        const cache = getCache(
-          cacheStore.getCacheKeyFromField(field, arrayIndex),
-          { ...dataSources, scenario: fieldScenario }
-        );
-
-        if (typeof cache !== "undefined") {
-          data = cache;
-        } else {
-          data = mockField(field, schema, {
-            scenario: hasProp(scenario, field.name)
-              ? scenario[field.name]
-              : undefined,
-            nameBuilders,
-            typeBuilders,
-          });
-
-          cacheStore.set(
-            [
-              cacheStore.getCacheKeyFromField(field, arrayIndex),
-              {
-                ...dataSources,
-                scenario: fieldScenario,
-              },
-            ],
-            data
-          );
-        }
-      }
-
-      if (isUndefined(data)) {
-        throw new Error(`Type "${field.type}" not found in document.`);
-      } else if (
-        hasProp(typeFieldsBuilders, field.name) &&
-        typeof typeFieldsBuilders[field.name] === "function"
-      ) {
-        const store = {
-          data,
-          get: function () {
-            return store.data;
-          },
-        };
-
-        const fieldResolver = typeFieldsBuilders[field.name](
-          store.get,
-          function buildMocks(type, customScenario = {}) {
-            return mockObjectType(type, schema, {
-              scenario: merge(fieldScenario, customScenario),
-              typeBuilders,
-              nameBuilders,
-            });
-          }
-        );
-
-        fieldResolver.getData = store.get;
-
-        Object.defineProperty(mockedField, field.name, {
-          get() {
-            return fieldResolver;
-          },
-          set(value) {
-            store.data = value;
-          },
-          enumerable: true,
-        });
+      if (typeof cache !== "undefined") {
+        data = cache;
       } else {
-        mockedField[field.name] = data;
+        data = mockField(field, schema, {
+          scenario: fieldScenario,
+          nameBuilders,
+          typeBuilders,
+        });
+
+        cacheStore.set(
+          [
+            cacheStore.getCacheKeyFromField(field, arrayIndex),
+            {
+              ...dataSources,
+              scenario: fieldScenario,
+            },
+          ],
+          data
+        );
       }
-    });
-  }
-  return mockedField;
+    }
+
+    if (isUndefined(data)) {
+      throw new Error(`Type "${field.type}" not found in document.`);
+    } else if (
+      hasProp(typeFieldsBuilders, field.name) &&
+      typeof typeFieldsBuilders[field.name] === "function"
+    ) {
+      const store = {
+        data,
+        get: function () {
+          return store.data;
+        },
+      };
+
+      const fieldResolver = typeFieldsBuilders[field.name](
+        store.get,
+        function buildMocks(type, customScenario = {}) {
+          return mockObjectType(type, schema, {
+            scenario: merge(fieldScenario, customScenario),
+            typeBuilders,
+            nameBuilders,
+          });
+        }
+      );
+
+      fieldResolver.getData = store.get;
+
+      Object.defineProperty(mockedObjectType, field.name, {
+        get() {
+          return fieldResolver;
+        },
+        set(value) {
+          store.data = value;
+        },
+        enumerable: true,
+      });
+    } else {
+      mockedObjectType[field.name] = data;
+    }
+  });
+  return mockedObjectType;
 }
 
 module.exports = {

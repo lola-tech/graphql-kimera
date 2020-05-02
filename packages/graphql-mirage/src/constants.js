@@ -7,7 +7,6 @@ const constants = {
   boolean: "Boolean",
   scalar: "ScalarTypeDefinition",
   interface: "InterfaceTypeDefinition",
-  customScalar: "CustomScalar",
 };
 
 module.exports = constants;
