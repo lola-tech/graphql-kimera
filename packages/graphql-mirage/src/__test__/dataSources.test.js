@@ -1,37 +1,52 @@
-const update = require('immutability-helper');
+const { times } = require("lodash");
+const update = require("immutability-helper");
 
 const {
   getScenarioFn,
   getTypeBuildersFn,
   getNameBuildersFn,
-} = require('../helpers');
+} = require("../helpers");
 
-describe('getScenario', () => {
+describe("getScenario", () => {
   const defaults = {
-    viewer: {
-      userName: 'lola23',
-      firstName: 'Lola',
+    me: {
+      userName: "ciobi", // String
+      children: [{}, { name: "Andreea" }, {}], // [Child]
+      trips: times(10, () => ({
+        rockets: [{ name: "Falcon 9" }, { name: "Falcon Heavy" }],
+      })), // [Launches -> { ..., rockets: [Rocket] }]
     },
+    countries: times(10, () => ({})),
   };
 
   const customData = {
-    viewer: {
-      userName: 'john69',
+    me: {
+      userName: "c10b10",
+      children: [{}],
     },
+    countries: times(5, () => ({
+      states: times(2, () => ({
+        name: "Arizona",
+      })),
+    })),
   };
 
-  it('merges defaults correctly', () => {
+  it("merges defaults correctly", () => {
     const actual = getScenarioFn(defaults)(customData);
-    expect(actual.viewer.userName).toEqual(customData.viewer.userName);
-    expect(actual.viewer.firstName).toEqual(defaults.viewer.firstName);
+    expect(actual.me.userName).toEqual(customData.me.userName);
+    expect(actual.me.children).toHaveLength(customData.me.children.length);
+    expect(actual.me.trips).toHaveLength(defaults.me.trips.length);
+    expect(actual.countries).toHaveLength(5);
+    expect(actual.countries[0].states).toHaveLength(2);
+    expect(actual.countries[0].states[0].name).toBe("Arizona");
   });
 
-  it('gets memoized by using the customData object shape', () => {
+  it("gets memoized by using the customData object shape", () => {
     const getScenario = getScenarioFn(defaults);
 
     const expected = getScenario(
       update(customData, {
-        viewer: { userName: { $set: customData.viewer.userName } },
+        me: { userName: { $set: customData.me.userName } },
       })
     );
     const actual = getScenario(customData);
@@ -39,44 +54,34 @@ describe('getScenario', () => {
     expect(actual === expected).toBe(true);
   });
 
-  it('handle nulls', () => {
-    const actual = getScenarioFn(null)({ viewer: { userName: 'lena' } });
+  it("handle nulls", () => {
+    const actual = getScenarioFn(null)({ me: { userName: "c10b10" } });
 
-    expect(actual.viewer.userName).toBe('lena');
+    expect(actual.me.userName).toBe("c10b10");
   });
 });
 
-describe('getNameBuilders', () => {
-  // TODO: investigate why the lib is not merging correctly more than 1 level deep
+describe("getNameBuilders", () => {
   const defaults = {
-    city: {
-      name: 'Cluj-Napoca',
-    },
-    address: {
-      line1: 'Eroilor Boulevard, no 15',
-      description: 'Hip part of the city',
-    },
-    loremIpsum: 'sid dolor',
+    city: "Cluj-Napoca",
+    address: "Eroilor Street",
+    description: "Lorem ipsum",
   };
   const customData = {
-    address: {
-      line1: 'George Baritiu, no 29',
-      description: 'The best coffee in the city',
-    },
-    testKey: true,
+    address: "Unirii Square",
+    test: true,
   };
 
-  it('getNameBuilders: merges the custom data correctly', () => {
+  it("getNameBuilders: merges the custom data correctly", () => {
     const actual = getNameBuildersFn(defaults)(customData);
 
-    expect(actual.city.name).toEqual(defaults.city.name);
-    expect(actual.address.line1).toEqual(customData.address.line1);
-    expect(actual.address.description).toEqual(customData.address.description);
-    expect(actual.loremIpsum).toEqual(defaults.loremIpsum);
-    expect(actual.testKey).toBe(true);
+    expect(actual.city).toEqual(defaults.city);
+    expect(actual.address).toEqual(customData.address);
+    expect(actual.description).toEqual(defaults.description);
+    expect(actual.test).toBe(true);
   });
 
-  it('gets memoized by using the customData object shape', () => {
+  it("gets memoized by using the customData object shape", () => {
     const getNameBuilders = getNameBuildersFn(defaults);
 
     const expected = getNameBuilders({
@@ -88,36 +93,28 @@ describe('getNameBuilders', () => {
   });
 });
 
-describe('getTypeBuilders', () => {
+describe("getTypeBuilders", () => {
   const defaults = {
-    city: {
-      name: 'Cluj-Napoca',
-    },
-    address: {
-      line1: 'Eroilor Boulevard, no 15',
-      description: 'Hip part of the city',
-    },
-    loremIpsum: 'sid dolor',
-  };
-  const customData = {
-    address: {
-      line1: 'George Baritiu, no 29',
-      description: 'The best coffee in the city',
-    },
-    testKey: true,
+    city: "Cluj-Napoca",
+    address: "Eroilor Street",
+    description: "Lorem ipsum",
   };
 
-  it('getTypeBuilders: merges the custom data correctly', () => {
+  const customData = {
+    address: "Unirii Square",
+    test: true,
+  };
+
+  it("getTypeBuilders: merges the custom data correctly", () => {
     const actual = getNameBuildersFn(defaults)(customData);
 
-    expect(actual.city.name).toEqual(defaults.city.name);
-    expect(actual.address.line1).toEqual(customData.address.line1);
-    expect(actual.address.description).toEqual(customData.address.description);
-    expect(actual.loremIpsum).toEqual(defaults.loremIpsum);
-    expect(actual.testKey).toBe(true);
+    expect(actual.city).toEqual(defaults.city);
+    expect(actual.address).toEqual(customData.address);
+    expect(actual.description).toEqual(defaults.description);
+    expect(actual.test).toBe(true);
   });
 
-  it('gets memoized by using the customData object shape', () => {
+  it("gets memoized by using the customData object shape", () => {
     const getTypeBuilders = getTypeBuildersFn(defaults);
 
     const expected = getTypeBuilders({ ...customData });

@@ -1,56 +1,59 @@
-const { mergeWith, memoize } = require('lodash');
+const {
+  isUndefined,
+  isObject,
+  isPlainObject,
+  mergeWith,
+  negate,
+  memoize,
+} = require("lodash");
+const { compose, first, filter } = require("lodash/fp");
 
-const constants = require('./constants');
+const constants = require("./constants");
 
-function isUndefined(value) {
-  return typeof value === 'undefined';
-}
-
-function hasProp(object, prop) {
-  return !isUndefined(object) && !isUndefined(object[prop]);
-}
-
-function getEnumVal(type, schema) {
-  return schema[type].values[0];
-}
-
-function getUnionVal(type, schema) {
-  return schema[type].types[0];
-}
-
-function getConcreteType(type, schema) {
-  return schema[type].implementedTypes[0];
-}
-
-function getUnionVals(type, schema) {
-  return schema[type].types;
-}
-
-function isUnionType(type, schema) {
-  return schema[type] && schema[type].types.length > 0;
-}
-
-function isEnumType(type, schema) {
-  return schema[type] && schema[type].values.length > 0;
-}
-
-function isScalarType(type, schema) {
-  return schema[type] && schema[type].type === constants.scalar;
-}
-
-function isInterfaceType(type, schema) {
-  return schema[type] && schema[type].type === constants.interface;
-}
-
-function isBuiltInScalarType(type) {
-  return [
+// Scalar Helpers
+const isBuiltInScalarType = (type) =>
+  [
     constants.int,
     constants.float,
     constants.string,
     constants.boolean,
     constants.ID,
   ].includes(type);
-}
+const isCustomScalarType = (type, schema) =>
+  schema[type] && schema[type].type === constants.customScalar;
+const isScalarType = (type, schema) =>
+  isCustomScalarType(type, schema) || isBuiltInScalarType(type);
+// Enums
+const getEnumVal = (type, schema) => schema[type].values[0];
+const isEnumType = (type, schema) =>
+  schema[type] && schema[type].values.length > 0;
+// Object Types
+const isObjectType = (type, schema) =>
+  !isScalarType(type, schema) && !isEnumType(type, schema);
+// Abstract Types
+const isInterfaceType = (type, schema) =>
+  schema[type] && schema[type].type === constants.interface;
+const isUnionType = (type, schema) =>
+  schema[type] && schema[type].types.length > 0;
+const isAbstractType = (type, schema) =>
+  isUnionType(type, schema) || isInterfaceType(type, schema);
+const getUnionVal = (type, schema) => schema[type].types[0];
+const getUnionVals = (type, schema) => schema[type].types;
+const getConcreteType = (type, schema) => {
+  if (isInterfaceType(type, schema)) {
+    // https://github.com/EasyGraphQL/easygraphql-parser/issues/9
+    return schema[type].implementedTypes[0];
+  } else if (isUnionType(type, schema)) {
+    return getUnionVal(type, schema);
+  }
+};
+
+const getFirstDefinedArrayElement = compose([
+  first,
+  filter(negate(isUndefined)),
+]);
+const hasProp = (object, prop) =>
+  !isUndefined(object) && !isUndefined(object[prop]);
 
 const getScenarioFn = (defaultScenario = {}) =>
   memoize(function getScenario(customScenario = {}) {
@@ -78,45 +81,45 @@ const getTypeBuildersFn = (defaults = {}) =>
     };
   }, JSON.stringify);
 
-function mergeDataSources(defaults = {}, custom = {}) {
+const mergeDataSources = (defaults = {}, custom = {}) => {
   return {
     scenario: getScenarioFn(defaults.scenario)(custom.scenario),
     nameBuilders: getNameBuildersFn(defaults.nameBuilders)(custom.nameBuilders),
     typeBuilders: getTypeBuildersFn(defaults.typeBuilders)(custom.typeBuilders),
   };
-}
+};
 
-function getDebugger(DEBUGGING) {
+const getDebugger = (DEBUGGING) => {
   let debuggerState = {
     types: new Set(),
     fields: new Set(),
   };
   return function debug(type, field) {
     if (!DEBUGGING) return;
-    console.log('DOES NOT WORK PROPERLY');
+    console.log("DOES NOT WORK PROPERLY");
     const { types, fields } = debuggerState;
-    const getSpaces = (size, char = '-') => {
-      return size ? `${char.repeat(size)}` : '';
+    const getSpaces = (size, char = "-") => {
+      return size ? `${char.repeat(size)}` : "";
     };
     if (type) {
       types.add(type);
       console.log(
-        `L${types.size - 1} ${getSpaces(types.size, '- ')} TYPE: ${type}`
+        `L${types.size - 1} ${getSpaces(types.size, "- ")} TYPE: ${type}`
       );
     } else if (field) {
       fields.add(field);
 
       console.log(
-        `L${types.size - 1} ${getSpaces(types.size, ' ')} FIELD: ${field}`
+        `L${types.size - 1} ${getSpaces(types.size, " ")} FIELD: ${field}`
       );
     }
   };
-}
+};
 
 // Displays duplicates in the cache, and what part of the key is different.
 // Usually this happens for the scenario.
 // Helpful to debug performance.
-function debugCacheDuplicates(cache, meta = {}) {
+const debugCacheDuplicates = (cache, meta = {}) => {
   const keys = cache._keys.map((key) => key[0]);
 
   // Lists the keys for inspection of duplication
@@ -130,7 +133,7 @@ function debugCacheDuplicates(cache, meta = {}) {
       (key) => key[0] === meta.showDifferenceForType
     );
     if (duplicates.length > 2) {
-      const keyParts = ['type', 'names', 'types', 'scenario'];
+      const keyParts = ["type", "names", "types", "scenario"];
       duplicates.slice(0, -1).forEach((duplicate, index) => {
         duplicates.slice(index + 1).forEach((nextDup, jindex) => {
           duplicate.map((testedKeyPart, i) => {
@@ -145,16 +148,34 @@ function debugCacheDuplicates(cache, meta = {}) {
       });
     } else if (duplicates.length) {
       console.log(
-        'Are equal',
+        "Are equal",
         duplicates[0].reduce((res, keyPart, i) => {
           if (keyPart !== duplicates[1][i]) {
-            console.log('DIFFERENT:', { zero: keyPart, one: duplicates[1][i] });
+            console.log("DIFFERENT:", { zero: keyPart, one: duplicates[1][i] });
           }
           return res && keyPart === duplicates[1][i];
         }, true)
       );
     }
   }
+};
+
+// A custom defaultsDeep merge function.
+// - for primitives like String, Int and Bool, ... returns leftmost argument
+// - for arrays and null, returns the leftmost option using mergeWith
+// - recursively merges objects with mergeWith
+function mergeScenarios(...options) {
+  const firstDefinedArg = getFirstDefinedArrayElement(options);
+  if (!isObject(firstDefinedArg)) {
+    return firstDefinedArg;
+  }
+  return mergeWith(...options, (defaultOption, newOption) => {
+    if (isPlainObject(defaultOption)) {
+      return mergeScenarios(defaultOption, newOption);
+    }
+
+    return defaultOption;
+  });
 }
 
 module.exports = {
@@ -162,17 +183,20 @@ module.exports = {
   getUnionVals,
   getEnumVal,
   getConcreteType,
-  isUnionType,
   isEnumType,
   isBuiltInScalarType,
+  isCustomScalarType,
   isScalarType,
+  isUnionType,
   isInterfaceType,
+  isAbstractType,
   getScenarioFn,
   getNameBuildersFn,
   getTypeBuildersFn,
-  isUndefined,
   hasProp,
   mergeDataSources,
   getDebugger,
   debugCacheDuplicates,
+  isObjectType,
+  mergeScenarios,
 };
