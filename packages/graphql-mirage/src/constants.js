@@ -5,7 +5,7 @@ const constants = {
   int: "Int",
   float: "Float",
   boolean: "Boolean",
-  scalar: "ScalarTypeDefinition",
+  customScalar: "ScalarTypeDefinition",
   interface: "InterfaceTypeDefinition",
 };
 

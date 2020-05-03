@@ -65,9 +65,16 @@ type User {
   profileImage: String
   gender: Gender
   dateOfBirth: Date
+  address: Address
   allergies: [String]
   trips: [Launch]!
   hobbies: [Hobby]
+}
+
+type Address {
+  street: String
+  city: String
+  country: String
 }
 
 type Mission {

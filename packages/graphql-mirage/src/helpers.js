@@ -1,4 +1,12 @@
-const { mergeWith, memoize } = require("lodash");
+const {
+  isUndefined,
+  isObject,
+  isPlainObject,
+  mergeWith,
+  negate,
+  memoize,
+} = require("lodash");
+const { compose, first, filter } = require("lodash/fp");
 
 const constants = require("./constants");
 
@@ -12,7 +20,7 @@ const isBuiltInScalarType = (type) =>
     constants.ID,
   ].includes(type);
 const isCustomScalarType = (type, schema) =>
-  schema[type] && schema[type].type === constants.scalar;
+  schema[type] && schema[type].type === constants.customScalar;
 const isScalarType = (type, schema) =>
   isCustomScalarType(type, schema) || isBuiltInScalarType(type);
 // Enums
@@ -40,7 +48,10 @@ const getConcreteType = (type, schema) => {
   }
 };
 
-const isUndefined = (value) => typeof value === "undefined";
+const getFirstDefinedArrayElement = compose([
+  first,
+  filter(negate(isUndefined)),
+]);
 const hasProp = (object, prop) =>
   !isUndefined(object) && !isUndefined(object[prop]);
 
@@ -149,6 +160,24 @@ const debugCacheDuplicates = (cache, meta = {}) => {
   }
 };
 
+// A custom defaultsDeep merge function.
+// - for primitives like String, Int and Bool, ... returns leftmost argument
+// - for arrays and null, returns the leftmost option using mergeWith
+// - recursively merges objects with mergeWith
+function mergeScenarios(...options) {
+  const firstDefinedArg = getFirstDefinedArrayElement(options);
+  if (!isObject(firstDefinedArg)) {
+    return firstDefinedArg;
+  }
+  return mergeWith(...options, (defaultOption, newOption) => {
+    if (isPlainObject(defaultOption)) {
+      return mergeScenarios(defaultOption, newOption);
+    }
+
+    return defaultOption;
+  });
+}
+
 module.exports = {
   getUnionVal,
   getUnionVals,
@@ -164,10 +193,10 @@ module.exports = {
   getScenarioFn,
   getNameBuildersFn,
   getTypeBuildersFn,
-  isUndefined,
   hasProp,
   mergeDataSources,
   getDebugger,
   debugCacheDuplicates,
   isObjectType,
+  mergeScenarios,
 };

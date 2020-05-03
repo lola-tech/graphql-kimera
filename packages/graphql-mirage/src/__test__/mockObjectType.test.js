@@ -21,37 +21,67 @@ const mockQuery = ({ scenario, typeBuilders, nameBuilders } = {}) => {
   });
 };
 
-// describe("Validation", () => {
-//   it("SCENARIO: should be validated against the schema", () => {
-//     expect(
-//       mockQuery({
-//         scenario: {
-//           me: { email: null },
-//         },
-//       })
-//     ).toThrowError();
-//   });
+describe("Validation", () => {
+  it("Should throw an error when the type builder isn't a function", () => {
+    expect(() =>
+      mockQuery({
+        typeBuilders: {
+          User: { email: null },
+        },
+      })
+    ).toThrow(TypeError);
+  });
 
-//   it("TYPE: should be validated against the schema", () => {
-//     expect(
-//       mockQuery({
-//         typeBuilders: {
-//           User: () => ({ email: null }),
-//         },
-//       })
-//     ).toThrowError();
-//   });
+  it("Should throw an error when the name builder isn't a function", () => {
+    expect(() =>
+      mockQuery({
+        nameBuilders: {
+          id: null,
+        },
+      })
+    ).toThrow(TypeError);
+  });
 
-//   it("NAME: should be validated agains the schema", () => {
-//     expect(
-//       mockQuery({
-//         nameBuilders: {
-//           id: () => null,
-//         },
-//       })
-//     ).toThrowError();
-//   });
-// });
+  it("SCENARIO: Should throw an error when we attempt to set a non-nullable field as null.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          me: { email: null },
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("SCENARIO: Should throw an error when we attempt to set a list with a primitive.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          me: { allergies: "test" },
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("TYPE: Should throw an error when we attempt to set a non-nullable field as null.", () => {
+    expect(() =>
+      mockQuery({
+        typeBuilders: {
+          User: () => ({ email: null }),
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("NAME: Should throw an error when we attempt to set a non-nullable field as null.", () => {
+    expect(() =>
+      mockQuery({
+        nameBuilders: {
+          id: () => null,
+        },
+      })
+    ).toThrowError();
+  });
+});
 
 describe("Scenario", () => {
   it("SCENARIO: sets built-in scalar", () => {
