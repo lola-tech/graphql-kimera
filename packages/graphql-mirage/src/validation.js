@@ -16,6 +16,7 @@ const validateBuilder = (builder, field, kind) => {
       `All builders need to be functions. The "${field[kind]}" ${kind} builder sn't a function.`
     );
   }
+
   return true;
 };
 
@@ -40,7 +41,7 @@ const validateScenario = (scenario, field, path) => {
 
   if (!isNull(scenario) && !Array.isArray(scenario) && field.isArray) {
     throw new TypeError(
-      `You are attempting to mock the the list "${path}" field with non-array value "${scenario}". List fields must be mocked with arrays.`
+      `You are attempting to mock the list "${path}" field with non-array value "${scenario}". List fields must be mocked with arrays.`
     );
   }
 

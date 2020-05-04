@@ -8,9 +8,9 @@ const {
   partialRight,
 } = require("lodash");
 const { map } = require("lodash/fp");
-const MultiKeyMap = require("multikeymap");
 
 const { validateBuilder, validateScenario } = require("./validation");
+const { executeAndCache } = require("./caching");
 const {
   // getDebugger,
   getEnumVal,
@@ -182,34 +182,6 @@ function mockField(field, schema, dataSources, depth, path) {
   );
 }
 
-const cacheStore = new MultiKeyMap();
-cacheStore.getCacheKeyFromField = (field, arrayIndex) => {
-  // TODO: In the future, add noNullArray and noNull if these
-  // will matter for data generation.
-  if (field.isArray) {
-    return `[${field.type}]`;
-  }
-
-  // Make ids of items part of a List unique
-  return Number.isInteger(arrayIndex) && field.type === "ID"
-    ? `${field.type}[${arrayIndex}]`
-    : field.type;
-};
-
-const getCache = (fieldKey, dataSources) => {
-  if (cacheStore.get([fieldKey, ...Object.values(dataSources)])) {
-    return cacheStore.get([fieldKey, ...Object.values(dataSources)]);
-  }
-
-  // Performance debugging
-  // debugCacheDuplicates(cacheStore, {
-  //   type,
-  //   scenario,
-  //   showDifferenceForType: 'ExpendableMenuItem',
-  // });
-  return undefined;
-};
-
 /**
  * Decides on a GraphQL Type "__typename" value by having a strategy
  * for abstract fields: If a value is set in a data source, select that,
@@ -275,47 +247,35 @@ function mockObjectType(
 
   schema[type].fields.forEach((field) => {
     const newPath = path + field.name + `.`;
-
-    let data = null;
     const fieldScenario = get(scenario, field.name);
 
-    const cache = getCache(cacheStore.getCacheKeyFromField(field, arrayIndex), {
-      ...dataSources,
-      scenario: fieldScenario,
-    });
-
-    if (!isUndefined(cache)) {
-      data = cache;
-    } else {
-      data = mockField(
-        field,
-        schema,
-        {
-          scenario: fieldScenario,
-          nameBuilders,
-          typeBuilders,
-        },
-        depth + 1,
-        newPath
-      );
-
-      cacheStore.set(
-        [
-          cacheStore.getCacheKeyFromField(field, arrayIndex),
+    const mockedField = executeAndCache(
+      () =>
+        mockField(
+          field,
+          schema,
           {
-            ...dataSources,
             scenario: fieldScenario,
+            nameBuilders,
+            typeBuilders,
           },
-        ],
-        data
-      );
-    }
+          depth + 1,
+          newPath
+        ),
+      // All needed to compute the cache key
+      field,
+      arrayIndex,
+      {
+        ...dataSources,
+        scenario: fieldScenario,
+      }
+    );
 
     if (typeFieldsBuilders && isFunction(typeFieldsBuilders[field.name])) {
       const store = {
-        data,
+        mockedField,
         get: function () {
-          return store.data;
+          return store.mockedField;
         },
       };
 
@@ -337,12 +297,12 @@ function mockObjectType(
           return fieldResolver;
         },
         set(value) {
-          store.data = value;
+          store.mockedField = value;
         },
         enumerable: true,
       });
     } else {
-      mockedObjectType[field.name] = data;
+      mockedObjectType[field.name] = mockedField;
     }
   });
   return mockedObjectType;
