@@ -35,7 +35,7 @@ In order to pass a resolver for that mutation to Mirage, we need to pass a [getM
 function getMutationResolvers(cache, buildMocks) {
   return {
     addCity: (_, { name }) => {
-      const newCity = buildMocks('City', { name });
+      const newCity = buildMocks("City", { name });
 
       cache.cities = cache.cities ? [...cache.cities, newCity] : [newCity];
 
@@ -92,7 +92,7 @@ This looks very similar to the `addCity` mutation, so lets implement its resolve
 function getMutationResolvers(cache, buildMocks) {
   return {
     addPersona: (_, { name, cityName }) => {
-      const newPersona = buildMocks('Persona', {
+      const newPersona = buildMocks("Persona", {
         name,
         city: { name: cityName },
       });
@@ -155,7 +155,7 @@ That explains our `cache.personas is not iterable` error, since the spread opera
 function getMutationResolvers(cache, buildMocks) {
   return {
     addPersona: (_, { cityName, name }) => {
-      const newPersona = buildMocks('Persona', {
+      const newPersona = buildMocks("Persona", {
         name,
         city: { name: cityName },
       });

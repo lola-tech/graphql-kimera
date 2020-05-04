@@ -15,15 +15,12 @@ Builders for these are considered to be the lowest priority data sources. When M
 If we don't specify our own collection of Built-in Scalar Types Builders, Mirage will use its defaults:
 
 ```javascript
-{
-  ['ID']: () =>
-    Math.random()
-      .toString(36)
-      .substr(2, 9),
-  ['String']: () => 'GENERATED_STRING',
-  ['Int']: () => random(0, 1000),
-  ['Float']: () => random(0.1, 1000.1),
-  ['Boolean']: () => [true, false][random(0, 1)],
+const builtInScalarTypesBuilders = {
+  ['ID']: () => 'Mocked ID Scalar',
+  ['String']: () => 'Mocked String Scalar',
+  ['Int']: () => 42,
+  ['Float']: () => 4.2,
+  ['Boolean']: () => true,
 }
 ```
 

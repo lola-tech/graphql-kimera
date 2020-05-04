@@ -1,8 +1,10 @@
 ---
-id: interfaces
-title: Interfaces
-sidebar_label: Interfaces
+id: abstract-fields
+title: Abstract Fields
+sidebar_label: Abstract Fields
 ---
+
+# Interfaces
 
 Use \_\_typename to specify a concrete type for an abstract field
 
@@ -39,7 +41,7 @@ We can tell Mirage what concrete types to build for our interface fields by sett
 
 ```javascript
 {
-  menu: [times(5, () => ({ __typename: 'NavigationMenuItem' }))];
+  menu: [times(5, () => ({ __typename: "NavigationMenuItem" }))];
 }
 ```
 

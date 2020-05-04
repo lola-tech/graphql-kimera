@@ -9,18 +9,24 @@ Setting up a GraphQL server with an [executable schema](/graphql-mirage/docs/glo
 We'll use [graphql-yoga](https://github.com/prisma/graphql-yoga) for the server, but Apollo Server could work just as well. In order to start the server, we first need to have Mirage build an executable schema.
 
 ```javascript
-const { GraphQLServer } = require('graphql-yoga');
-const { getExecutableSchema } = require('graphql-mirage');
+const { GraphQLServer } = require("graphql-yoga");
+const { getExecutableSchema } = require("graphql-mirage");
 
 const typeDefs = `
-type City {
+type User {
   id: ID!
   name: String
-  population: Int
+  gender: Gender
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  NON_BINARY
 }
 
 type Query {
-  city: City
+  me: User
 }
 
 schema {
@@ -31,19 +37,19 @@ schema {
 const executableSchema = getExecutableSchema(typeDefs);
 
 const server = new GraphQLServer({ schema: executableSchema });
-server.start(() => console.log('Server is running on localhost:4000'));
+server.start(() => console.log("Server is running on localhost:4000"));
 ```
 
 Running this code with `node` will start a server on `localhost:4000`. Visiting the URL will predictably take us to the GraphQL Playground.
 
-Running the `city` query...
+Running the `me` query...
 
 ```graphql
 query {
-  city {
+  me {
     id
     name
-    population
+    gender
   }
 }
 ```
@@ -53,10 +59,10 @@ query {
 ```json
 {
   "data": {
-    "city": {
+    "me": {
       "id": "irg5btv90",
-      "name": "GENERATED_STRING",
-      "population": 695
+      "name": "Mocked String Scalar",
+      "gender": "FEMALE"
     }
   }
 }

@@ -6,37 +6,43 @@ sidebar_label: 4. Fields with arguments
 
 Write resolvers for [fields with arguments](https://graphql.org/learn/schema/#arguments)
 
-Say we decide to want support for Personas in our app. Lets amend the schema to add a `Persona` type, and the ability to query for a list of Personas from a specific city.
+Say we decide to want to support for querying for a bunch of launches. Lets amend the schema.
 
 ```graphql
 # ...
 
-type Persona {
+type User {
   id: ID!
-  city: City
+  name: String
+  trips: [Launch]
+}
+
+type Launch {
+  id: ID!
+  site: String
 }
 
 type Query {
-  cities: [City]
-  personas(city: String): [Persona]
+  me: User
+  launches(site: String): [Launch]
 }
 
 # ...
 ```
 
-To deal with the newly added `personas` field with arguments, Mirage allows us to write field resolvers in our Object Type Builders.
+To deal with the newly added `launches` field with arguments, Mirage allows us to write field resolvers in our Object Type Builders.
 
 ```javascript
 // ...
 
 const typeBuilders = {
   // ...
-  ['Query']: () => ({
-    personas: getPersonas =>
-      function personasResolver(_, { city }) {
+  ["Query"]: () => ({
+    launches: (getLaunches) =>
+      function launchesResolver(_, { site }) {
         return city
-          ? getPersonas().filter(persona => persona.city.name === city)
-          : getPersonas();
+          ? getLaunches().filter((launch) => launch.site === site)
+          : getLaunches();
       },
   }),
 };
@@ -44,13 +50,13 @@ const typeBuilders = {
 // ..
 ```
 
-The `personasResolver` function needs access to the list of available `personas` in order to do filtering, so Mirage conveniently passes a `getPersonas` function which returns the total list of available personas to our resolver.
+The `launchesResolver` function needs access to the list of available `launches` in order to do filtering, so Mirage conveniently passes a `getLaunches` function which returns the total list of available launches to our resolver.
 
 > **Note**
 >
 > You can read more about the fields resolvers syntax on the [Object Type Builders concepts page](/graphql-mirage/docs/object-type-builders#fields-with-arguments).
 
-We have our resolver in place, but there seems to be a problem. Inspecting the result of the query that returns all cities and all personas...
+We have our resolver in place, but there seems to be a problem. Inspecting the result of the query that returns the viewer and all personas...
 
 ```graphql
 query {
@@ -78,10 +84,10 @@ To make sure that personas are only from cities from our `cities` list, we need 
 const cities = times(5, () => ({ id: casual.uuid, name: casual.city }));
 const typeBuilders = {
   // ...
-  ['Persona']: () => ({
+  ["Persona"]: () => ({
     city: casual.random_element(cities),
   }),
-  ['Query']: () => ({
+  ["Query"]: () => ({
     cities: cities,
     // ...
   }),

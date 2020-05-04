@@ -6,24 +6,24 @@ sidebar_label: Introduction
 
 GraphQL Mirage is a tool for auto-generating mocks from custom data sources.
 
-Its name is inspired from a [testing solution for Ember.js](http://www.ember-cli-mirage.com/).
+Mirage has your back by helping you create an [executable schema](/graphql-mirage/docs/glossary#executable-schema) with mock data, while allowing you to be very precise about how data should be generated.
 
-Mirage is a tool that allows us to create an [executable schema](/graphql-mirage/docs/glossary#executable-schema) with mock data, while allowing us to be very precise about how data should be generated.
+## The problems
 
-## The problem
+Say we have decided on how the schema looks, but we want to start work on the frontend application before implementing the resolvers in the GraphQL server. Mirage allows us to auto-mock our whole API, and will provide us with levers that we can pull in order to customize responses where we feel necessary.
 
-Our previous implementation of the mocking server had several issues:
+Another problem that we encounter has to do with testing. In React, we often run into the problem of wanting to test complex components which execute multiple GraphQL operations.
 
-- It required replicating the schema resolver tree, which made it cumbersome to update and difficult to follow the code.
-- The data builders couldn't be changed from outside the server, and whatever control we had (shape of array fields), needed to built into the server with each new array field added to the schema.
-- It required us to be exhaustive in the definitions of the builders for types, ie. we needed to add every (required) field in the builder, even if we didn't necessarily cared about its value.
-- There was no way to set data in the mocks from outside of the actual builder functions which made it impossible to use in tests
+In Apollo, the [current practice](https://www.apollographql.com/docs/react/development-testing/testing/) requires us to mock the complete response of each query in the component tree.
+
+That becomes cumbersome, especially since in the context of a specific test, we aren't interested in all of the fields having specific values. Another difficulty of this approach is that one needs to hunt for all queries executed by all subcomponents, which can be difficult to do for complex component hierarchies.
+
+Mirage allows us to only set the query fields we care about to specific values, while auto-mocking the rest of the queries fields. This vastly reduces the code needed to be written in tests, naturally co-locates mocks with test assertions and keeps the code cleaner.
 
 ## The solution
 
-GraphQL Mirage solves each of the problems above by:
+GraphQL Mirage solves problems described above by:
 
-- Walking the [schema SDL](/graphql-mirage/docs/glossary#schema-definition-language) directly and constructing the resolver tree as it does so. This means there's no need for manually replicating the schema structure.
-- By default it can generate data for any kind of field, which allows us to only focus on the fields we care about.
-- Uses a [priority-based data sources mechanism](/graphql-mirage/docs/data-sources) to allow us to be precise about exactly what field we want to set a value for.
-- The same mechanism can be overwritten from outside of the implementation of our mocks, by using the same api.
+- Walking the [schema SDL](/graphql-mirage/docs/glossary#schema-definition-language) directly and constructing the resolver tree as it does so.
+- By default it generates data for any kind of field, which allows us to only focus on the fields we care about.
+- It uses a [priority-based data sources mechanism](/graphql-mirage/docs/data-sources) to allow us to be precise about exactly what fields we want to customize.

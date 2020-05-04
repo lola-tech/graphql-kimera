@@ -6,53 +6,52 @@ sidebar_label: 3. Array Fields
 
 Define the shape of Array Fields
 
-Lets amend the schema to add an `Airport` type.
+Lets image our user is an astronaut and amend the schema to add an `Launch` type.
 
 ```graphql
-type City {
+type User {
   id: ID!
   name: String
-  airports: [Airport]
+  trips: [Launch]
 }
 
-type Airport {
+type Launch {
   id: ID!
-  name: String
+  site: String
 }
 
 # ...
 ```
 
-Lets say we want our mock server to return two airports for our city, and the first airport be called `Avram Iancu`. To do that, we can use a [Scenario](/graphql-mirage/docs/scenarios) for our field.
+Lets say we want our mock server to return two trips for our `me` query, and the first trips be launched from a site called `Kennedy Space Center`. To do that, we can use a [Scenario](/graphql-mirage/docs/scenarios) for our field.
 
 ```javascript
 // ...
 
 const typeBuilders = {
-  ['City']: () => ({
-    name: casual.city,
-    airports: [{ name: 'Avram Iancu' }, {}],
+  ["User"]: () => ({
+    name: casual.full_name,
+    trips: [{ name: "Kennedy Space Center" }, {}],
   }),
 };
 
 // ..
 ```
 
-Running a `city` `query` will predictably return two airports:
+Running a `me` `query` will predictably return two launches:
 
 ```json
 {
   "data": {
-    "city": {
+    "me": {
       "id": "m43g3ealt",
       "name": "Cloog",
-      "population": 476,
-      "airports": [
+      "trips": [
         {
-          "name": "Avram Iancu"
+          "site": "Kennedy Space Center"
         },
         {
-          "name": "GENERATED_STRING"
+          "site": "Mocked String Scalar"
         }
       ]
     }
