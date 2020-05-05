@@ -65,47 +65,39 @@ const getFieldMockBuilderFactoryFn = (field, scenario) => (
  * @see mockField
  *
  * @param {Object} field The parsed schema field object.
- * @param {Object} dataSources An object with the Scenario, Name and Type builders.
+ * @param {Object} dataSources An object with the Scenario and the Builders.
  * @returns {Object} Returns the merged data sources scenario.
  */
-const reduceDataSourcesToScenario = (
-  field,
-  { scenario, nameBuilders, typeBuilders }
-) => {
+const reduceDataSourcesToScenario = (field, { scenario, builders }) => {
   if (isNull(scenario)) {
     return null;
   }
 
-  const getBuilderScenario = (builders, field, kind) => {
-    const builder = get(builders, field[kind]);
-    return validateBuilder(builder, field, kind) && builder && builder();
+  const getBuilderScenario = (builders, field) => {
+    const builder = get(builders, field.type);
+    return validateBuilder(builder, field) && builder && builder();
   };
 
-  const typeScenario = getBuilderScenario(typeBuilders, field, "type");
-  const nameScenario = getBuilderScenario(nameBuilders, field, "name");
+  const builderScenario = getBuilderScenario(builders, field);
 
   if (field.isArray) {
-    // By merging the type and the name builder execution result
-    // we obtain a scenario which we'll call "the builders scenario".
-    const buildersScenario = mergeScenarios(typeScenario, nameScenario);
-
     if (Array.isArray(scenario)) {
       // If we have a user defined array scenario,
-      // merge each array element with the buildersScenario
-      return map(partialRight(mergeScenarios, buildersScenario))(scenario);
+      // merge each array element with the builderScenario
+      return map(partialRight(mergeScenarios, builderScenario))(scenario);
     } else if (!isUndefined(scenario)) {
       // If scenario is defined as something other than an array
       // return it so we can throw a TypeError at validation.
       return scenario;
     }
 
-    // Otherwise create a scenario out of the buildersScenario
-    return !isUndefined(buildersScenario)
-      ? times(DEFAULT_ARRAY_LENGTH, () => buildersScenario)
+    // Otherwise create a scenario out of the builderScenario
+    return !isUndefined(builderScenario)
+      ? times(DEFAULT_ARRAY_LENGTH, () => builderScenario)
       : undefined;
   }
 
-  return mergeScenarios(scenario, typeScenario, nameScenario);
+  return mergeScenarios(scenario, builderScenario);
 };
 
 /**
@@ -114,7 +106,7 @@ const reduceDataSourcesToScenario = (
  *
  * @param {Object} field The parsed schema field object.
  * @param {Object} schema The parsed schema.
- * @param {Object} dataSources An object with the Scenario, Name and Type builders.
+ * @param {Object} dataSources An object with the Scenario and the Builders.
  * @param {Object} depth The Query depth of the mocked field.
  * @param {Object} path The field path through the Query object. E.g: me.address.city
  * @returns {*} Returns the mocked value for the field.
@@ -136,11 +128,6 @@ function mockField(field, schema, dataSources, depth, path) {
   if (!isObjectType(field.type, schema)) {
     // If a user defined value is defined, return that.
     if (!isUndefined(reducedScenario)) {
-      // if (!isUndefined(index) && !Array.isArray(scenario)) {
-      //   throw new Error(
-      //     `Scenario value for "${field.name}" expected to be array.`
-      //   );
-      // }
       return buildFieldMock((index) =>
         isUndefined(index) ? reducedScenario : reducedScenario[index]
       );
@@ -220,7 +207,7 @@ const getTypename = (type, schema, scenario) => {
  *
  * @param {String} type The GraphQL Type name for which we need the __typename
  * @param {Object} schema The parsed schema.
- * @param {Object} dataSources An object with the Scenario, Name and Type builders.
+ * @param {Object} dataSources An object with the Scenario and the Builders.
  * @param {number} arrayIndex If the current type is mocked as part of a list, its index.
  * @param {Object} depth The Query depth of the mocked field whose type we are mocking.
  * @param {Object} path The field path through the Query object. E.g: me.address.city
@@ -238,12 +225,12 @@ function mockObjectType(
     throw new Error(`Type "${type}" not found in schema.`);
   }
 
-  let { scenario, typeBuilders } = dataSources;
+  let { scenario, builders } = dataSources;
 
   const mockedObjectType = { __typename: getTypename(type, schema, scenario) };
 
-  const typeBuilder = get(typeBuilders, type);
-  const typeBuilderScenario = typeBuilder && typeBuilder();
+  const builder = get(builders, type);
+  const builderScenario = builder && builder();
 
   schema[type].fields.forEach((field) => {
     const newPath = path + field.name + `.`;
@@ -260,7 +247,7 @@ function mockObjectType(
       fieldDataSources
     );
 
-    if (typeBuilderScenario && isFunction(typeBuilderScenario[field.name])) {
+    if (builderScenario && isFunction(builderScenario[field.name])) {
       const store = {
         mockedField,
         get: function () {
@@ -268,7 +255,7 @@ function mockObjectType(
         },
       };
 
-      const fieldResolver = typeBuilderScenario[field.name](
+      const fieldResolver = builderScenario[field.name](
         store.get,
         function buildMocks(type, customScenario = {}) {
           return mockObjectType(type, schema, {

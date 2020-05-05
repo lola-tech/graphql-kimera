@@ -65,27 +65,18 @@ const getScenarioFn = (defaultScenario = {}) =>
     );
   }, JSON.stringify);
 
-const getNameBuildersFn = (defaults = {}) =>
-  memoize(function getNameBuilders(nameBuilders = {}) {
+const getBuildersFn = (defaults = {}) =>
+  memoize(function getBuilders(builders = {}) {
     return {
       ...defaults,
-      ...nameBuilders,
-    };
-  }, JSON.stringify);
-
-const getTypeBuildersFn = (defaults = {}) =>
-  memoize(function getTypeBuilders(typeBuilders = {}) {
-    return {
-      ...defaults,
-      ...typeBuilders,
+      ...builders,
     };
   }, JSON.stringify);
 
 const mergeDataSources = (defaults = {}, custom = {}) => {
   return {
     scenario: getScenarioFn(defaults.scenario)(custom.scenario),
-    nameBuilders: getNameBuildersFn(defaults.nameBuilders)(custom.nameBuilders),
-    typeBuilders: getTypeBuildersFn(defaults.typeBuilders)(custom.typeBuilders),
+    builders: getBuildersFn(defaults.builders)(custom.builders),
   };
 };
 
@@ -191,8 +182,7 @@ module.exports = {
   isInterfaceType,
   isAbstractType,
   getScenarioFn,
-  getNameBuildersFn,
-  getTypeBuildersFn,
+  getBuildersFn,
   hasProp,
   mergeDataSources,
   getDebugger,

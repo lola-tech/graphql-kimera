@@ -13,11 +13,10 @@ const typeDefs = fs.readFileSync(
 const DEFAULT_ARRAY_LENGTH = 3;
 
 const schema = schemaParser(typeDefs);
-const mockQuery = ({ scenario, typeBuilders, nameBuilders } = {}) => {
+const mockQuery = ({ scenario, builders } = {}) => {
   return mockObjectType("Query", schema, {
     scenario,
-    typeBuilders,
-    nameBuilders,
+    builders,
   });
 };
 
@@ -25,18 +24,8 @@ describe("Validation", () => {
   it("Should throw an error when the type builder isn't a function", () => {
     expect(() =>
       mockQuery({
-        typeBuilders: {
+        builders: {
           User: { email: null },
-        },
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw an error when the name builder isn't a function", () => {
-    expect(() =>
-      mockQuery({
-        nameBuilders: {
-          id: null,
         },
       })
     ).toThrow(TypeError);
@@ -65,18 +54,8 @@ describe("Validation", () => {
   it("TYPE: Should throw an error when we attempt to set a non-nullable field as null.", () => {
     expect(() =>
       mockQuery({
-        typeBuilders: {
+        builders: {
           User: () => ({ email: null }),
-        },
-      })
-    ).toThrowError();
-  });
-
-  it("NAME: Should throw an error when we attempt to set a non-nullable field as null.", () => {
-    expect(() =>
-      mockQuery({
-        nameBuilders: {
-          id: () => null,
         },
       })
     ).toThrowError();
@@ -155,7 +134,7 @@ describe("Type Builders", () => {
           ],
         },
       },
-      typeBuilders: { Mission: () => ({ name: "Beta" }) },
+      builders: { Mission: () => ({ name: "Beta" }) },
     });
 
     expect(actual.me.trips[0].mission.name).toEqual("Beta");
@@ -168,7 +147,7 @@ describe("Type Builders", () => {
           trips: [{ site: "Kennedy Space Center" }, {}],
         },
       },
-      typeBuilders: {
+      builders: {
         User: () => ({ profileImage: null }),
         Launch: () => ({ rockets: null }),
       },
@@ -180,7 +159,7 @@ describe("Type Builders", () => {
 
   it("TYPE: Object Type builders can set the shape of Array Object Type fields", () => {
     const actual = mockQuery({
-      typeBuilders: {
+      builders: {
         User: () => ({
           trips: times(5, () => ({
             rockets: [{ name: "Falcon Heavy" }, { type: "Small" }],
@@ -197,7 +176,7 @@ describe("Type Builders", () => {
 
   it("TYPE: can set Type Builder for Built-in Scalar Types", () => {
     const actual = mockQuery({
-      typeBuilders: {
+      builders: {
         ID: () => "GENERATED_ID",
       },
     });
@@ -215,7 +194,7 @@ describe("Type Builders", () => {
           trips: [{ site: "Vandenberg Air Force Base" }, {}],
         },
       },
-      typeBuilders: {
+      builders: {
         User: () => ({
           profileImage: "http://example.com/profile.png",
           email: "test@example.com",
@@ -243,7 +222,7 @@ describe("Type Builders", () => {
           })),
         },
       },
-      typeBuilders: {
+      builders: {
         LaunchConnection: () => ({
           list: (getLaunches) => {
             return (_, { siteFilter }) => {
@@ -266,46 +245,6 @@ describe("Type Builders", () => {
   });
 });
 
-describe("Name Builders", () => {
-  it("NAME: works when no Scenario or Object Type builder present", () => {
-    const actual = mockQuery({
-      nameBuilders: {
-        id: () => "NAME_BUILDER_ID",
-      },
-    });
-
-    expect(actual.me.id).toEqual("NAME_BUILDER_ID");
-    expect(actual.me.trips[0].id).toEqual("NAME_BUILDER_ID");
-    expect(actual.me.trips[0].rockets[0].id).toEqual("NAME_BUILDER_ID");
-  });
-
-  it("NAME: does not overwrite Scenario", () => {
-    const actual = mockQuery({
-      scenario: { me: { id: "SCENARIO_ID" } },
-      nameBuilders: {
-        id: () => "NAME_BUILDER_ID",
-      },
-    });
-
-    expect(actual.me.id).toEqual("SCENARIO_ID");
-  });
-
-  it("NAME: does not overwrite Object Type builder", () => {
-    const actual = mockQuery({
-      typeBuilders: {
-        User: () => ({
-          id: "OBJECT_BUILDER_ID",
-        }),
-      },
-      nameBuilders: {
-        id: () => "NAME_BUILDER_ID",
-      },
-    });
-
-    expect(actual.me.id).toEqual("OBJECT_BUILDER_ID");
-  });
-});
-
 describe("Enums", () => {
   it("ENUM: selects the first value of the enum", () => {
     const actual = mockQuery();
@@ -319,7 +258,7 @@ describe("Scalars", () => {
   it("SCALAR: uses Type builder to generate scalar value", () => {
     const DATE = "1989-12-16";
     const actual = mockQuery({
-      typeBuilders: {
+      builders: {
         Date: () => DATE,
       },
     });

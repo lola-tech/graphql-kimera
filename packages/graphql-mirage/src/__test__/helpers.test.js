@@ -27,27 +27,24 @@ test("it works", () => {
           name: "Jim",
           trips: [{ rockets: [{}, {}] }, { mission: "Unobtainium" }, {}],
         },
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
             trips: [{ isBooked: false }],
-          }),
-          String: () => "Mocked String",
-        },
-        nameBuilders: {
-          profileImage: () => "http://example.com/profile.png",
-          me: () => ({
             allergies: ["Aspirin"],
             address: {
               city: "New York City",
             },
+            profileImage: "http://example.com/profile.png",
           }),
+          String: () => "Mocked String",
         },
       }
     )
   ).toEqual({
     name: "Jim",
     emailAddress: "type@example.com",
+    profileImage: "http://example.com/profile.png",
     trips: [{ rockets: [{}, {}] }, { mission: "Unobtainium" }, {}],
     allergies: ["Aspirin"],
     address: {
@@ -66,7 +63,7 @@ test("it works", () => {
       },
       {
         scenario: [{ rockets: [{}, {}] }, { mission: "Unobtainium" }, {}],
-        typeBuilders: {
+        builders: {
           User: () => ({
             trips: [{ isBooked: false }],
           }),
@@ -77,9 +74,6 @@ test("it works", () => {
           }),
           LaunchDestination: () => ({ name: "Mars" }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          mission: () => "Tracking beetroot",
         },
       }
     )
@@ -103,14 +97,11 @@ test("it works", () => {
       },
       {
         scenario: { name: "Jim" },
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          emailAddress: () => "hello@example.com",
         },
       }
     )
@@ -125,14 +116,11 @@ test("it works", () => {
       },
       {
         scenario: "example@test.com",
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          emailAddress: () => "hello@example.com",
         },
       }
     )
@@ -147,14 +135,11 @@ test("it works", () => {
       },
       {
         scenario: null,
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          emailAddress: () => "hello@example.com",
         },
       }
     )
@@ -169,14 +154,11 @@ test("it works", () => {
       },
       {
         scenario: undefined,
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          emailAddress: () => "name@example.com",
         },
       }
     )
@@ -191,17 +173,14 @@ test("it works", () => {
       },
       {
         scenario: undefined,
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
         },
-        nameBuilders: {
-          emailAddress: () => "name@example.com",
-        },
       }
     )
-  ).toEqual("name@example.com");
+  ).toEqual(undefined);
 
   expect(
     testReduceToScenario(
@@ -212,13 +191,10 @@ test("it works", () => {
       },
       {
         scenario: [{}],
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
-        },
-        nameBuilders: {
-          emailAddress: () => "name@example.com",
         },
       }
     )
@@ -233,13 +209,10 @@ test("it works", () => {
       },
       {
         scenario: undefined,
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
           }),
-        },
-        nameBuilders: {
-          emailAddress: () => "name@example.com",
         },
       }
     )
@@ -256,21 +229,12 @@ test("it works", () => {
         scenario: () => () => {
           // something
         },
-        typeBuilders: {
+        builders: {
           User: () => ({
             emailAddress: "type@example.com",
             trips: [{ isBooked: false }],
           }),
           String: () => "Mocked String",
-        },
-        nameBuilders: {
-          profileImage: () => "http://example.com/profile.png",
-          me: () => ({
-            allergies: ["Aspirin"],
-            address: {
-              city: "New York City",
-            },
-          }),
         },
       }
     )

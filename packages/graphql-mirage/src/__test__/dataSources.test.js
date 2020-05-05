@@ -1,11 +1,7 @@
 const { times } = require("lodash");
 const update = require("immutability-helper");
 
-const {
-  getScenarioFn,
-  getTypeBuildersFn,
-  getNameBuildersFn,
-} = require("../helpers");
+const { getScenarioFn, getBuildersFn } = require("../helpers");
 
 describe("getScenario", () => {
   const defaults = {
@@ -61,39 +57,7 @@ describe("getScenario", () => {
   });
 });
 
-describe("getNameBuilders", () => {
-  const defaults = {
-    city: "Cluj-Napoca",
-    address: "Eroilor Street",
-    description: "Lorem ipsum",
-  };
-  const customData = {
-    address: "Unirii Square",
-    test: true,
-  };
-
-  it("getNameBuilders: merges the custom data correctly", () => {
-    const actual = getNameBuildersFn(defaults)(customData);
-
-    expect(actual.city).toEqual(defaults.city);
-    expect(actual.address).toEqual(customData.address);
-    expect(actual.description).toEqual(defaults.description);
-    expect(actual.test).toBe(true);
-  });
-
-  it("gets memoized by using the customData object shape", () => {
-    const getNameBuilders = getNameBuildersFn(defaults);
-
-    const expected = getNameBuilders({
-      ...customData,
-    });
-    const actual = getNameBuilders(customData);
-
-    expect(actual === expected).toBe(true);
-  });
-});
-
-describe("getTypeBuilders", () => {
+describe("getBuilders", () => {
   const defaults = {
     city: "Cluj-Napoca",
     address: "Eroilor Street",
@@ -105,8 +69,8 @@ describe("getTypeBuilders", () => {
     test: true,
   };
 
-  it("getTypeBuilders: merges the custom data correctly", () => {
-    const actual = getNameBuildersFn(defaults)(customData);
+  it("getBuilders: merges the custom data correctly", () => {
+    const actual = getBuildersFn(defaults)(customData);
 
     expect(actual.city).toEqual(defaults.city);
     expect(actual.address).toEqual(customData.address);
@@ -115,10 +79,10 @@ describe("getTypeBuilders", () => {
   });
 
   it("gets memoized by using the customData object shape", () => {
-    const getTypeBuilders = getTypeBuildersFn(defaults);
+    const getBuilders = getBuildersFn(defaults);
 
-    const expected = getTypeBuilders({ ...customData });
-    const actual = getTypeBuilders(customData);
+    const expected = getBuilders({ ...customData });
+    const actual = getBuilders(customData);
 
     expect(actual === expected).toBe(true);
   });

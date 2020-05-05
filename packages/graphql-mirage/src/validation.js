@@ -3,17 +3,16 @@ const { isUndefined, isNull, isFunction } = require("lodash");
 // INSTANTIANTE VALIDATOR WITH GLOBALS?
 
 /**
- * Validates a Type or Name builder.
+ * Makes sure a Builder is a function.
  * Throws a TypeError if the builder isn't a function.
  *
  * @param {Object} field
  * @param {any} builder
- * @param {"type" | "name"} kind
  */
-const validateBuilder = (builder, field, kind) => {
+const validateBuilder = (builder, field) => {
   if (!isUndefined(builder) && !isFunction(builder)) {
     throw new TypeError(
-      `All builders need to be functions. The "${field[kind]}" ${kind} builder sn't a function.`
+      `All builders need to be functions. The "${field["type"]}" builder isn't a function.`
     );
   }
 

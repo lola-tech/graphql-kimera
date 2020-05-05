@@ -37,9 +37,9 @@ const buildMocks = memoize(
 function getExecutableSchema(
   // Schema SDL string
   typeDefs,
-  // fn (context) => ({ scenario: ..., nameBuilders: ..., typeBuilders: ... })
+  // fn (context) => ({ scenario: ..., builders: ... })
   getDefaultDataSources = () => ({}),
-  // { scenario: ..., nameBuilders: ..., typeBuilders: ... }
+  // { scenario: ..., builders: ... }
   customDataSources = {},
   // fn (mockedQueryType, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
   getMutationResolvers = () => ({}),
