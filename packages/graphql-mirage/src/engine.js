@@ -238,40 +238,29 @@ function mockObjectType(
     throw new Error(`Type "${type}" not found in schema.`);
   }
 
-  let { scenario, nameBuilders, typeBuilders } = dataSources;
+  let { scenario, typeBuilders } = dataSources;
 
   const mockedObjectType = { __typename: getTypename(type, schema, scenario) };
 
-  const typeFieldsBuilders =
-    typeBuilders && typeBuilders[type] && typeBuilders[type]();
+  const typeBuilder = get(typeBuilders, type);
+  const typeBuilderScenario = typeBuilder && typeBuilder();
 
   schema[type].fields.forEach((field) => {
     const newPath = path + field.name + `.`;
-    const fieldScenario = get(scenario, field.name);
+    const fieldDataSources = {
+      ...dataSources,
+      scenario: get(scenario, field.name),
+    };
 
     const mockedField = executeAndCache(
-      () =>
-        mockField(
-          field,
-          schema,
-          {
-            scenario: fieldScenario,
-            nameBuilders,
-            typeBuilders,
-          },
-          depth + 1,
-          newPath
-        ),
-      // All needed to compute the cache key
+      () => mockField(field, schema, fieldDataSources, depth + 1, newPath),
+      // Used to compute the cache key
       field,
       arrayIndex,
-      {
-        ...dataSources,
-        scenario: fieldScenario,
-      }
+      fieldDataSources
     );
 
-    if (typeFieldsBuilders && isFunction(typeFieldsBuilders[field.name])) {
+    if (typeBuilderScenario && isFunction(typeBuilderScenario[field.name])) {
       const store = {
         mockedField,
         get: function () {
@@ -279,13 +268,12 @@ function mockObjectType(
         },
       };
 
-      const fieldResolver = typeFieldsBuilders[field.name](
+      const fieldResolver = typeBuilderScenario[field.name](
         store.get,
         function buildMocks(type, customScenario = {}) {
           return mockObjectType(type, schema, {
-            scenario: merge(fieldScenario, customScenario),
-            typeBuilders,
-            nameBuilders,
+            ...fieldDataSources,
+            scenario: merge(fieldDataSources.scenario, customScenario),
           });
         }
       );
