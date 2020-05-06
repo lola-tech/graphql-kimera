@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const schemaParser = require("easygraphql-parser");
 
-const { reduceDataSourcesToScenario } = require("../engine");
+const { useResolver, reduceToScenarioAndResolver } = require("../scenarios");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -11,7 +11,7 @@ const typeDefs = fs.readFileSync(
 const schema = schemaParser(typeDefs);
 
 const testReduceToScenario = (...args) => {
-  return reduceDataSourcesToScenario(...args, schema);
+  return reduceToScenarioAndResolver(...args, schema).reducedScenario;
 };
 
 test("it works", () => {
@@ -219,24 +219,27 @@ test("it works", () => {
   ).toEqual(undefined);
 
   expect(
-    typeof testReduceToScenario(
+    testReduceToScenario(
       {
-        name: "launches",
-        type: "LaunchConnection",
+        name: "me",
+        type: "User",
         isArray: false,
       },
       {
-        scenario: () => () => {
-          // something
+        scenario: {
+          emailAddress: { test: "email@example.com" },
         },
         builders: {
           User: () => ({
-            emailAddress: "type@example.com",
+            emailAddress: useResolver(() => () => "resolver@example.com"),
             trips: [{ isBooked: false }],
           }),
           String: () => "Mocked String",
         },
       }
     )
-  ).toBe("function");
+  ).toEqual({
+    emailAddress: { test: "email@example.com" },
+    trips: [{ isBooked: false }],
+  });
 });

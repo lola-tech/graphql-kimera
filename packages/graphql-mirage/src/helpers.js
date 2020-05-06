@@ -1,12 +1,4 @@
-const {
-  isUndefined,
-  isObject,
-  isPlainObject,
-  mergeWith,
-  negate,
-  memoize,
-} = require("lodash");
-const { compose, first, filter } = require("lodash/fp");
+const { isUndefined, mergeWith, memoize } = require("lodash");
 
 const constants = require("./constants");
 
@@ -48,10 +40,6 @@ const getConcreteType = (type, schema) => {
   }
 };
 
-const getFirstDefinedArrayElement = compose([
-  first,
-  filter(negate(isUndefined)),
-]);
 const hasProp = (object, prop) =>
   !isUndefined(object) && !isUndefined(object[prop]);
 
@@ -151,24 +139,6 @@ const debugCacheDuplicates = (cache, meta = {}) => {
   }
 };
 
-// A custom defaultsDeep merge function.
-// - for primitives like String, Int and Bool, ... returns leftmost argument
-// - for arrays and null, returns the leftmost option using mergeWith
-// - recursively merges objects with mergeWith
-function mergeScenarios(...options) {
-  const firstDefinedArg = getFirstDefinedArrayElement(options);
-  if (!isObject(firstDefinedArg)) {
-    return firstDefinedArg;
-  }
-  return mergeWith(...options, (defaultOption, newOption) => {
-    if (isPlainObject(defaultOption)) {
-      return mergeScenarios(defaultOption, newOption);
-    }
-
-    return defaultOption;
-  });
-}
-
 module.exports = {
   getUnionVal,
   getUnionVals,
@@ -188,5 +158,4 @@ module.exports = {
   getDebugger,
   debugCacheDuplicates,
   isObjectType,
-  mergeScenarios,
 };

@@ -1,15 +1,6 @@
-const {
-  merge,
-  isUndefined,
-  isFunction,
-  isNull,
-  times,
-  get,
-  partialRight,
-} = require("lodash");
-const { map } = require("lodash/fp");
+const { isFunction, isUndefined, isNull, times, get } = require("lodash");
 
-const { validateBuilder, validateScenario } = require("./validation");
+const { validateScenario } = require("./validation");
 const { executeAndCache } = require("./caching");
 const {
   // getDebugger,
@@ -20,9 +11,14 @@ const {
   isObjectType,
   isAbstractType,
   isBuiltInScalarType,
-  mergeScenarios,
   // debugCacheDuplicates,
 } = require("./helpers");
+const {
+  mergeScenarios,
+  reduceToScenarioAndResolver,
+  useResolver,
+  isResolverScenario,
+} = require("./scenarios");
 const constants = require("./constants");
 
 const DEFAULT_ARRAY_LENGTH = 3;
@@ -60,47 +56,6 @@ const getFieldMockBuilderFactoryFn = (field, scenario) => (
     : fieldMockFactoryFn();
 
 /**
- * Reduces user defined data sources to a single scenario object.
- *
- * @see mockField
- *
- * @param {Object} field The parsed schema field object.
- * @param {Object} dataSources An object with the Scenario and the Builders.
- * @returns {Object} Returns the merged data sources scenario.
- */
-const reduceDataSourcesToScenario = (field, { scenario, builders }) => {
-  if (isNull(scenario)) {
-    return null;
-  }
-
-  const getBuilderScenario = (builders, field) => {
-    const builder = get(builders, field.type);
-    return validateBuilder(builder, field) && builder && builder();
-  };
-
-  const builderScenario = getBuilderScenario(builders, field);
-
-  if (field.isArray) {
-    if (Array.isArray(scenario)) {
-      // If we have a user defined array scenario,
-      // merge each array element with the builderScenario
-      return map(partialRight(mergeScenarios, builderScenario))(scenario);
-    } else if (!isUndefined(scenario)) {
-      // If scenario is defined as something other than an array
-      // return it so we can throw a TypeError at validation.
-      return scenario;
-    }
-
-    // Otherwise create a scenario out of the builderScenario
-    return !isUndefined(builderScenario)
-      ? times(DEFAULT_ARRAY_LENGTH, () => builderScenario)
-      : undefined;
-  }
-
-  return mergeScenarios(scenario, builderScenario);
-};
-
-/**
  * Mocks data for a specific field that into consideration the various
  * data sources that were passed. Does this recursively for Object Type fields.
  *
@@ -111,15 +66,13 @@ const reduceDataSourcesToScenario = (field, { scenario, builders }) => {
  * @param {Object} path The field path through the Query object. E.g: me.address.city
  * @returns {*} Returns the mocked value for the field.
  */
-function mockField(field, schema, dataSources, depth, path) {
-  // Reduce custom data sources to a single scenario which represents
-  // the single source of truth for how the user wants to customize the mocks.
-  const reducedScenario = reduceDataSourcesToScenario(field, dataSources);
-  const buildFieldMock = getFieldMockBuilderFactoryFn(field, reducedScenario);
-  validateScenario(reducedScenario, field, path);
+function mockField(field, schema, { scenario, ...dataSources }, depth, path) {
+  const buildFieldMock =
+    validateScenario(scenario, field, path) &&
+    getFieldMockBuilderFactoryFn(field, scenario);
 
   // If the user wants this field to be null, let it be.
-  if (isNull(reducedScenario)) {
+  if (isNull(scenario)) {
     return null;
   }
 
@@ -127,9 +80,9 @@ function mockField(field, schema, dataSources, depth, path) {
   // return the value directly.
   if (!isObjectType(field.type, schema)) {
     // If a user defined value is defined, return that.
-    if (!isUndefined(reducedScenario)) {
+    if (!isUndefined(scenario)) {
       return buildFieldMock((index) =>
-        isUndefined(index) ? reducedScenario : reducedScenario[index]
+        isUndefined(index) ? scenario : scenario[index]
       );
     }
 
@@ -158,9 +111,9 @@ function mockField(field, schema, dataSources, depth, path) {
       {
         ...dataSources,
         scenario:
-          !isUndefined(index) && Array.isArray(reducedScenario)
-            ? reducedScenario[index]
-            : reducedScenario,
+          !isUndefined(index) && Array.isArray(scenario)
+            ? scenario[index]
+            : scenario,
       },
       index,
       depth,
@@ -216,7 +169,7 @@ const getTypename = (type, schema, scenario) => {
 function mockObjectType(
   type,
   schema,
-  dataSources,
+  dataSources = {},
   arrayIndex = false,
   depth = 0,
   path = ""
@@ -225,29 +178,58 @@ function mockObjectType(
     throw new Error(`Type "${type}" not found in schema.`);
   }
 
-  let { scenario, builders } = dataSources;
+  if (
+    isFunction(dataSources.scenario) ||
+    isResolverScenario(dataSources.scenario)
+  ) {
+    throw new TypeError(
+      `Root scenario for type "${type}" cannot be a function or a ResolverScenario. Supplied a "${
+        isFunction(dataSources.scenario) ? "function" : "ResolverScenario"
+      }".`
+    );
+  }
 
-  const mockedObjectType = { __typename: getTypename(type, schema, scenario) };
-
-  const builder = get(builders, type);
-  const builderScenario = builder && builder();
+  const mockedObjectType = {
+    __typename: getTypename(type, schema, dataSources.scenario),
+  };
 
   schema[type].fields.forEach((field) => {
     const newPath = path + field.name + `.`;
     const fieldDataSources = {
       ...dataSources,
-      scenario: get(scenario, field.name),
+      scenario: get(dataSources.scenario, field.name),
     };
 
-    const mockedField = executeAndCache(
-      () => mockField(field, schema, fieldDataSources, depth + 1, newPath),
+    const { mockedField, resolverFactoryFn } = executeAndCache(
+      () => {
+        // Reduce the Scenario and the Builders to a single scenario which represents
+        // the single source of truth for how the user wants to mock this field.
+        const {
+          reducedScenario,
+          resolverFactoryFn,
+        } = reduceToScenarioAndResolver(field, fieldDataSources, newPath);
+
+        return {
+          resolverFactoryFn,
+          mockedField: mockField(
+            field,
+            schema,
+            {
+              ...fieldDataSources,
+              scenario: reducedScenario,
+            },
+            depth + 1,
+            newPath
+          ),
+        };
+      },
       // Used to compute the cache key
       field,
       arrayIndex,
       fieldDataSources
     );
 
-    if (builderScenario && isFunction(builderScenario[field.name])) {
+    if (resolverFactoryFn) {
       const store = {
         mockedField,
         get: function () {
@@ -255,15 +237,20 @@ function mockObjectType(
         },
       };
 
-      const fieldResolver = builderScenario[field.name](
+      const fieldResolver = resolverFactoryFn(
         store.get,
-        function buildMocks(type, customScenario = {}) {
-          return mockObjectType(type, schema, {
+        (type, customScenario = {}) =>
+          mockObjectType(type, schema, {
             ...fieldDataSources,
-            scenario: merge(fieldDataSources.scenario, customScenario),
-          });
-        }
+            scenario: mergeScenarios(customScenario, fieldDataSources.scenario),
+          })
       );
+
+      if (!isFunction(fieldResolver)) {
+        throw new TypeError(
+          `The argument passed to "useResolver" for field "${path}" is a function "() => {}", and needs to be a resolver factory "() => () => {}"`
+        );
+      }
 
       fieldResolver.getData = store.get;
 
@@ -287,5 +274,6 @@ module.exports = {
   mockField,
   mockObjectType,
   defaultBuilders,
-  reduceDataSourcesToScenario,
+  reduceToScenarioAndResolver,
+  useResolver,
 };

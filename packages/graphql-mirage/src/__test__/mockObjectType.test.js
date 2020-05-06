@@ -4,6 +4,7 @@ const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
 const { mockObjectType } = require("../engine");
+const { useResolver } = require("../scenarios");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -21,6 +22,10 @@ const mockQuery = ({ scenario, builders } = {}) => {
 };
 
 describe("Validation", () => {
+  it("Should throw an error when mocking inexisting types", () => {
+    expect(() => mockObjectType("InexistentType", schema)).toThrow(Error);
+  });
+
   it("Should throw an error when the type builder isn't a function", () => {
     expect(() =>
       mockQuery({
@@ -51,7 +56,7 @@ describe("Validation", () => {
     ).toThrowError();
   });
 
-  it("TYPE: Should throw an error when we attempt to set a non-nullable field as null.", () => {
+  it("BUILDER: Should throw an error when we attempt to set a non-nullable field as null.", () => {
     expect(() =>
       mockQuery({
         builders: {
@@ -59,6 +64,88 @@ describe("Validation", () => {
         },
       })
     ).toThrowError();
+  });
+
+  it("Should throw an error when a function is used in a scenario", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          launches: {
+            list: jest.fn(),
+          },
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when the root scenario is a ResolverScenario", () => {
+    expect(() =>
+      mockQuery({
+        scenario: useResolver(() => {}),
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when the root scenario is a function", () => {
+    expect(() =>
+      mockQuery({
+        scenario: jest.fn(),
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when a function is used to mock a field in a Builder", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          LaunchConnection: () => ({
+            list: [
+              {
+                site: jest.fn(),
+              },
+            ],
+          }),
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("Should throw a TypeError error when a resolver is created in a builder scenario", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          LaunchConnection: () => ({
+            list: [
+              {
+                site: useResolver(jest.fn()),
+              },
+            ],
+          }),
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw a TypeError when setting a Builder function returns a function", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          Markdown: () => () => {},
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw a TypeError when setting a Builder function returns a ResolverScenario", () => {
+    const mockedResolver = () => jest.fn();
+
+    expect(() =>
+      mockQuery({
+        builders: {
+          Markdown: () => useResolver(() => mockedResolver),
+        },
+      })
+    ).toThrow(TypeError);
   });
 });
 
@@ -68,7 +155,10 @@ describe("Scenario", () => {
 
     const actual = mockQuery({
       scenario: {
-        me: { email: EMAIL, profileImage: null },
+        me: {
+          email: EMAIL,
+          profileImage: null,
+        },
       },
     });
 
@@ -123,8 +213,8 @@ describe("Scenario", () => {
   });
 });
 
-describe("Type Builders", () => {
-  it("TYPE: can set built-in scalar field value from Object Type Builder", () => {
+describe("Builders", () => {
+  it("BUILDER: can set built-in scalar field value from a Builder", () => {
     const actual = mockQuery({
       scenario: {
         me: {
@@ -140,7 +230,7 @@ describe("Type Builders", () => {
     expect(actual.me.trips[0].mission.name).toEqual("Beta");
   });
 
-  it("TYPE: can set null values for *any* field from Object Type Builder", () => {
+  it("BUILDER: can set null values for *any* field from a Builder", () => {
     const actual = mockQuery({
       scenario: {
         me: {
@@ -157,7 +247,7 @@ describe("Type Builders", () => {
     expect(actual.me.trips[0].rockets).toBe(null);
   });
 
-  it("TYPE: Object Type builders can set the shape of Array Object Type fields", () => {
+  it("BUILDER: Can define Scenarios for fields in Builders", () => {
     const actual = mockQuery({
       builders: {
         User: () => ({
@@ -174,7 +264,7 @@ describe("Type Builders", () => {
     expect(actual.me.trips[0].rockets[1].type).toBe("Small");
   });
 
-  it("TYPE: can set Type Builder for Built-in Scalar Types", () => {
+  it("BUILDER: can set a Builder for Built-in Scalar Types", () => {
     const actual = mockQuery({
       builders: {
         ID: () => "GENERATED_ID",
@@ -185,7 +275,7 @@ describe("Type Builders", () => {
     expect(actual.me.trips[0].id).toBe("GENERATED_ID");
   });
 
-  it("TYPE: Object Type builder does not ovewrite Scenario", () => {
+  it("BUILDER: Builder does not overwrite Scenario", () => {
     const actual = mockQuery({
       scenario: {
         me: {
@@ -212,36 +302,69 @@ describe("Type Builders", () => {
     // Redunant. Checking if merging works for fields that are not in scenario
     expect(actual.me.trips[0].rockets).toEqual(null);
   });
+});
 
-  it("TYPE: Object Type has arguments", () => {
+describe("Custom Resolvers", () => {
+  it("Can set a resolver in a Scenario", () => {
+    const makeListScenario = (listLength) =>
+      times(listLength, (i) => ({
+        site: i % 2 ? "Odd Space Center" : "Even Space Center",
+      }));
+
     const actual = mockQuery({
       scenario: {
         launches: {
-          list: times(5, (i) => ({
-            site: i % 2 ? "Odd Space Center" : "Even Space Center",
-          })),
+          list: useResolver(
+            (getLaunches) => (_, { siteFilter }) => {
+              return getLaunches().filter((launch) => {
+                return launch.site.includes(siteFilter);
+              });
+            },
+            makeListScenario(5)
+          ),
         },
       },
       builders: {
         LaunchConnection: () => ({
-          list: (getLaunches) => {
-            return (_, { siteFilter }) => {
-              return getLaunches().filter((launch) => {
-                return launch.site.includes(siteFilter);
-              });
-            };
-          },
+          list: makeListScenario(1),
         }),
       },
     });
 
     expect(typeof actual.launches.list).toBe("function");
     expect(actual.launches.list(null, { siteFilter: "Odd" })).toHaveLength(2);
-    expect(actual.launches.list(null, { siteFilter: "Even" })).toHaveLength(3);
-    // Checks if the closed value can be updated with a setter
-    // Useful for mutations
+    // Checks if the mocked value can be updated with a setter (Useful for mutations).
     actual.launches.list = times(5, () => ({ site: "Odd" }));
     expect(actual.launches.list(null, { siteFilter: "Odd" })).toHaveLength(5);
+  });
+
+  it("Mock function passed to resolver works", () => {
+    const actual = mockQuery({
+      scenario: {
+        launches: {
+          list: useResolver((_, mockType) => () => {
+            return [mockType("Launch", { site: "Mocked Site" })];
+          }),
+        },
+      },
+    });
+
+    expect(actual.launches.list()).toHaveLength(1);
+    expect(actual.launches.list()[0].site).toBe("Mocked Site");
+  });
+
+  it("Can set a resolver in a Builder", () => {
+    const mockedResolver = () => jest.fn();
+
+    const actual = mockQuery({
+      builders: {
+        LaunchConnection: () => ({
+          list: useResolver(() => mockedResolver),
+        }),
+      },
+    });
+
+    expect(actual.launches.list).toBe(mockedResolver);
   });
 });
 

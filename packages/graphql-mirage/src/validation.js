@@ -29,7 +29,7 @@ const validateBuilder = (builder, field) => {
  */
 const validateScenario = (scenario, field, path) => {
   if (isUndefined(scenario)) {
-    return;
+    return true;
   }
 
   if (isNull(scenario) && field.noNull) {
@@ -45,6 +45,8 @@ const validateScenario = (scenario, field, path) => {
   }
 
   // TODO: Check if scenario is array and field is not array
+
+  return true;
 };
 
 module.exports = {
