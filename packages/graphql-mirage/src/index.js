@@ -6,30 +6,16 @@ const schemaParser = require("easygraphql-parser");
 const { mapValues, memoize } = require("lodash");
 
 const { mockObjectType } = require("./engine");
-const { getScenarioFn, mergeDataSources } = require("./helpers");
+const { getScenarioFn, mergeMockProviders } = require("./helpers");
 
-// Returns the same cached result if the `type`, `defaults`, `custom`,
-// and `selector` arguments do not change.
 const buildMocks = memoize(
-  function buildMocks(type, schema, defaults = {}, custom = {}) {
-    // if (type !== 'Query' && selector) {
-    //   // When we use `buildMocks` to generate Object Types (in the context of mutations)
-    //   // we want to sub-select a part of the scenario in order to have `mockObjectType`
-    //   // walk the correct tree of scenario data.
-    //   defaults = {
-    //     ...defaults,
-    //     scenario: jmespath.search(defaults.scenario, selector),
-    //   };
-    // }
-
-    return mockObjectType(type, schema, mergeDataSources(defaults, custom));
-  },
-  (type, _, defaults, custom, selector) =>
+  (type, schema, defaults = {}, custom = {}) =>
+    mockObjectType(type, schema, mergeMockProviders(defaults, custom)),
+  (type, _, defaults, custom) =>
     JSON.stringify({
       type,
       defaults,
       custom,
-      selector,
     })
 );
 
@@ -38,9 +24,9 @@ function getExecutableSchema(
   // Schema SDL string
   typeDefs,
   // fn (context) => ({ scenario: ..., builders: ... })
-  getDefaultDataSources = () => ({}),
+  getDefaultMockProviders = () => ({}),
   // { scenario: ..., builders: ... }
-  customDataSources = {},
+  customMockProviders = {},
   // fn (mockedQueryType, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
   getMutationResolvers = () => ({}),
   // fn () => ({ URI: () => {...}, ... })
@@ -49,8 +35,8 @@ function getExecutableSchema(
   // Parse the schema string into a custom data structure
   const schema = schemaParser(typeDefs);
 
-  const getMemoizedDefaultDataSources = memoize(
-    getDefaultDataSources,
+  const getMemoizedDefaultMockProviders = memoize(
+    getDefaultMockProviders,
     (context) => JSON.stringify(context)
   );
 
@@ -62,24 +48,24 @@ function getExecutableSchema(
     },
   });
 
+  // Partial application of buildMocks to be passed down to the Mutation
+  // resolvers. This function will be called to generate data for a specific
+  // type in the Mutation resolver.
   const _getBuildMocksFn = (context) =>
-    // Partial application of buildMocks to be passed down to the Mutation resolvers
-    // This function will be called to generate data for a certain type in the Mutation
-    // resolver
-    function buildMocksForType(type, selector = "", scenario = {}) {
+    function buildMocksForType(type, scenario = {}) {
       return buildMocks(
         type,
         schema,
-        // When generating data for a Type in a mutation, see as default the merged version of
-        // default data sources, and custom data sources. The custom data sources is what comes
-        // from a frontend app in a test, or in Mockery.
-        mergeDataSources(
-          getMemoizedDefaultDataSources(context),
-          customDataSources
+        // When generating data for a Type in a mutation, see as default the
+        // merged version of default mock providers, and custom mock providers.
+        // The custom mock providers is what comes from a frontend app in a
+        // test.
+        mergeMockProviders(
+          getMemoizedDefaultMockProviders(context),
+          customMockProviders
         ),
         // This scenario is provided in the mutation to overwrite the above defaults.
-        { scenario },
-        selector
+        { scenario }
       );
     };
 
@@ -88,8 +74,8 @@ function getExecutableSchema(
     return buildMocks(
       "Query",
       schema,
-      getMemoizedDefaultDataSources(context),
-      customDataSources
+      getMemoizedDefaultMockProviders(context),
+      customMockProviders
     );
   };
 
