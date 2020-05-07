@@ -22,8 +22,8 @@ const DEFAULT_ARRAY_LENGTH = 3;
  *
  * @see useResolver
  *
- * @param {Object} dataSources An object with the Scenario and the Builders.
- * @returns {Object} Returns the merged data sources scenario.
+ * @param {Object} mockProvider An object with the Scenario and the Builders.
+ * @returns {Object} Returns the merged mock providers scenario.
  */
 function ResolverScenario(resolverFactoryFn, scenario) {
   this.resolverFactory = resolverFactoryFn;
@@ -39,8 +39,8 @@ const isResolverScenario = (node) => {
  *
  * @see ResolverScenario
  *
- * @param {Object} dataSources An object with the Scenario and the Builders.
- * @returns {Object} Returns the merged data sources scenario.
+ * @param {Object} mockProvider An object with the Scenario and the Builders.
+ * @returns {Object} Returns the merged mock providers scenario.
  */
 const useResolver = (resolverFactoryFn, scenario) => {
   return new ResolverScenario(resolverFactoryFn, scenario);
@@ -73,13 +73,13 @@ function mergeScenarios(...options) {
 }
 
 /**
- * Reduces user defined data sources to a single scenario object.
+ * Reduces user defined mock providers to a single scenario object.
  *
  * @see mockField
  *
  * @param {Object} field The parsed schema field object.
- * @param {Object} dataSources An object with the Scenario and the Builders.
- * @returns {Object} Returns the merged data sources scenario.
+ * @param {Object} mockProviders An object with the Scenario and the Builders.
+ * @returns {Object} The reduced Scenario computed from the mock providers.
  */
 const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
   if (isFunction(scenario)) {
@@ -95,6 +95,7 @@ const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
   };
   const builderScenario = getBuilderScenario();
 
+  // Validate the Builder
   if (isFunction(builderScenario) || isResolverScenario(builderScenario)) {
     const illegalEntity = isFunction(builderScenario)
       ? "function"
@@ -118,6 +119,7 @@ const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
   });
 
   if (isNull(scenario)) {
+    // console.log(field.name);
     return withResolverFactory(null);
   }
 

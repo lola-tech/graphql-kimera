@@ -1,7 +1,5 @@
 const { isUndefined, isNull, isFunction } = require("lodash");
 
-// INSTANTIANTE VALIDATOR WITH GLOBALS?
-
 /**
  * Makes sure a Builder is a function.
  * Throws a TypeError if the builder isn't a function.
@@ -23,9 +21,9 @@ const validateBuilder = (builder, field) => {
  * Validates a Scenario for a specifc field.
  * Check for non-nullable and array issues.
  *
+ * @param {Object} scenario
  * @param {Object} field
- * @param {any} builder
- * @param {"type" | "name"} kind
+ * @param {string} path
  */
 const validateScenario = (scenario, field, path) => {
   if (isUndefined(scenario)) {
@@ -44,7 +42,13 @@ const validateScenario = (scenario, field, path) => {
     );
   }
 
-  // TODO: Check if scenario is array and field is not array
+  if (Array.isArray(scenario) && !field.isArray) {
+    throw new TypeError(
+      `You are attempting to mock "${path}" field with the array ${JSON.stringify(
+        scenario
+      )}. "${path}" is not a List field.`
+    );
+  }
 
   return true;
 };

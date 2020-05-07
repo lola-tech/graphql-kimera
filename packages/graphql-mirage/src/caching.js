@@ -5,7 +5,8 @@ const { ID } = require("./constants");
 
 const cacheStore = new MultiKeyMap();
 
-const _computeCacheKey = (field, arrayIndex, dataSources) => {
+// TODO: Maybe replace with reducedScenario
+const computeFieldCacheKey = (field, arrayIndex, mockProviders) => {
   const fieldKeyPart = field.isArray
     ? `[${field.type}]`
     : // Make ids of items part of a List unique
@@ -13,21 +14,33 @@ const _computeCacheKey = (field, arrayIndex, dataSources) => {
     ? `${field.type}[${arrayIndex}]`
     : field.type;
 
-  return [fieldKeyPart, ...Object.values(dataSources)];
+  const key = [
+    fieldKeyPart + (field.noNull ? "!" : ""),
+    ...Object.values(mockProviders),
+  ];
+  return key;
 };
 
-const executeAndCache = (func, field, arrayIndex, dataSources) => {
-  const cacheKey = _computeCacheKey(field, arrayIndex, dataSources);
+/**
+ * Memoizes the result of executing a function.
+ * It does so using a MultiKeyMap.
+ *
+ * @param {Object} scenario
+ * @param {Object} field
+ * @param {string} path
+ */
+const executeAndCache = (func, cacheKey) => {
   let result = cacheStore.get(cacheKey);
 
   if (!isUndefined(result)) {
     return result;
-  } else {
-    result = func();
-    cacheStore.set(cacheKey, result);
   }
+
+  result = func();
+
+  cacheStore.set(cacheKey, result);
 
   return result;
 };
 
-module.exports = { executeAndCache };
+module.exports = { computeFieldCacheKey, executeAndCache };

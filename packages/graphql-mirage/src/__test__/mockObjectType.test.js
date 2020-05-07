@@ -21,138 +21,9 @@ const mockQuery = ({ scenario, builders } = {}) => {
   });
 };
 
-describe("Validation", () => {
-  it("Should throw an error when mocking inexisting types", () => {
-    expect(() => mockObjectType("InexistentType", schema)).toThrow(Error);
-  });
-
-  it("Should throw an error when the type builder isn't a function", () => {
-    expect(() =>
-      mockQuery({
-        builders: {
-          User: { email: null },
-        },
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("SCENARIO: Should throw an error when we attempt to set a non-nullable field as null.", () => {
-    expect(() =>
-      mockQuery({
-        scenario: {
-          me: { email: null },
-        },
-      })
-    ).toThrowError();
-  });
-
-  it("SCENARIO: Should throw an error when we attempt to set a list with a primitive.", () => {
-    expect(() =>
-      mockQuery({
-        scenario: {
-          me: { allergies: "test" },
-        },
-      })
-    ).toThrowError();
-  });
-
-  it("BUILDER: Should throw an error when we attempt to set a non-nullable field as null.", () => {
-    expect(() =>
-      mockQuery({
-        builders: {
-          User: () => ({ email: null }),
-        },
-      })
-    ).toThrowError();
-  });
-
-  it("Should throw an error when a function is used in a scenario", () => {
-    expect(() =>
-      mockQuery({
-        scenario: {
-          launches: {
-            list: jest.fn(),
-          },
-        },
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw an error when the root scenario is a ResolverScenario", () => {
-    expect(() =>
-      mockQuery({
-        scenario: useResolver(() => {}),
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw an error when the root scenario is a function", () => {
-    expect(() =>
-      mockQuery({
-        scenario: jest.fn(),
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw an error when a function is used to mock a field in a Builder", () => {
-    expect(() =>
-      mockQuery({
-        builders: {
-          LaunchConnection: () => ({
-            list: [
-              {
-                site: jest.fn(),
-              },
-            ],
-          }),
-        },
-      })
-    ).toThrowError();
-  });
-
-  it("Should throw a TypeError error when a resolver is created in a builder scenario", () => {
-    expect(() =>
-      mockQuery({
-        builders: {
-          LaunchConnection: () => ({
-            list: [
-              {
-                site: useResolver(jest.fn()),
-              },
-            ],
-          }),
-        },
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw a TypeError when setting a Builder function returns a function", () => {
-    expect(() =>
-      mockQuery({
-        builders: {
-          Markdown: () => () => {},
-        },
-      })
-    ).toThrow(TypeError);
-  });
-
-  it("Should throw a TypeError when setting a Builder function returns a ResolverScenario", () => {
-    const mockedResolver = () => jest.fn();
-
-    expect(() =>
-      mockQuery({
-        builders: {
-          Markdown: () => useResolver(() => mockedResolver),
-        },
-      })
-    ).toThrow(TypeError);
-  });
-});
-
-describe("Scenario", () => {
+describe("Scenarios", () => {
   it("SCENARIO: sets built-in scalar", () => {
     const EMAIL = "me@example.com";
-
     const actual = mockQuery({
       scenario: {
         me: {
@@ -161,7 +32,6 @@ describe("Scenario", () => {
         },
       },
     });
-
     expect(actual.me.email).toEqual(EMAIL);
     expect(actual.me.profileImage).toBe(null);
   });
@@ -174,12 +44,10 @@ describe("Scenario", () => {
         },
       },
     });
-
     expect(actual.me.allergies).toHaveLength(2);
     expect(actual.me.allergies[0]).toBe("Aspirin");
     expect(actual.me.allergies[1]).toBe("Peanuts");
   });
-
   it("SCENARIO: sets deep Array of Object Types", () => {
     const actual = mockQuery({
       scenario: {
@@ -192,12 +60,10 @@ describe("Scenario", () => {
         },
       },
     });
-
     expect(actual.me.trips).toHaveLength(5);
     expect(actual.me.trips[0].site).toEqual("Kennedy Space Center");
     expect(actual.me.trips[4].site).toEqual("Vandenberg Air Force Base");
   });
-
   it("SCENARIO: sets deep Array of Object Types recursively", () => {
     const actual = mockQuery({
       scenario: {
@@ -206,7 +72,6 @@ describe("Scenario", () => {
         },
       },
     });
-
     expect(actual.me.trips[0].rockets).toHaveLength(2);
     expect(actual.me.trips[0].rockets[0].name).toEqual("Falcon 9");
     expect(actual.me.trips[1].rockets).toHaveLength(DEFAULT_ARRAY_LENGTH);
@@ -304,6 +169,84 @@ describe("Builders", () => {
   });
 });
 
+describe("Interfaces", () => {
+  it("INTERFACE: automatically selects the first concrete type when __typename is missing", () => {
+    const actual = mockQuery();
+    const concreteTypes = ["Planet", "Star"];
+
+    expect(actual.me.trips[0].destination.__typename).toBe(concreteTypes[0]);
+  });
+
+  it("INTERFACE: can set custom concrete type from scenario using __typename", () => {
+    const actual = mockQuery({
+      scenario: {
+        me: {
+          trips: [
+            {
+              destination: { __typename: "Star" },
+            },
+          ],
+        },
+      },
+    });
+
+    expect(actual.me.trips[0].destination.__typename).toBe("Star");
+  });
+});
+
+describe("Unions", () => {
+  it("UNION: automatically selects the first concrete type when __typename is missing", () => {
+    const actual = mockQuery({
+      scenario: {
+        me: { hobbies: [{}] },
+      },
+    });
+    const concreteTypes = ["ReadingHobby", "KarateHobby"];
+
+    actual.me.hobbies.map((hobby) =>
+      expect(hobby.__typename).toBe(concreteTypes[0])
+    );
+  });
+
+  it("UNION: uses Concrete Type instead of Interface Type when __typename is specified", () => {
+    const actual = mockQuery({
+      scenario: {
+        me: {
+          hobbies: [
+            { __typename: "ReadingHobby" },
+            { __typename: "KarateHobby" },
+          ],
+        },
+      },
+    });
+
+    expect(actual.me.hobbies[0].__typename).toBe("ReadingHobby");
+    expect(actual.me.hobbies[1].__typename).toBe("KarateHobby");
+  });
+});
+
+describe("Enums", () => {
+  it("ENUM: selects the first value of the enum", () => {
+    const actual = mockQuery();
+    const enumValues = ["FEMALE", "MALE", "NON_BINARY"];
+
+    expect(actual.me.gender).toBe(enumValues[0]);
+  });
+});
+
+describe("Scalars", () => {
+  it("SCALAR: uses Type builder to generate scalar value", () => {
+    const DATE = "1989-12-16";
+    const actual = mockQuery({
+      builders: {
+        Date: () => DATE,
+      },
+    });
+
+    expect(actual.me.dateOfBirth).toBe(DATE);
+  });
+});
+
 describe("Custom Resolvers", () => {
   it("Can set a resolver in a Scenario", () => {
     const makeListScenario = (listLength) =>
@@ -368,80 +311,130 @@ describe("Custom Resolvers", () => {
   });
 });
 
-describe("Enums", () => {
-  it("ENUM: selects the first value of the enum", () => {
-    const actual = mockQuery();
-    const enumValues = ["FEMALE", "MALE", "NON_BINARY"];
-
-    expect(actual.me.gender).toBe(enumValues[0]);
-  });
-});
-
-describe("Scalars", () => {
-  it("SCALAR: uses Type builder to generate scalar value", () => {
-    const DATE = "1989-12-16";
-    const actual = mockQuery({
-      builders: {
-        Date: () => DATE,
-      },
-    });
-
-    expect(actual.me.dateOfBirth).toBe(DATE);
-  });
-});
-
-describe("Interfaces", () => {
-  it("INTERFACE: automatically selects the first concrete type when __typename is missing", () => {
-    const actual = mockQuery();
-    const concreteTypes = ["Planet", "Star"];
-
-    expect(actual.me.trips[0].destination.__typename).toBe(concreteTypes[0]);
+describe("Validation", () => {
+  it("Should throw an error when mocking inexisting types.", () => {
+    expect(() => mockObjectType("InexistentType", schema)).toThrowError();
   });
 
-  it("INTERFACE: can set custom concrete type from scenario using __typename", () => {
-    const actual = mockQuery({
-      scenario: {
-        me: {
-          trips: [
-            {
-              destination: { __typename: "Star" },
-            },
-          ],
+  it("Should throw an error when a Builder isn't a function.", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          User: { email: null },
         },
-      },
-    });
-
-    expect(actual.me.trips[0].destination.__typename).toBe("Star");
-  });
-});
-
-describe("Unions", () => {
-  it("UNION: automatically selects the first concrete type when __typename is missing", () => {
-    const actual = mockQuery({
-      scenario: {
-        me: { hobbies: [{}] },
-      },
-    });
-    const concreteTypes = ["ReadingHobby", "KarateHobby"];
-
-    actual.me.hobbies.map((hobby) =>
-      expect(hobby.__typename).toBe(concreteTypes[0])
-    );
+      })
+    ).toThrow(TypeError);
   });
 
-  it("UNION: uses Concrete Type instead of Interface Type when __typename is specified", () => {
-    const actual = mockQuery({
-      scenario: {
-        me: {
-          hobbies: [
-            { __typename: "ReadingHobby" },
-            { __typename: "KarateHobby" },
-          ],
+  it("Should throw an error when we attempt to set a non-nullable field as null in a Scenario.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          me: { email: null },
         },
-      },
-    });
+      })
+    ).toThrow(TypeError);
+  });
 
-    expect(actual.me.hobbies[0].__typename).toBe("ReadingHobby");
-    expect(actual.me.hobbies[1].__typename).toBe("KarateHobby");
+  it("Should throw an error when we attempt to set a list with a primitive in Scenario.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          me: { allergies: "test" },
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("Should throw an error when we attempt to set a non-nullable field as null in a Builder.", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          User: () => ({ email: null }),
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("Should throw an error when a function is used in a Scenario.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          launches: {
+            list: jest.fn(),
+          },
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when the root Scenario is a ResolverScenario.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: useResolver(() => {}),
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when the root Scenario is a function.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: jest.fn(),
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw an error when a function is used to mock a field in a Builder.", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          LaunchConnection: () => ({
+            list: [
+              {
+                site: jest.fn(),
+              },
+            ],
+          }),
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("Should throw a TypeError error when a useResolver callback is a simple function in a Builder scenario.", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          LaunchConnection: () => ({
+            list: [
+              {
+                site: useResolver(jest.fn()),
+              },
+            ],
+          }),
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw a TypeError when setting a Builder function returns a function", () => {
+    expect(() =>
+      mockQuery({
+        builders: {
+          Markdown: () => () => {},
+        },
+      })
+    ).toThrow(TypeError);
+  });
+
+  it("Should throw a TypeError when setting a Builder function returns a ResolverScenario", () => {
+    const mockedResolver = () => jest.fn();
+
+    expect(() =>
+      mockQuery({
+        builders: {
+          Markdown: () => useResolver(() => mockedResolver),
+        },
+      })
+    ).toThrow(TypeError);
   });
 });
