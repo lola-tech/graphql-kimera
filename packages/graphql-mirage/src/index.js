@@ -8,12 +8,9 @@ const { mapValues, memoize } = require("lodash");
 const { mockObjectType } = require("./engine");
 const { getScenarioFn, mergeMockProviders } = require("./helpers");
 
-// Returns the same cached result if the `type`, `defaults`, `custom`,
-// and `selector` arguments do not change.
 const buildMocks = memoize(
-  function buildMocks(type, schema, defaults = {}, custom = {}) {
-    return mockObjectType(type, schema, mergeMockProviders(defaults, custom));
-  },
+  (type, schema, defaults = {}, custom = {}) =>
+    mockObjectType(type, schema, mergeMockProviders(defaults, custom)),
   (type, _, defaults, custom) =>
     JSON.stringify({
       type,
@@ -51,24 +48,24 @@ function getExecutableSchema(
     },
   });
 
+  // Partial application of buildMocks to be passed down to the Mutation
+  // resolvers. This function will be called to generate data for a specific
+  // type in the Mutation resolver.
   const _getBuildMocksFn = (context) =>
-    // Partial application of buildMocks to be passed down to the Mutation resolvers
-    // This function will be called to generate data for a certain type in the Mutation
-    // resolver
-    function buildMocksForType(type, selector = "", scenario = {}) {
+    function buildMocksForType(type, scenario = {}) {
       return buildMocks(
         type,
         schema,
-        // When generating data for a Type in a mutation, see as default the merged version of
-        // default mock providers, and custom mock providers. The custom mock providers is what comes
-        // from a frontend app in a test, or in Mockery.
+        // When generating data for a Type in a mutation, see as default the
+        // merged version of default mock providers, and custom mock providers.
+        // The custom mock providers is what comes from a frontend app in a
+        // test.
         mergeMockProviders(
           getMemoizedDefaultMockProviders(context),
           customMockProviders
         ),
         // This scenario is provided in the mutation to overwrite the above defaults.
-        { scenario },
-        selector
+        { scenario }
       );
     };
 

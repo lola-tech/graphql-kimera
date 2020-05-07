@@ -3,7 +3,6 @@ const { isFunction, isUndefined, isNull, times, get } = require("lodash");
 const { validateScenario } = require("./validation");
 const { executeAndCache, computeFieldCacheKey } = require("./caching");
 const {
-  // getDebugger,
   getEnumVal,
   getConcreteType,
   isEnumType,
@@ -12,7 +11,6 @@ const {
   isAbstractType,
   isBuiltInScalarType,
   getAppendedPath,
-  // debugCacheDuplicates,
 } = require("./helpers");
 const {
   mergeScenarios,
@@ -66,7 +64,7 @@ const getFieldMockBuilderFactoryFn = (field, scenario) => (
  * @param {Object} schema The parsed schema.
  * @param {Object} mockProviders An object with the Scenario and the Builders.
  * @param {Object} depth The Query depth of the mocked field.
- * @param {Object} path The field path through the mocked type. E.g: Query:me.address
+ * @param {Object} path Field path through the mocked type. E.g: Query:me.name
  * @returns {*} Returns the mocked value for the field.
  */
 function mockField(
@@ -94,8 +92,8 @@ function mockField(
       );
     }
 
-    // If code got here, then no user defined mock providers could be found,
-    // so depending on the field type, use a different strategy to mock data.
+    // If code got here, then no user defined mock providers could be found, so
+    // depending on the field type, use a different strategy to mock data.
 
     if (isEnumType(field.type, schema)) {
       // For Enumeration types select the first possible value defined in the
@@ -105,8 +103,8 @@ function mockField(
       // For custom scalars use the "Mocked Custom Scalar" string.
       return buildFieldMock(defaultMockProviders[constants.customScalar]);
     } else if (isBuiltInScalarType(field.type)) {
-      // For built-in scalars use the respective Scalar value
-      // defined in `defaultMockProviders`.
+      // For built-in scalars use the respective Scalar value defined in
+      // `defaultMockProviders`.
       return buildFieldMock(defaultMockProviders[field.type]);
     }
   }
@@ -129,9 +127,9 @@ function mockField(
 }
 
 /**
- * Decides on a GraphQL Type "__typename" value by having a strategy
- * for abstract fields: If a value is set in a mock provider, select that,
- * otherise, select the first concrete type defined in the schema.
+ * Decides on a GraphQL Type "__typename" value by having a strategy for
+ * abstract fields: If a value is set in a mock provider, select that, otherise,
+ * select the first concrete type defined in the schema.
  *
  * @see mockObjectType
  *
@@ -162,17 +160,21 @@ const getTypename = (type, schema, scenario) => {
 };
 
 /**
- * Takes an Object Type, and mocks data for each of its fields by using
- * the `mockField` function.
+ * Takes an Object Type, and mocks data for each of its fields by using the
+ * `mockField` function.
  *
  * @see mockField
  *
  * @param {String} type The GraphQL Type name for which we need the __typename
  * @param {Object} schema The parsed schema.
- * @param {Object} mockProviders An object with the user-defined Scenario and the Builders.
- * @param {number} arrayIndex If the current type is mocked as part of a list, its index.
- * @param {Object} depth The Query depth of the mocked field whose type we are mocking.
- * @param {Object} path The field path through the Query object. E.g: me.address.city
+ * @param {Object} mockProviders An object with the user-defined Scenario and
+ * the Builders.
+ * @param {number} arrayIndex If the current type is mocked as part of a list,
+ * its index.
+ * @param {Object} depth The Query depth of the mocked field whose type we are
+ * mocking.
+ * @param {Object} path The field path through the Query object. E.g:
+ * me.address.city
  * @returns {Object} Returns the mocked Object Type.
  */
 function mockObjectType(
@@ -224,8 +226,9 @@ function mockObjectType(
     };
 
     const { mockedField, resolverFactoryFn } = executeAndCache(() => {
-      // Reduce the Scenario and the Builders to a single scenario which represents
-      // the single source of truth for how the user wants to mock this field.
+      // Reduce the Scenario and the Builders to a single scenario which
+      // represents the single source of truth for how the user wants to mock
+      // this field.
       const {
         reducedScenario,
         resolverFactoryFn,
