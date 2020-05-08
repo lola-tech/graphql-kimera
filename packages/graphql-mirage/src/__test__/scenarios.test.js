@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const schemaParser = require("easygraphql-parser");
 
-const { useResolver, reduceToScenarioAndResolver } = require("../scenarios");
+const { useResolver, reduceToScenario } = require("../scenarios");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -11,7 +11,7 @@ const typeDefs = fs.readFileSync(
 const schema = schemaParser(typeDefs);
 
 const testReduceToScenario = (...args) => {
-  return reduceToScenarioAndResolver(...args, schema).reducedScenario;
+  return reduceToScenario(...args, schema).reducedScenario;
 };
 
 test("it works", () => {

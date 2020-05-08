@@ -81,7 +81,11 @@ function mergeScenarios(...options) {
  * @param {Object} mockProviders An object with the Scenario and the Builders.
  * @returns {Object} The reduced Scenario computed from the mock providers.
  */
-const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
+const reduceToScenario = (field, { scenario, builders }, path) => {
+  if (isNull(scenario)) {
+    return null;
+  }
+
   if (isFunction(scenario)) {
     throw new TypeError(
       `Field "${path}" was attempted to be mocked with a function. If you meant to define a resolver, you need to do so using "useResolver".`
@@ -91,7 +95,7 @@ const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
   // Convert the field builder to a scenario by executing it
   const getBuilderScenario = () => {
     const builder = get(builders, field.type);
-    return validateBuilder(builder, field) && builder && builder();
+    return validateBuilder(builder, field.type) && builder && builder();
   };
   const builderScenario = getBuilderScenario();
 
@@ -106,50 +110,29 @@ const reduceToScenarioAndResolver = (field, { scenario, builders }, path) => {
     );
   }
 
-  // Extract the resolver factory if defined.
-  let resolverFactoryFn = undefined;
-  if (isResolverScenario(scenario)) {
-    resolverFactoryFn = scenario.resolverFactory;
-    scenario = scenario.scenario;
-  }
-  // Add the resolver factory function to the result
-  const withResolverFactory = (reducedScenario) => ({
-    reducedScenario,
-    resolverFactoryFn,
-  });
-
-  if (isNull(scenario)) {
-    // console.log(field.name);
-    return withResolverFactory(null);
-  }
-
   if (field.isArray) {
     if (Array.isArray(scenario)) {
       // If we have a user defined array scenario,
       // merge each array element with the builderScenario
-      return withResolverFactory(
-        map(partialRight(mergeScenarios, builderScenario))(scenario)
-      );
+      return map(partialRight(mergeScenarios, builderScenario))(scenario);
     } else if (!isUndefined(scenario)) {
       // If scenario is defined as something other than an array
       // return it so we can throw a TypeError at validation.
-      return withResolverFactory(scenario);
+      return scenario;
     }
 
     // Otherwise create a scenario out of the builderScenario
-    return withResolverFactory(
-      !isUndefined(builderScenario)
-        ? times(DEFAULT_ARRAY_LENGTH, () => builderScenario)
-        : undefined
-    );
+    return !isUndefined(builderScenario)
+      ? times(DEFAULT_ARRAY_LENGTH, () => builderScenario)
+      : undefined;
   }
 
-  return withResolverFactory(mergeScenarios(scenario, builderScenario));
+  return mergeScenarios(scenario, builderScenario);
 };
 
 module.exports = {
   mergeScenarios,
   useResolver,
   isResolverScenario,
-  reduceToScenarioAndResolver,
+  reduceToScenario,
 };

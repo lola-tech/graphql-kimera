@@ -5,12 +5,12 @@ const {
 const schemaParser = require("easygraphql-parser");
 const { mapValues, memoize } = require("lodash");
 
-const { mockObjectType } = require("./engine");
+const { mockType } = require("./engine");
 const { getScenarioFn, mergeMockProviders } = require("./helpers");
 
 const buildMocks = memoize(
   (type, schema, defaults = {}, custom = {}) =>
-    mockObjectType(type, schema, mergeMockProviders(defaults, custom)),
+    mockType(type, schema, mergeMockProviders(defaults, custom)),
   (type, _, defaults, custom) =>
     JSON.stringify({
       type,

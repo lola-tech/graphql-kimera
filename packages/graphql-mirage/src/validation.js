@@ -7,10 +7,10 @@ const { isUndefined, isNull, isFunction } = require("lodash");
  * @param {Object} field
  * @param {any} builder
  */
-const validateBuilder = (builder, field) => {
+const validateBuilder = (builder, type) => {
   if (!isUndefined(builder) && !isFunction(builder)) {
     throw new TypeError(
-      `All builders need to be functions. The "${field["type"]}" builder isn't a function.`
+      `All builders need to be functions. The "${type}" builder isn't a function.`
     );
   }
 
@@ -25,7 +25,7 @@ const validateBuilder = (builder, field) => {
  * @param {Object} field
  * @param {string} path
  */
-const validateScenario = (scenario, field, path) => {
+const validateFieldScenario = (scenario, field, path) => {
   if (isUndefined(scenario)) {
     return true;
   }
@@ -54,6 +54,6 @@ const validateScenario = (scenario, field, path) => {
 };
 
 module.exports = {
-  validateScenario,
+  validateFieldScenario,
   validateBuilder,
 };

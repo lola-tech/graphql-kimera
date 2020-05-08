@@ -3,7 +3,7 @@ const path = require("path");
 const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
-const { mockObjectType } = require("../engine");
+const { mockType } = require("../engine");
 const { useResolver } = require("../scenarios");
 
 const typeDefs = fs.readFileSync(
@@ -15,11 +15,22 @@ const DEFAULT_ARRAY_LENGTH = 3;
 
 const schema = schemaParser(typeDefs);
 const mockQuery = ({ scenario, builders } = {}) => {
-  return mockObjectType("Query", schema, {
+  return mockType("Query", schema, {
     scenario,
     builders,
   });
 };
+
+test("Can mock non Object Types directly", () => {
+  const actual = mockType("Markdown", schema, {
+    scenario: "Test",
+    builders: {
+      Markdown: () => "Test",
+    },
+  });
+
+  expect(actual).toBe("Test");
+});
 
 describe("Scenarios", () => {
   it("SCENARIO: sets built-in scalar", () => {
@@ -312,11 +323,19 @@ describe("Custom Resolvers", () => {
 });
 
 describe("Validation", () => {
-  it("Should throw an error when mocking inexisting types.", () => {
-    expect(() => mockObjectType("InexistentType", schema)).toThrowError();
+  it("Throws when when mocking inexisting types.", () => {
+    expect(() => mockType("InexistentType", schema)).toThrowError();
   });
 
-  it("Should throw an error when a Builder isn't a function.", () => {
+  it("Should throw when the root scenario isn't an object", () => {
+    expect(() =>
+      mockType("Query", schema, {
+        scenario: () => {},
+      })
+    ).toThrowError();
+  });
+
+  it("Throws when when a Builder isn't a function.", () => {
     expect(() =>
       mockQuery({
         builders: {
@@ -326,7 +345,7 @@ describe("Validation", () => {
     ).toThrow(TypeError);
   });
 
-  it("Should throw an error when we attempt to set a non-nullable field as null in a Scenario.", () => {
+  it("Throws when attempting to mock a non-nullable field as null in a Scenario.", () => {
     expect(() =>
       mockQuery({
         scenario: {
@@ -336,7 +355,17 @@ describe("Validation", () => {
     ).toThrow(TypeError);
   });
 
-  it("Should throw an error when we attempt to set a list with a primitive in Scenario.", () => {
+  it("Throws when attempting to mock with a non-list field in with an array Scenario.", () => {
+    expect(() =>
+      mockQuery({
+        scenario: {
+          metadata: [],
+        },
+      })
+    ).toThrowError();
+  });
+
+  it("Throws when attempting to mock a list with a primitive in Scenario.", () => {
     expect(() =>
       mockQuery({
         scenario: {
@@ -346,7 +375,7 @@ describe("Validation", () => {
     ).toThrowError();
   });
 
-  it("Should throw an error when we attempt to set a non-nullable field as null in a Builder.", () => {
+  it("Throws when attempting to mock a non-nullable field as null in a Builder.", () => {
     expect(() =>
       mockQuery({
         builders: {
@@ -356,7 +385,7 @@ describe("Validation", () => {
     ).toThrowError();
   });
 
-  it("Should throw an error when a function is used in a Scenario.", () => {
+  it("Throws when when a function is used in a Scenario.", () => {
     expect(() =>
       mockQuery({
         scenario: {
@@ -368,7 +397,7 @@ describe("Validation", () => {
     ).toThrow(TypeError);
   });
 
-  it("Should throw an error when the root Scenario is a ResolverScenario.", () => {
+  it("Throws when when the root Scenario is a ResolverScenario.", () => {
     expect(() =>
       mockQuery({
         scenario: useResolver(() => {}),
@@ -376,7 +405,7 @@ describe("Validation", () => {
     ).toThrow(TypeError);
   });
 
-  it("Should throw an error when the root Scenario is a function.", () => {
+  it("Throws when when the root Scenario is a function.", () => {
     expect(() =>
       mockQuery({
         scenario: jest.fn(),
@@ -384,7 +413,7 @@ describe("Validation", () => {
     ).toThrow(TypeError);
   });
 
-  it("Should throw an error when a function is used to mock a field in a Builder.", () => {
+  it("Throws when when a function is used to mock a field in a Builder.", () => {
     expect(() =>
       mockQuery({
         builders: {
