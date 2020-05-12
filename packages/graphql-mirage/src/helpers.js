@@ -1,6 +1,9 @@
-const { mergeWith, memoize } = require("lodash");
+const MultiKeyMap = require("multikeymap");
+const { memoize } = require("lodash");
 
 const constants = require("./constants");
+
+memoize.Cache = MultiKeyMap;
 
 // Scalar Helpers
 const isBuiltInScalarType = (type) =>
@@ -45,31 +48,6 @@ const getAppendedPath = (path, field, type) => {
   return typePrefix + path + (path ? "." : "") + field.name;
 };
 
-const getScenarioFn = (defaultScenario = {}) =>
-  memoize(function getScenario(customScenario = {}) {
-    return mergeWith(
-      {},
-      defaultScenario,
-      customScenario,
-      (defaultVal, newVal) => (Array.isArray(defaultVal) ? newVal : undefined)
-    );
-  }, JSON.stringify);
-
-const getBuildersFn = (defaults = {}) =>
-  memoize(function getBuilders(builders = {}) {
-    return {
-      ...defaults,
-      ...builders,
-    };
-  }, JSON.stringify);
-
-const mergeMockProviders = (defaults = {}, custom = {}) => {
-  return {
-    scenario: getScenarioFn(defaults.scenario)(custom.scenario),
-    builders: getBuildersFn(defaults.builders)(custom.builders),
-  };
-};
-
 module.exports = {
   getUnionVal,
   getUnionVals,
@@ -82,9 +60,7 @@ module.exports = {
   isUnionType,
   isInterfaceType,
   isAbstractType,
-  getScenarioFn,
-  getBuildersFn,
-  mergeMockProviders,
   isObjectType,
   getAppendedPath,
+  memoize,
 };

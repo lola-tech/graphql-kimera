@@ -1,9 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
-const { buildMocks, mergeScenario } = require("../index");
+const { buildMocks } = require("../index");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -12,26 +11,20 @@ const typeDefs = fs.readFileSync(
 const schema = schemaParser(typeDefs);
 
 describe("Scenario", () => {
-  it("SCENARIO: selectors allows to select subscenario for Object Type", () => {
-    const defaultScenario = {
-      me: {
-        trips: times(5, () => ({
-          site: "Kennedy Space Center",
-          mission: { name: "Test Mission" },
-        })),
-      },
-    };
-
+  it("SCENARIO: overwrites default scenario", () => {
     const actual = buildMocks(
       "Launch",
       schema,
       {
-        scenario: defaultScenario,
+        scenario: {
+          site: "Kennedy Space Center",
+          mission: { name: "Test Mission" },
+        },
       },
       {
-        scenario: mergeScenario(defaultScenario.me.trips[0], {
+        scenario: {
           site: "Vandenberg Air Force Base",
-        }),
+        },
       }
     );
 
@@ -39,15 +32,15 @@ describe("Scenario", () => {
     expect(actual.mission.name).toEqual("Test Mission");
   });
 
-  it("SCENARIO: works when selector cannot find subscenario", () => {
+  it("SCENARIO: works only with main scenario", () => {
     const actual = buildMocks(
       "Launch",
       schema,
       {},
       {
-        scenario: mergeScenario(undefined, {
+        scenario: {
           site: "Kennedy Space Center",
-        }),
+        },
       }
     );
 

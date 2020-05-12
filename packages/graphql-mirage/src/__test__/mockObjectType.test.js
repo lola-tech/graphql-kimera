@@ -4,7 +4,7 @@ const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
 const { mockType } = require("../engine");
-const { useResolver } = require("../scenarios");
+const { useResolver } = require("../mockProviders");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),

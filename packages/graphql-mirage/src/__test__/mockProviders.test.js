@@ -1,7 +1,7 @@
 const { times } = require("lodash");
 const update = require("immutability-helper");
 
-const { getScenarioFn, getBuildersFn } = require("../helpers");
+const { mergeScenarios, mergeBuilders } = require("../mockProviders");
 
 describe("getScenario", () => {
   const defaults = {
@@ -28,7 +28,7 @@ describe("getScenario", () => {
   };
 
   it("merges defaults correctly", () => {
-    const actual = getScenarioFn(defaults)(customData);
+    const actual = mergeScenarios(customData, defaults);
     expect(actual.me.userName).toEqual(customData.me.userName);
     expect(actual.me.children).toHaveLength(customData.me.children.length);
     expect(actual.me.trips).toHaveLength(defaults.me.trips.length);
@@ -38,20 +38,19 @@ describe("getScenario", () => {
   });
 
   it("gets memoized by using the customData object shape", () => {
-    const getScenario = getScenarioFn(defaults);
-
-    const expected = getScenario(
+    const expected = mergeScenarios(
       update(customData, {
-        me: { userName: { $set: customData.me.userName } },
-      })
+        me: { children: { $set: [{}] } },
+      }),
+      defaults
     );
-    const actual = getScenario(customData);
+    const actual = mergeScenarios(customData, defaults);
 
-    expect(actual === expected).toBe(true);
+    expect(actual).toBe(expected);
   });
 
   it("handle nulls", () => {
-    const actual = getScenarioFn(null)({ me: { userName: "c10b10" } });
+    const actual = mergeScenarios({ me: { userName: "c10b10" } }, null);
 
     expect(actual.me.userName).toBe("c10b10");
   });
@@ -70,7 +69,7 @@ describe("getBuilders", () => {
   };
 
   it("getBuilders: merges the custom data correctly", () => {
-    const actual = getBuildersFn(defaults)(customData);
+    const actual = mergeBuilders(customData, defaults);
 
     expect(actual.city).toEqual(defaults.city);
     expect(actual.address).toEqual(customData.address);
@@ -79,11 +78,10 @@ describe("getBuilders", () => {
   });
 
   it("gets memoized by using the customData object shape", () => {
-    const getBuilders = getBuildersFn(defaults);
+    const expected = mergeBuilders({ ...customData }, defaults);
+    const actual = mergeBuilders(customData, defaults);
 
-    const expected = getBuilders({ ...customData });
-    const actual = getBuilders(customData);
-
-    expect(actual === expected).toBe(true);
+    // Should have identical references if memoization worked
+    expect(actual).toBe(expected);
   });
 });

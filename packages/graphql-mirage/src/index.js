@@ -3,20 +3,24 @@ const {
   addMockFunctionsToSchema,
 } = require("graphql-tools");
 const schemaParser = require("easygraphql-parser");
-const { mapValues, memoize } = require("lodash");
+const { mapValues } = require("lodash");
 
 const { mockType } = require("./engine");
-const { getScenarioFn, mergeMockProviders } = require("./helpers");
+const { memoize } = require("./helpers");
+const { mergeScenarios, mergeMockProviders } = require("./mockProviders");
 
 const buildMocks = memoize(
   (type, schema, defaults = {}, custom = {}) =>
     mockType(type, schema, mergeMockProviders(defaults, custom)),
-  (type, _, defaults, custom) =>
-    JSON.stringify({
-      type,
-      defaults,
-      custom,
-    })
+  (type, _, defaults, custom) => [
+    [
+      JSON.stringify({
+        type,
+        defaults,
+        custom,
+      }),
+    ],
+  ]
 );
 
 // Uses buldMocks to generate data and serve it in an Executable Schema context
@@ -37,7 +41,7 @@ function getExecutableSchema(
 
   const getMemoizedDefaultMockProviders = memoize(
     getDefaultMockProviders,
-    (context) => JSON.stringify(context)
+    (context) => [JSON.stringify(context)]
   );
 
   // Start building the apollo executable schema
@@ -103,8 +107,7 @@ function getExecutableSchema(
 }
 
 module.exports = {
-  mergeScenario: (defaultScenario, customScenario) =>
-    getScenarioFn(defaultScenario)(customScenario),
+  mergeScenarios,
   buildMocks,
   getExecutableSchema,
 };

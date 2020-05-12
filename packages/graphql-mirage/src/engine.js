@@ -1,12 +1,4 @@
-const {
-  memoize,
-  isFunction,
-  isUndefined,
-  isNull,
-  times,
-  get,
-} = require("lodash");
-const MultiKeyMap = require("multikeymap");
+const { isFunction, isUndefined, isNull, times, get } = require("lodash");
 
 const { validateFieldScenario } = require("./validation");
 const {
@@ -18,13 +10,14 @@ const {
   isAbstractType,
   isBuiltInScalarType,
   getAppendedPath,
+  memoize,
 } = require("./helpers");
 const {
   mergeScenarios,
   reduceToScenario,
   useResolver,
   isResolverScenario,
-} = require("./scenarios");
+} = require("./mockProviders");
 const constants = require("./constants");
 
 const DEFAULT_ARRAY_LENGTH = 3;
@@ -218,7 +211,7 @@ function _mockType(type, schema, mockProviders = {}, meta = {}) {
     depth = 0,
     arrayIndex = false,
     path = "",
-    noNull = false,
+    // noNull = false,
     isListType = false,
     field = {},
   } = meta;
@@ -321,7 +314,6 @@ function _mockType(type, schema, mockProviders = {}, meta = {}) {
   );
 }
 
-memoize.Cache = MultiKeyMap;
 const mockType = memoize(
   (...args) => {
     // console.log("Generating for", args[0]);

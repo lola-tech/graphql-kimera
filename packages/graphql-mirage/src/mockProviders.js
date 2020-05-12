@@ -11,6 +11,7 @@ const {
   get,
 } = require("lodash");
 const { map, compose, first, filter } = require("lodash/fp");
+const { memoize } = require("./helpers");
 
 const { validateBuilder } = require("./validation");
 
@@ -48,29 +49,55 @@ const useResolver = (resolverFactoryFn, scenario) => {
 
 // All options that aren't objects are selected from the leftmost argument when conflicts exist
 // Objects are merged deeply, always selecting for the leftmost value when conflict exists
-function mergeScenarios(...options) {
-  const firstDefinedArgument = compose([first, filter(negate(isUndefined))])(
-    options
-  );
+const mergeScenarios = memoize(
+  (...scenarios) => {
+    const firstDefinedScenario = compose([first, filter(negate(isUndefined))])(
+      scenarios
+    );
 
-  if (!isObjectLike(firstDefinedArgument)) {
-    return firstDefinedArgument;
-  }
-
-  return mergeWith(...options, (defaultOption, newOption) => {
-    if (
-      // When the merged options are primitives return the default option
-      !isPlainObject(defaultOption) ||
-      // Treat ResolverScenarios as primitives
-      isResolverScenario(defaultOption) ||
-      (!isUndefined(defaultOption) && isResolverScenario(newOption))
-    ) {
-      return defaultOption;
+    if (!isObjectLike(firstDefinedScenario)) {
+      return firstDefinedScenario;
     }
 
-    return mergeScenarios(defaultOption, newOption);
-  });
-}
+    return mergeWith(...scenarios, (defaultOption, newOption) => {
+      if (
+        // When the merged options are primitives return the default option
+        !isPlainObject(defaultOption) ||
+        // Treat ResolverScenarios as primitives
+        isResolverScenario(defaultOption) ||
+        (!isUndefined(defaultOption) && isResolverScenario(newOption))
+      ) {
+        return defaultOption;
+      }
+
+      return mergeScenarios(defaultOption, newOption);
+    });
+  },
+  (...scenarios) => {
+    return [
+      JSON.stringify(scenarios, (key, value) =>
+        isFunction(value) ? "__RESOLVER__" : value
+      ),
+    ];
+  }
+);
+
+const mergeBuilders = memoize(
+  (customBuilders = {}, defaultBuilders = {}) => ({
+    ...defaultBuilders,
+    ...customBuilders,
+  }),
+  (customBuilders = {}) => {
+    return Object.keys(customBuilders);
+  }
+);
+
+const mergeMockProviders = (defaults = {}, custom = {}) => {
+  return {
+    scenario: mergeScenarios(custom.scenario, defaults.scenario),
+    builders: mergeBuilders(custom.builders, defaults.builders),
+  };
+};
 
 /**
  * Reduces user defined mock providers to a single scenario object.
@@ -132,6 +159,8 @@ const reduceToScenario = (field, { scenario, builders }, path) => {
 
 module.exports = {
   mergeScenarios,
+  mergeBuilders,
+  mergeMockProviders,
   useResolver,
   isResolverScenario,
   reduceToScenario,
