@@ -8,7 +8,7 @@
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
-    "test": "echo test"
+    "test": "echo Docusaurus doesn't need to run any test!"
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.50",
