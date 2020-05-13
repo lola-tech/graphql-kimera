@@ -4,14 +4,13 @@ const { times } = require("lodash");
 const schemaParser = require("easygraphql-parser");
 
 const { mockType } = require("../engine");
+const { DEFAULT_LIST_LENGTH } = require("../constants");
 const { useResolver } = require("../mockProviders");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
   "utf8"
 );
-
-const DEFAULT_ARRAY_LENGTH = 3;
 
 const schema = schemaParser(typeDefs);
 const mockQuery = ({ scenario, builders } = {}) => {
@@ -59,6 +58,7 @@ describe("Scenarios", () => {
     expect(actual.me.allergies[0]).toBe("Aspirin");
     expect(actual.me.allergies[1]).toBe("Peanuts");
   });
+
   it("SCENARIO: sets deep Array of Object Types", () => {
     const actual = mockQuery({
       scenario: {
@@ -75,6 +75,7 @@ describe("Scenarios", () => {
     expect(actual.me.trips[0].site).toEqual("Kennedy Space Center");
     expect(actual.me.trips[4].site).toEqual("Vandenberg Air Force Base");
   });
+
   it("SCENARIO: sets deep Array of Object Types recursively", () => {
     const actual = mockQuery({
       scenario: {
@@ -85,7 +86,7 @@ describe("Scenarios", () => {
     });
     expect(actual.me.trips[0].rockets).toHaveLength(2);
     expect(actual.me.trips[0].rockets[0].name).toEqual("Falcon 9");
-    expect(actual.me.trips[1].rockets).toHaveLength(DEFAULT_ARRAY_LENGTH);
+    expect(actual.me.trips[1].rockets).toHaveLength(DEFAULT_LIST_LENGTH);
   });
 });
 

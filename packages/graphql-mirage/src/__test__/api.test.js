@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const schemaParser = require("easygraphql-parser");
 
-const { buildMocks } = require("../index");
+const { buildMocks } = require("../engine");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),

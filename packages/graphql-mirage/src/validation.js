@@ -22,31 +22,33 @@ const validateBuilder = (builder, type) => {
  * Check for non-nullable and array issues.
  *
  * @param {Object} scenario
- * @param {Object} field
+ * @param {Object} meta
  * @param {string} path
  */
-const validateFieldScenario = (scenario, field, path) => {
+const validateFieldScenario = (scenario, meta) => {
   if (isUndefined(scenario)) {
     return true;
   }
 
-  if (isNull(scenario) && field.noNull) {
+  if (isNull(scenario) && meta.noNull) {
     throw new TypeError(
-      `You are attempting to mock the non-nullable "${path}" field with "null".`
+      `You are attempting to mock the non-nullable "${meta.path}" field with "null".`
     );
   }
 
-  if (!isNull(scenario) && !Array.isArray(scenario) && field.isArray) {
+  if (!isNull(scenario) && !Array.isArray(scenario) && meta.isArray) {
     throw new TypeError(
-      `You are attempting to mock the list "${path}" field with non-array value "${scenario}". List fields must be mocked with arrays.`
+      `You are attempting to mock the list "${meta.path}" field with non-array value "${scenario}". List fields must be mocked with arrays.`
     );
   }
 
-  if (Array.isArray(scenario) && !field.isArray) {
+  if (Array.isArray(scenario) && !meta.isArray) {
     throw new TypeError(
-      `You are attempting to mock "${path}" field with the array ${JSON.stringify(
-        scenario
-      )}. "${path}" is not a List field.`
+      `You are attempting to mock "${
+        meta.path
+      }" field with the array ${JSON.stringify(scenario)}. "${
+        meta.path
+      }" is not a List field.`
     );
   }
 

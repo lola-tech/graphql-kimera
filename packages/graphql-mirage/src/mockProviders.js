@@ -11,55 +11,71 @@ const {
   get,
 } = require("lodash");
 const { map, compose, first, filter } = require("lodash/fp");
+
 const { memoize } = require("./helpers");
-
 const { validateBuilder } = require("./validation");
-
-// TODO:
-const DEFAULT_ARRAY_LENGTH = 3;
+const { DEFAULT_LIST_LENGTH } = require("./constants");
 
 /**
- * TOBEWRITTERN
+ * The function that needs to be used when defining a resolver in
+ * mock provider.
  *
- * @see useResolver
+ * @public
  *
- * @param {Object} mockProvider An object with the Scenario and the Builders.
- * @returns {Object} Returns the merged mock providers scenario.
- */
-function ResolverScenario(resolverFactoryFn, scenario) {
-  this.resolverFactory = resolverFactoryFn;
-  this.scenario = scenario;
-}
-
-const isResolverScenario = (node) => {
-  return node instanceof ResolverScenario;
-};
-
-/**
- * TOBEWRITTERN
- *
- * @see ResolverScenario
- *
- * @param {Object} mockProvider An object with the Scenario and the Builders.
+ * @param {Function} resolverFactoryFn A function that returns a resolver and receives a getter as its argument
+ * @param {scenario} scenario Optional. The scenario for this field
  * @returns {Object} Returns the merged mock providers scenario.
  */
 const useResolver = (resolverFactoryFn, scenario) => {
   return new ResolverScenario(resolverFactoryFn, scenario);
 };
 
-// All options that aren't objects are selected from the leftmost argument when conflicts exist
-// Objects are merged deeply, always selecting for the leftmost value when conflict exists
+/** The Resolver Scenario constructor. */
+function ResolverScenario(resolverFactoryFn, scenario) {
+  this.resolverFactory = resolverFactoryFn;
+  this.scenario = scenario;
+}
+
+/** Is the current node a Resolver Scenario? */
+const isResolverScenario = (node) => {
+  return node instanceof ResolverScenario;
+};
+
+/**
+ * Deeply merges two scenarios into one.
+ *
+ * Objects are merged deeply, always selecting for the leftmost value when conflict exists.
+ * All nodes that aren't objects are selected from the leftmost argument when conflicts exist.
+ *
+ * @param {Object} assignedScenario The scenario that will merged over over second scenario. The higher priority scenario.
+ * @param {Object} scenario The scenario that will be deeply overwritten by the assignedScenario.
+ * @returns {Object} Returns a scenario object.
+ */
 const mergeScenarios = memoize(
-  (...scenarios) => {
-    const firstDefinedScenario = compose([first, filter(negate(isUndefined))])(
-      scenarios
-    );
+  (assignedScenario, scenario) => {
+    const firstDefinedScenario = compose([first, filter(negate(isUndefined))])([
+      assignedScenario,
+      scenario,
+    ]);
 
     if (!isObjectLike(firstDefinedScenario)) {
       return firstDefinedScenario;
     }
 
-    return mergeWith(...scenarios, (defaultOption, newOption) => {
+    if (
+      assignedScenario &&
+      scenario &&
+      !isObjectLike(scenario) &&
+      isObjectLike(assignedScenario)
+    ) {
+      console.warn(
+        `A scenario "${JSON.stringify(
+          assignedScenario
+        )}" is "${typeof assignedScenario}" attempted to be merged with a "${scenario}" of type "${typeof scenario}". This is most likely a mistake.`
+      );
+    }
+
+    return mergeWith(assignedScenario, scenario, (defaultOption, newOption) => {
       if (
         // When the merged options are primitives return the default option
         !isPlainObject(defaultOption) ||
@@ -75,6 +91,7 @@ const mergeScenarios = memoize(
   },
   (...scenarios) => {
     return [
+      "__MERGED_SCENARIOS__",
       JSON.stringify(scenarios, (key, value) =>
         isFunction(value) ? "__RESOLVER__" : value
       ),
@@ -88,41 +105,53 @@ const mergeBuilders = memoize(
     ...customBuilders,
   }),
   (customBuilders = {}) => {
-    return Object.keys(customBuilders);
+    return ["__MERGED_BUILDERS__", ...Object.keys(customBuilders)];
   }
 );
 
-const mergeMockProviders = (defaults = {}, custom = {}) => {
-  return {
+/**
+ * Merges custom scenarios and builders with defaults using different
+ * strategies.
+ *
+ * @see mergeScenarios for the scenarios merging strategy
+ * @see mergeBuilders  for the builders merging strategy
+ *
+ * @param {Object} defaults An object with default mock providers
+ * @param {Object} custom An object with the custom mock providers that are
+ * meant to overwrite the defaults.
+ * @returns {Object} An object with the merged
+ */
+const mergeMockProviders = memoize(
+  (defaults = {}, custom = {}) => ({
     scenario: mergeScenarios(custom.scenario, defaults.scenario),
     builders: mergeBuilders(custom.builders, defaults.builders),
-  };
-};
+  }),
+  (defaults, custom) => ["__MERGED_MOCKED_PROVIDERS__", defaults, custom]
+);
 
 /**
  * Reduces user defined mock providers to a single scenario object.
  *
- * @see mockField
- *
- * @param {Object} field The parsed schema field object.
- * @param {Object} mockProviders An object with the Scenario and the Builders.
- * @returns {Object} The reduced Scenario computed from the mock providers.
+ * @param {Object} mockProviders An object with the user-defined Scenario and
+ * the Builders.
+ * @param {Object} meta An object containing meta information about the mocked
+ * type. For the complete list of meta keys @see mockType in ./engine.js.
  */
-const reduceToScenario = (field, { scenario, builders }, path) => {
+const reduceToScenario = ({ scenario, builders }, meta) => {
   if (isNull(scenario)) {
     return null;
   }
 
   if (isFunction(scenario)) {
     throw new TypeError(
-      `Field "${path}" was attempted to be mocked with a function. If you meant to define a resolver, you need to do so using "useResolver".`
+      `Field "${meta.path}" was attempted to be mocked with a function. If you meant to define a resolver, you need to do so using "useResolver".`
     );
   }
 
   // Convert the field builder to a scenario by executing it
   const getBuilderScenario = () => {
-    const builder = get(builders, field.type);
-    return validateBuilder(builder, field.type) && builder && builder();
+    const builder = get(builders, meta.type);
+    return validateBuilder(builder, meta.type) && builder && builder();
   };
   const builderScenario = getBuilderScenario();
 
@@ -133,11 +162,11 @@ const reduceToScenario = (field, { scenario, builders }, path) => {
       : "ResolverScenario";
 
     throw new TypeError(
-      `Builder for type "${field.type}" returns a ${illegalEntity}. Builder functions cannot return ${illegalEntity}s.`
+      `Builder for type "${meta.type}" returns a ${illegalEntity}. Builder functions cannot return ${illegalEntity}s.`
     );
   }
 
-  if (field.isArray) {
+  if (meta.isArray) {
     if (Array.isArray(scenario)) {
       // If we have a user defined array scenario,
       // merge each array element with the builderScenario
@@ -150,7 +179,7 @@ const reduceToScenario = (field, { scenario, builders }, path) => {
 
     // Otherwise create a scenario out of the builderScenario
     return !isUndefined(builderScenario)
-      ? times(DEFAULT_ARRAY_LENGTH, () => builderScenario)
+      ? times(DEFAULT_LIST_LENGTH, () => builderScenario)
       : undefined;
   }
 

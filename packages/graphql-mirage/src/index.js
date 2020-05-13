@@ -5,25 +5,24 @@ const {
 const schemaParser = require("easygraphql-parser");
 const { mapValues } = require("lodash");
 
-const { mockType } = require("./engine");
 const { memoize } = require("./helpers");
-const { mergeScenarios, mergeMockProviders } = require("./mockProviders");
+const { buildMocks } = require("./engine");
+const { useResolver, mergeMockProviders } = require("./mockProviders");
 
-const buildMocks = memoize(
-  (type, schema, defaults = {}, custom = {}) =>
-    mockType(type, schema, mergeMockProviders(defaults, custom)),
-  (type, _, defaults, custom) => [
-    [
-      JSON.stringify({
-        type,
-        defaults,
-        custom,
-      }),
-    ],
-  ]
-);
-
-// Uses buldMocks to generate data and serve it in an Executable Schema context
+/**
+ * Uses buildMocks to generate data and serve it in an Executable Schema context
+ *
+ * @see ResolverScenario
+ * @public
+ *
+ * @param {string} typeDefs The Schema SDL string.
+ * @param {Function} getDefaultMockProviders A function that gets the context as
+ * an argument, and returns an object with the mock providers
+ * @param {Object} customMockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
+ * @param {Function} getMutationResolvers A function that returns an object with resolvers for mutations.
+ * @param {Function} getCustomResolvers A function that returns a list of custom resolver.
+ * @returns {Object} An Executable Schema object.
+ */
 function getExecutableSchema(
   // Schema SDL string
   typeDefs,
@@ -41,7 +40,7 @@ function getExecutableSchema(
 
   const getMemoizedDefaultMockProviders = memoize(
     getDefaultMockProviders,
-    (context) => [JSON.stringify(context)]
+    (context) => ["__DEFAULT_MOCK_PROVIDERS__", JSON.stringify(context)]
   );
 
   // Start building the apollo executable schema
@@ -55,23 +54,21 @@ function getExecutableSchema(
   // Partial application of buildMocks to be passed down to the Mutation
   // resolvers. This function will be called to generate data for a specific
   // type in the Mutation resolver.
-  const _getBuildMocksFn = (context) =>
-    function buildMocksForType(type, scenario = {}) {
-      return buildMocks(
-        type,
-        schema,
-        // When generating data for a Type in a mutation, see as default the
-        // merged version of default mock providers, and custom mock providers.
-        // The custom mock providers is what comes from a frontend app in a
-        // test.
-        mergeMockProviders(
-          getMemoizedDefaultMockProviders(context),
-          customMockProviders
-        ),
-        // This scenario is provided in the mutation to overwrite the above defaults.
-        { scenario }
-      );
-    };
+  const _getBuildMocksFn = (context) => (type, scenario = {}) =>
+    buildMocks(
+      type,
+      schema,
+      // When generating data for a Type in a mutation, see as default the
+      // merged version of default mock providers, and custom mock providers.
+      // The custom mock providers is what comes from a frontend app in a test.
+      mergeMockProviders(
+        getMemoizedDefaultMockProviders(context),
+        customMockProviders
+      ),
+      // This scenario is provided in the mutation to overwrite the above
+      // defaults.
+      { scenario }
+    );
 
   // Generates mocks for the Query node. Essentially our initial data store.
   const _getMockedQuery = (context) => {
@@ -107,7 +104,6 @@ function getExecutableSchema(
 }
 
 module.exports = {
-  mergeScenarios,
-  buildMocks,
+  useResolver,
   getExecutableSchema,
 };
