@@ -1,14 +1,12 @@
 git:
   depth: 5
-language: node_js
-cache: yarn
 
-# https://github.com/nlola-tech/grapql-mirage
-node_js:
-  - node
-  
-before_install:
-  - nvm install && nvm use 
+language: node_js
+# defaulting to .nvmrc specified node version which is lts/* ->  latest LTS Node.js release
+# https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#specifying-nodejs-versions
+# https://github.com/nvm-sh/nvm#nvmrc
+
+cache: npm
 
 install:
   - npm install
@@ -23,7 +21,7 @@ before-deploy:
 deploy:
   provider: pages
   skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  github_token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
   keep_history: true
   on:
     all_branches: true
@@ -33,6 +31,5 @@ deploy:
 # safelist
 branches:
   only:
-  - master
-  - gh-pages
-
+    - master
+    - gh-pages
