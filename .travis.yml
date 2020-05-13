@@ -20,16 +20,6 @@ before-deploy:
 
 deploy:
   provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
-  keep_history: true
-  on:
-    all_branches: true
+  token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
   local_dir: packages/graphql-mirage-docs/build
   verbose: true
-
-# safelist
-branches:
-  only:
-    - master
-    - gh-pages
