@@ -1,4 +1,7 @@
+const { map, compose, first, filter } = require("lodash/fp");
+
 const {
+  memoize,
   isFunction,
   isUndefined,
   mergeWith,
@@ -9,10 +12,7 @@ const {
   isNull,
   partialRight,
   get,
-} = require("lodash");
-const { map, compose, first, filter } = require("lodash/fp");
-
-const { memoize } = require("./helpers");
+} = require("./helpers");
 const { validateBuilder } = require("./validation");
 const { DEFAULT_LIST_LENGTH } = require("./constants");
 
@@ -99,6 +99,7 @@ const mergeScenarios = memoize(
   }
 );
 
+/** Merges two sets of builders. */
 const mergeBuilders = memoize(
   (customBuilders = {}, defaultBuilders = {}) => ({
     ...defaultBuilders,
@@ -129,6 +130,17 @@ const mergeMockProviders = memoize(
   (defaults, custom) => ["__MERGED_MOCKED_PROVIDERS__", defaults, custom]
 );
 
+/** Executes a Builder for a specific type, and returns the resulting scenario. */
+const getBuilderScenario = memoize(
+  (builders, type) => {
+    const builder = get(builders, type);
+    return validateBuilder(builder, type) && builder && builder();
+  },
+  (builders, type) => {
+    return ["__BUILDER_SCENARIO__", type, builders];
+  }
+);
+
 /**
  * Reduces user defined mock providers to a single scenario object.
  *
@@ -149,11 +161,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
   }
 
   // Convert the field builder to a scenario by executing it
-  const getBuilderScenario = () => {
-    const builder = get(builders, meta.type);
-    return validateBuilder(builder, meta.type) && builder && builder();
-  };
-  const builderScenario = getBuilderScenario();
+  const builderScenario = getBuilderScenario(builders, meta.type);
 
   // Validate the Builder
   if (isFunction(builderScenario) || isResolverScenario(builderScenario)) {

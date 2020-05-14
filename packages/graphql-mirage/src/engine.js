@@ -1,5 +1,3 @@
-const { isFunction, isUndefined, isNull, times, get } = require("lodash");
-
 const { validateFieldScenario } = require("./validation");
 const {
   getEnumVal,
@@ -11,6 +9,11 @@ const {
   isBuiltInScalarType,
   getAppendedPath,
   memoize,
+  isFunction,
+  isUndefined,
+  isNull,
+  times,
+  get,
 } = require("./helpers");
 const {
   mergeScenarios,
@@ -282,15 +285,20 @@ const mockType = memoize(
       meta
     );
   },
-  function resolveMemoCacheKey(_, __, mockProviders = {}, meta = {}) {
+  function resolveMemoCacheKey(type, _, mockProviders = {}, meta = {}) {
     const fieldKeyPart = meta.isArray
-      ? `[${meta.type}]`
+      ? `[${type}]`
       : // Make ids of items part of a List unique
-      Number.isInteger(meta.arrayIndex) && meta.type === constants.ID
-      ? `${meta.type}[${meta.arrayIndex}]`
-      : meta.type;
+      Number.isInteger(meta.arrayIndex) && type === constants.ID
+      ? `${type}[${meta.arrayIndex}]`
+      : type;
 
-    return ["__NODE__", fieldKeyPart + (meta.noNull ? "!" : ""), mockProviders];
+    return [
+      "__NODE__",
+      fieldKeyPart + (meta.noNull ? "!" : ""),
+      mockProviders.builders,
+      mockProviders.scenario,
+    ];
   }
 );
 

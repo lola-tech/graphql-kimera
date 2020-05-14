@@ -1,5 +1,17 @@
 const MultiKeyMap = require("multikeymap");
-const { memoize } = require("lodash");
+
+const memoize = require("lodash/memoize");
+const isFunction = require("lodash/isFunction");
+const isUndefined = require("lodash/isUndefined");
+const isNull = require("lodash/isNull");
+const times = require("lodash/times");
+const get = require("lodash/get");
+const mergeWith = require("lodash/mergeWith");
+const isObjectLike = require("lodash/isObjectLike");
+const isPlainObject = require("lodash/isPlainObject");
+const negate = require("lodash/negate");
+const partialRight = require("lodash/partialRight");
+const mapValues = require("lodash/mapValues");
 
 const constants = require("./constants");
 
@@ -76,5 +88,17 @@ module.exports = {
   isAbstractType,
   isObjectType,
   getAppendedPath,
+  // lodash
   memoize,
+  isFunction,
+  isUndefined,
+  isNull,
+  times,
+  get,
+  mergeWith,
+  isObjectLike,
+  isPlainObject,
+  negate,
+  partialRight,
+  mapValues,
 };

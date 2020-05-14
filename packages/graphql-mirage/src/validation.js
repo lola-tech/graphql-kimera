@@ -1,4 +1,4 @@
-const { isUndefined, isNull, isFunction } = require("lodash");
+const { isUndefined, isNull, isFunction } = require("./helpers");
 
 /**
  * Makes sure a Builder is a function.
@@ -38,7 +38,11 @@ const validateFieldScenario = (scenario, meta) => {
 
   if (!isNull(scenario) && !Array.isArray(scenario) && meta.isArray) {
     throw new TypeError(
-      `You are attempting to mock the list "${meta.path}" field with non-array value "${scenario}". List fields must be mocked with arrays.`
+      `You are attempting to mock the list "${
+        meta.path
+      }" field with non-array value "${JSON.stringify(
+        scenario
+      )}". List fields must be mocked with arrays.`
     );
   }
 

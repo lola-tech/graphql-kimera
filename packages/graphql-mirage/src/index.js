@@ -3,9 +3,8 @@ const {
   addMockFunctionsToSchema,
 } = require("graphql-tools");
 const schemaParser = require("easygraphql-parser");
-const { mapValues } = require("lodash");
 
-const { memoize } = require("./helpers");
+const { memoize, mapValues } = require("./helpers");
 const { buildMocks } = require("./engine");
 const { useResolver, mergeMockProviders } = require("./mockProviders");
 
