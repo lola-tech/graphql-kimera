@@ -201,7 +201,14 @@ const getTypename = (type, schema, scenario, meta) => {
  * @returns {Object} Returns the mocked Object Type.
  */
 const mockType = memoize(
-  (type, schema, mockProviders = {}, meta = { depth: 0, path: "" }) => {
+  (type, schema, mockProviders = {}, meta = {}) => {
+    meta = {
+      type,
+      depth: 0,
+      path: "",
+      ...meta,
+    };
+
     if (!schema[type] && !isBuiltInScalarType(type)) {
       throw new Error(`Type "${type}" not found in schema.`);
     }
@@ -315,7 +322,12 @@ const mockType = memoize(
  * @returns {Object} Returns the mocked Object Type.
  */
 const buildMocks = (type, schema, defaults = {}, custom = {}) =>
-  mockType(type, schema, mergeMockProviders(defaults, custom));
+  mockType(
+    type,
+    schema,
+    Object.keys(custom) ? mergeMockProviders(defaults, custom) : defaults,
+    undefined
+  );
 
 module.exports = {
   mockType,
