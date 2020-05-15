@@ -12,18 +12,15 @@ language: node_js
 # https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#caching-with-npm
 cache: npm
 
-install:
-  - npm install
-
-after-install:
-  - cd packages/graphql-mirage && npm run test
-  - cd ../..
-
 before-deploy:
   - cd packages/graphql-mirage-docs && npm run build
 
 deploy:
   provider: pages
+  strategy: git
   token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
   local_dir: packages/graphql-mirage-docs/build
   verbose: true
+  on:
+    branch: master
+  edge: true # opt in to dpl v2
