@@ -14,6 +14,7 @@ type Query {
     siteFilter: String
   ): LaunchConnection!
   launch(id: ID!): Launch
+  metadata: Markdown
   me: User
 }
 
@@ -26,6 +27,8 @@ type Mutation {
   # for use with the iOS tutorial
   uploadProfileImage(file: Upload!): User
 }
+
+scalar Markdown
 
 type TripUpdateResponse {
   success: Boolean!
@@ -65,9 +68,16 @@ type User {
   profileImage: String
   gender: Gender
   dateOfBirth: Date
+  address: Address
   allergies: [String]
   trips: [Launch]!
   hobbies: [Hobby]
+}
+
+type Address {
+  street: String
+  city: String
+  country: String
 }
 
 type Mission {
