@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "documentation for mirage graphql auto-mocking took",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
