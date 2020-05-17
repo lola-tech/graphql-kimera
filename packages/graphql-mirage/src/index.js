@@ -7,6 +7,7 @@ const schemaParser = require("easygraphql-parser");
 const { memoize, mapValues } = require("./helpers");
 const { buildMocks } = require("./engine");
 const { useResolver, mergeBuilders } = require("./mockProviders");
+const { initializeStore } = require("./store");
 
 /**
  * Uses buildMocks to generate data and serve it in an Executable Schema context
@@ -68,29 +69,25 @@ function getExecutableSchema(
         mapValues(_mockQueryType(context), (val) =>
           typeof val === "function" ? val : () => val
         ),
-      Mutation: (root, args, context) =>
+      Mutation: (root, args, context) => {
         getMutationResolvers(
-          // The cache to be modified in the mutation.
-          _mockQueryType(context),
-          // The `buildMocks` function used to generate data in the mutation
-          function mutationsBuildMocks(type, scenario = {}) {
-            return buildMocks(
-              type,
-              schema,
-              {
-                // Use the mutation resolver scenario.
-                scenario,
-                // Use the predefined builders.
-                builders: mergeBuilders(
-                  customMockProviders.builders,
-                  getMemoizedDefaultMockProviders(context).builders
-                ),
-              },
-              {}
-            );
-          },
-          context // The apollo context
-        ),
+          // The store which will be used to retrieve and mutate data.
+          initializeStore(_mockQueryType(context)),
+          // The `buildMocks` function used to mock types in mutations.
+          (type, scenario = {}) =>
+            buildMocks(type, schema, {
+              // Use the mutation resolver scenario.
+              scenario,
+              // Use the predefined builders.
+              builders: mergeBuilders(
+                getMemoizedDefaultMockProviders(context).builders,
+                customMockProviders.builders
+              ),
+            }),
+          // The GraphQL context.
+          context
+        );
+      },
       ...getCustomResolvers(),
     },
     preserveResolvers: false,

@@ -22,6 +22,7 @@ const {
   isResolverScenario,
   mergeMockProviders,
 } = require("./mockProviders");
+const { initializeStore } = require("./store");
 const { DEFAULT_LIST_LENGTH, ...constants } = require("./constants");
 
 // Used to track a potentially recursive branch so we can warn the user.
@@ -95,21 +96,16 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
     // If a resolver factory has been defined in scenario,
     // make use of the resolver.
     if (resolverFactoryFn) {
-      const store = {
-        mockedField,
-        get: function () {
-          return store.mockedField;
-        },
-      };
+      const resolverStore = initializeStore(mockedField);
 
       const fieldResolver = resolverFactoryFn(
-        store.get,
+        resolverStore,
         (type, customScenario = {}) =>
           mockType(type, schema, {
             ...fieldMockProviders,
             scenario: mergeScenarios(
-              customScenario,
-              fieldMockProviders.scenario
+              fieldMockProviders.scenario,
+              customScenario
             ),
           })
       );
@@ -120,19 +116,9 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
         );
       }
 
-      fieldResolver.getData = store.get;
+      fieldResolver.__mocks = resolverStore;
 
-      // Make it so we can still update the cache value.
-      // This is useful in mutations.
-      Object.defineProperty(mockedObjectType, field.name, {
-        get() {
-          return fieldResolver;
-        },
-        set(value) {
-          store.mockedField = value;
-        },
-        enumerable: true,
-      });
+      mockedObjectType[field.name] = fieldResolver;
     } else {
       mockedObjectType[field.name] = mockedField;
     }
@@ -310,8 +296,8 @@ const mockType = memoize(
 );
 
 /**
- * Mocks a specific type, and allows definition for default and custom data
- * sources.
+ * Mocks a specific type, and allows definition for default and custom mock
+ * providers.
  *
  * @see mockType
  *
@@ -321,13 +307,8 @@ const mockType = memoize(
  * @param {Object} custom The overwriting mock providers.
  * @returns {Object} Returns the mocked Object Type.
  */
-const buildMocks = (type, schema, defaults = {}, custom = {}) =>
-  mockType(
-    type,
-    schema,
-    Object.keys(custom) ? mergeMockProviders(defaults, custom) : defaults,
-    undefined
-  );
+const buildMocks = (type, schema, defaults = {}, custom) =>
+  mockType(type, schema, mergeMockProviders(defaults, custom));
 
 module.exports = {
   mockType,

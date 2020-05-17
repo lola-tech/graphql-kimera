@@ -11,7 +11,6 @@ const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
   "utf8"
 );
-
 const schema = schemaParser(typeDefs);
 const mockQuery = ({ scenario, builders } = {}) => {
   return mockType("Query", schema, {
@@ -270,8 +269,8 @@ describe("Custom Resolvers", () => {
       scenario: {
         launches: {
           list: useResolver(
-            (getLaunches) => (_, { siteFilter }) => {
-              return getLaunches().filter((launch) => {
+            (launchesStore) => (_, { siteFilter }) => {
+              return launchesStore.get().filter((launch) => {
                 return launch.site.includes(siteFilter);
               });
             },
@@ -289,7 +288,7 @@ describe("Custom Resolvers", () => {
     expect(typeof actual.launches.list).toBe("function");
     expect(actual.launches.list(null, { siteFilter: "Odd" })).toHaveLength(2);
     // Checks if the mocked value can be updated with a setter (Useful for mutations).
-    actual.launches.list = times(5, () => ({ site: "Odd" }));
+    actual.launches.list.__mocks.update(times(5, () => ({ site: "Odd" })));
     expect(actual.launches.list(null, { siteFilter: "Odd" })).toHaveLength(5);
   });
 

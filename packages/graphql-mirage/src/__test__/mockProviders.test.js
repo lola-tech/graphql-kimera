@@ -33,7 +33,7 @@ describe("mergeScenarios", () => {
   };
 
   it("merges defaults correctly", () => {
-    const actual = mergeScenarios(customData, defaults);
+    const actual = mergeScenarios(defaults, customData);
     expect(actual.me.userName).toEqual(customData.me.userName);
     expect(actual.me.children).toHaveLength(customData.me.children.length);
     expect(actual.me.trips).toHaveLength(defaults.me.trips.length);
@@ -44,18 +44,18 @@ describe("mergeScenarios", () => {
 
   it("gets memoized by using the customData object shape", () => {
     const expected = mergeScenarios(
+      defaults,
       update(customData, {
         me: { children: { $set: [{}] } },
-      }),
-      defaults
+      })
     );
-    const actual = mergeScenarios(customData, defaults);
+    const actual = mergeScenarios(defaults, customData);
 
     expect(actual).toBe(expected);
   });
 
   it("handle nulls", () => {
-    const actual = mergeScenarios({ me: { userName: "c10b10" } }, null);
+    const actual = mergeScenarios(null, { me: { userName: "c10b10" } });
 
     expect(actual.me.userName).toBe("c10b10");
   });
@@ -74,7 +74,7 @@ describe("mergeBuilders", () => {
   };
 
   it("getBuilders: merges the custom data correctly", () => {
-    const actual = mergeBuilders(customData, defaults);
+    const actual = mergeBuilders(defaults, customData);
 
     expect(actual.city).toEqual(defaults.city);
     expect(actual.address).toEqual(customData.address);
@@ -83,8 +83,8 @@ describe("mergeBuilders", () => {
   });
 
   it("gets memoized by using the customData object shape", () => {
-    const expected = mergeBuilders({ ...customData }, defaults);
-    const actual = mergeBuilders(customData, defaults);
+    const expected = mergeBuilders(defaults, { ...customData });
+    const actual = mergeBuilders(defaults, customData);
 
     // Should have identical references if memoization worked
     expect(actual).toBe(expected);

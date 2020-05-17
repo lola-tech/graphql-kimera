@@ -7,15 +7,14 @@
     "test": "jest --collectCoverage --runInBand"
   },
   "dependencies": {
-    "casual": "1.6.2",
     "easygraphql-parser": "0.0.12",
     "graphql": "14.1.1",
     "graphql-tools": "4.0.5",
-    "immutability-helper": "3.0.1",
     "lodash": "4.17.13",
     "multikeymap": "^1.0.0"
   },
   "devDependencies": {
+    "immutability-helper": "3.0.2",
     "jest": "24.8.0"
   },
   "repository": {
