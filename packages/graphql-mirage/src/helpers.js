@@ -1,17 +1,21 @@
 const MultiKeyMap = require("multikeymap");
-
+const {
+  get,
+  isFunction,
+  isUndefined,
+  isNull,
+  isNil,
+  times,
+  mergeWith,
+  isPlainObject,
+  negate,
+  partialRight,
+  partial,
+  mapValues,
+  cloneDeep,
+  isObjectLike,
+} = require("lodash");
 const memoize = require("lodash/memoize");
-const isFunction = require("lodash/isFunction");
-const isUndefined = require("lodash/isUndefined");
-const isNull = require("lodash/isNull");
-const times = require("lodash/times");
-const get = require("lodash/get");
-const mergeWith = require("lodash/mergeWith");
-const isObjectLike = require("lodash/isObjectLike");
-const isPlainObject = require("lodash/isPlainObject");
-const negate = require("lodash/negate");
-const partialRight = require("lodash/partialRight");
-const mapValues = require("lodash/mapValues");
 
 const constants = require("./constants");
 
@@ -76,6 +80,16 @@ const getAppendedPath = (path, field, parentType) => {
   return typePrefix + path + (path ? "." : "") + field.name;
 };
 
+// Checks if two values have the same type. Considers null the same type as
+// objects and arrays.
+const haveDifferentTypes = (one, two) => {
+  return (
+    typeof one !== typeof two ||
+    (Array.isArray(one) && !Array.isArray(two)) ||
+    (isPlainObject(one) && !isPlainObject(two))
+  );
+};
+
 module.exports = {
   getEnumVal,
   getConcreteType,
@@ -88,17 +102,21 @@ module.exports = {
   isAbstractType,
   isObjectType,
   getAppendedPath,
+  haveDifferentTypes,
   // lodash
+  get,
   memoize,
   isFunction,
   isUndefined,
   isNull,
+  isNil,
   times,
-  get,
   mergeWith,
-  isObjectLike,
   isPlainObject,
   negate,
   partialRight,
+  partial,
   mapValues,
+  cloneDeep,
+  isObjectLike,
 };

@@ -1,4 +1,4 @@
-const { map, compose, first, filter } = require("lodash/fp");
+const { map } = require("lodash/fp");
 
 const {
   memoize,
@@ -7,10 +7,9 @@ const {
   mergeWith,
   isObjectLike,
   isPlainObject,
-  negate,
   times,
   isNull,
-  partialRight,
+  partial,
   get,
 } = require("./helpers");
 const { validateBuilder } = require("./validation");
@@ -52,41 +51,39 @@ const isResolverScenario = (node) => {
  * @returns {Object} Returns a scenario object.
  */
 const mergeScenarios = memoize(
-  (assignedScenario, scenario) => {
-    const firstDefinedScenario = compose([first, filter(negate(isUndefined))])([
-      assignedScenario,
-      scenario,
-    ]);
-
-    if (!isObjectLike(firstDefinedScenario)) {
-      return firstDefinedScenario;
+  (baseScenario, assignedScenario) => {
+    if (isUndefined(assignedScenario) || isUndefined(baseScenario)) {
+      return assignedScenario || baseScenario;
     }
 
-    if (
-      assignedScenario &&
-      scenario &&
-      !isObjectLike(scenario) &&
-      isObjectLike(assignedScenario)
-    ) {
+    if (isNull(assignedScenario) || isNull(baseScenario)) {
+      return assignedScenario;
+    }
+
+    if (typeof baseScenario !== typeof assignedScenario) {
       console.warn(
-        `A scenario "${JSON.stringify(
+        `The "${JSON.stringify(
           assignedScenario
-        )}" is "${typeof assignedScenario}" attempted to be merged with a "${scenario}" of type "${typeof scenario}". This is most likely a mistake.`
+        )}" scenario of type "${typeof assignedScenario}" is attempted to be merged with a "${baseScenario}" of type "${typeof baseScenario}". This is most likely a mistake.`
       );
     }
 
-    return mergeWith(assignedScenario, scenario, (defaultOption, newOption) => {
+    if (!isObjectLike(assignedScenario)) {
+      return assignedScenario;
+    }
+
+    return mergeWith(assignedScenario, baseScenario, (assigned, base) => {
       if (
         // When the merged options are primitives return the default option
-        !isPlainObject(defaultOption) ||
+        !isPlainObject(assigned) ||
         // Treat ResolverScenarios as primitives
-        isResolverScenario(defaultOption) ||
-        (!isUndefined(defaultOption) && isResolverScenario(newOption))
+        isResolverScenario(assigned) ||
+        (!isUndefined(assigned) && isResolverScenario(base))
       ) {
-        return defaultOption;
+        return assigned;
       }
 
-      return mergeScenarios(defaultOption, newOption);
+      return mergeScenarios(base, assigned);
     });
   },
   (...scenarios) => {
@@ -101,10 +98,16 @@ const mergeScenarios = memoize(
 
 /** Merges two sets of builders. */
 const mergeBuilders = memoize(
-  (customBuilders = {}, defaultBuilders = {}) => ({
-    ...defaultBuilders,
-    ...customBuilders,
-  }),
+  (defaultBuilders = {}, customBuilders) => {
+    if (!customBuilders) {
+      return defaultBuilders;
+    }
+
+    return {
+      ...defaultBuilders,
+      ...customBuilders,
+    };
+  },
   (customBuilders = {}) => {
     return ["__MERGED_BUILDERS__", ...Object.keys(customBuilders)];
   }
@@ -124,8 +127,8 @@ const mergeBuilders = memoize(
  */
 const mergeMockProviders = memoize(
   (defaults = {}, custom = {}) => ({
-    scenario: mergeScenarios(custom.scenario, defaults.scenario),
-    builders: mergeBuilders(custom.builders, defaults.builders),
+    scenario: mergeScenarios(defaults.scenario, custom.scenario),
+    builders: mergeBuilders(defaults.builders, custom.builders),
   }),
   (defaults, custom) => ["__MERGED_MOCKED_PROVIDERS__", defaults, custom]
 );
@@ -178,7 +181,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
     if (Array.isArray(scenario)) {
       // If we have a user defined array scenario,
       // merge each array element with the builderScenario
-      return map(partialRight(mergeScenarios, builderScenario))(scenario);
+      return map(partial(mergeScenarios, builderScenario))(scenario);
     } else if (!isUndefined(scenario)) {
       // If scenario is defined as something other than an array
       // return it so we can throw a TypeError at validation.
@@ -191,7 +194,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
       : undefined;
   }
 
-  return mergeScenarios(scenario, builderScenario);
+  return mergeScenarios(builderScenario, scenario);
 };
 
 module.exports = {
