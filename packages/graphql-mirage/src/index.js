@@ -69,7 +69,7 @@ function getExecutableSchema(
         mapValues(_mockQueryType(context), (val) =>
           typeof val === "function" ? val : () => val
         ),
-      Mutation: (root, args, context) => {
+      Mutation: (root, args, context) =>
         getMutationResolvers(
           // The store which will be used to retrieve and mutate data.
           initializeStore(_mockQueryType(context)),
@@ -86,8 +86,7 @@ function getExecutableSchema(
             }),
           // The GraphQL context.
           context
-        );
-      },
+        ),
       ...getCustomResolvers(),
     },
     preserveResolvers: false,
