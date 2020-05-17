@@ -1,5 +1,3 @@
-const castPath = require("lodash/_castPath");
-
 const {
   isNil,
   cloneDeep,
@@ -16,8 +14,6 @@ const { isResolverScenario } = require("./mockProviders");
  * Returns a value from store. When it encounters a resolver, it uses the
  * `getMocks` function to retrieve the stored mocked value.
  *
- * @see https://lodash.com/docs/4.17.15#get
- *
  * @param {Object} store The mocked data store.
  * @param {Array|string} path The path of value to get. Similar to lodash's get path.
  * @returns {any} The resolved value, or undefined if nothing was found.
@@ -27,8 +23,7 @@ const getFromStore = (store, path) => {
     return store;
   }
 
-  path = castPath(path, store);
-  return path.reduce((innerStore, prop) => {
+  return path.split(".").reduce((innerStore, prop) => {
     if (isNil(innerStore)) {
       return undefined;
     }
