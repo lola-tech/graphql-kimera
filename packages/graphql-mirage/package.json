@@ -1,7 +1,7 @@
 {
   "name": "@lola-tech/graphql-mirage",
   "version": "1.0.0",
-  "description": "Automocking GraphQL Engine. Name inspired from EmberCLI Mirage.",
+  "description": "Automocking GraphQL Engine",
   "main": "src/index.js",
   "scripts": {
     "test": "jest --collectCoverage --runInBand"
@@ -21,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/lola-tech/graphql-mirage.git"
   },
-  "author": "Alex Ciobica <alexandru.ciobica@lola.tech>",
+  "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lola-tech/graphql-mirage/issues"
