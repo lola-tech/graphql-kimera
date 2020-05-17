@@ -4,7 +4,7 @@ const {
 } = require("graphql-tools");
 const schemaParser = require("easygraphql-parser");
 
-const { memoize, mapValues } = require("./helpers");
+const { memoize, zipObject } = require("./helpers");
 const { buildMocks } = require("./engine");
 const { useResolver, mergeBuilders } = require("./mockProviders");
 const { initializeStore } = require("./store");
@@ -51,28 +51,46 @@ function getExecutableSchema(
     },
   });
 
-  // Generates mocks for the Query node. Essentially our initial data store.
-  const _mockQueryType = (context) => {
-    return buildMocks(
-      "Query",
-      schema,
-      getMemoizedDefaultMockProviders(context),
-      customMockProviders
-    );
-  };
+  // Creates a unique global store that's used in queries, and that's passed to
+  // resolvers.
+  const getGlobalStore = memoize(
+    (context) => {
+      const mockedQuery = buildMocks(
+        "Query",
+        schema,
+        getMemoizedDefaultMockProviders(context),
+        customMockProviders
+      );
+      return {
+        store: initializeStore(mockedQuery),
+        queries: Object.keys(mockedQuery),
+      };
+    },
+    () => ["__GLOBAL_STORE__"]
+  );
 
   // Add the mocks to the exectuable schema
   addMockFunctionsToSchema({
     schema: executableSchema,
     mocks: {
-      Query: (root, args, context) =>
-        mapValues(_mockQueryType(context), (val) =>
-          typeof val === "function" ? val : () => val
-        ),
-      Mutation: (root, args, context) =>
-        getMutationResolvers(
+      Query: (root, args, context) => {
+        const { queries, store } = getGlobalStore(context);
+        return zipObject(
+          queries,
+          queries.map((queryName) => {
+            const mockedQueryField = store.get(queryName);
+            return typeof mockedQueryField === "function"
+              ? mockedQueryField
+              : // Getting anew in order to make sure
+                // changes from mutations will propagate.
+                () => store.get(queryName);
+          })
+        );
+      },
+      Mutation: (root, args, context) => {
+        return getMutationResolvers(
           // The store which will be used to retrieve and mutate data.
-          initializeStore(_mockQueryType(context)),
+          getGlobalStore(context).store,
           // The `buildMocks` function used to mock types in mutations.
           (type, scenario = {}) =>
             buildMocks(type, schema, {
@@ -86,7 +104,8 @@ function getExecutableSchema(
             }),
           // The GraphQL context.
           context
-        ),
+        );
+      },
       ...getCustomResolvers(),
     },
     preserveResolvers: false,

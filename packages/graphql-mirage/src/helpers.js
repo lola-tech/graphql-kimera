@@ -14,6 +14,7 @@ const {
   mapValues,
   cloneDeep,
   isObjectLike,
+  zipObject,
 } = require("lodash");
 const memoize = require("lodash/memoize");
 
@@ -119,4 +120,5 @@ module.exports = {
   mapValues,
   cloneDeep,
   isObjectLike,
+  zipObject,
 };

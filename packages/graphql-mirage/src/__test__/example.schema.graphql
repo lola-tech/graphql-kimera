@@ -36,7 +36,7 @@ input CreateRocketInput {
 }
 
 type CreateRocketPayload {
-  rocket: Rocket
+  rockets: [Rocket]
   successful: Boolean!
 }
 
