@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Mirage',
+  title: 'Kimera',
   tagline: 'A tool for building mock servers with precision',
   url: 'https://lola-tech.github.io',
   baseUrl: '/graphql-kimera/',
@@ -8,9 +8,9 @@ module.exports = {
   projectName: 'graphql-kimera',
   themeConfig: {
     navbar: {
-      title: 'Mirage',
+      title: 'Kimera',
       logo: {
-        alt: 'Mirage Logo',
+        alt: 'Kimera Logo',
         src: 'img/logo-dark.png',
       },
       links: [
@@ -74,7 +74,7 @@ module.exports = {
       //     ],
       //   },
       // ],
-      copyright: `Copyright © ${new Date().getFullYear()} lola.tech Mirage`,
+      copyright: `Copyright © ${new Date().getFullYear()} lola.tech Kimera`,
     },
   },
   presets: [
