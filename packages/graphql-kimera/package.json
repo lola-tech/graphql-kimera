@@ -19,7 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lola-tech/graphql-kimera.git"
+    "url": "https://github.com/lola-tech/graphql-kimera.git",
+    "directory": "packages/graphql-kimera"
   },
   "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
   "license": "ISC",
