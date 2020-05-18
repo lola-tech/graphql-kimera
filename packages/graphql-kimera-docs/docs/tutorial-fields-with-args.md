@@ -24,7 +24,7 @@ type Query {
 # ...
 ```
 
-To deal with the newly added `personas` field with arguments, Mirage allows us to write field resolvers in our Object Type Builders.
+To deal with the newly added `personas` field with arguments, Kimera allows us to write field resolvers in our Object Type Builders.
 
 ```javascript
 // ...
@@ -44,11 +44,11 @@ const typeBuilders = {
 // ..
 ```
 
-The `personasResolver` function needs access to the list of available `personas` in order to do filtering, so Mirage conveniently passes a `getPersonas` function which returns the total list of available personas to our resolver.
+The `personasResolver` function needs access to the list of available `personas` in order to do filtering, so Kimera conveniently passes a `getPersonas` function which returns the total list of available personas to our resolver.
 
 > **Note**
 >
-> You can read more about the fields resolvers syntax on the [Object Type Builders concepts page](/graphql-mirage/docs/object-type-builders#fields-with-arguments).
+> You can read more about the fields resolvers syntax on the [Object Type Builders concepts page](/graphql-kimera/docs/object-type-builders#fields-with-arguments).
 
 We have our resolver in place, but there seems to be a problem. Inspecting the result of the query that returns all cities and all personas...
 
@@ -90,7 +90,7 @@ const typeBuilders = {
 
 > **Important Note**
 >
-> Mirage doesn't actually link the `city` field to an object in the `cities` list. All it does is that when it generates a persona, it will generate another city with a shape that respects the one set in the Scenario. Internally, the object that you see as part of the `cities` list result, and the ones set as `city` fields on `Persona`s, have different references.
+> Kimera doesn't actually link the `city` field to an object in the `cities` list. All it does is that when it generates a persona, it will generate another city with a shape that respects the one set in the Scenario. Internally, the object that you see as part of the `cities` list result, and the ones set as `city` fields on `Persona`s, have different references.
 >
 > Understanding this is important when working with mutations, because as a consequence, in some situations we might need to update separate objects in the `Query` tree even though they might seem the same from an UI point of view.
 >
@@ -98,4 +98,4 @@ const typeBuilders = {
 
 Links:
 
-- Read more on [how field resolvers work in Object Type Builders](/graphql-mirage/docs/object-type-builders#fields-with-arguments)
+- Read more on [how field resolvers work in Object Type Builders](/graphql-kimera/docs/object-type-builders#fields-with-arguments)

@@ -27,7 +27,7 @@ schema {
 # ...
 ```
 
-In order to pass a resolver for that mutation to Mirage, we need to pass a [getMutationResolvers function](/graphql-mirage/docs/api-get-executable-schema#getmutationresolverscache-buildmocks-context) as an argument to `getExecutableSchema`. The `getMutationResolvers` function needs to return an object with [resolvers](/graphql-mirage/docs/glossary#resolver) for all mutation we want to handle:
+In order to pass a resolver for that mutation to Kimera, we need to pass a [getMutationResolvers function](/graphql-kimera/docs/api-get-executable-schema#getmutationresolverscache-buildmocks-context) as an argument to `getExecutableSchema`. The `getMutationResolvers` function needs to return an object with [resolvers](/graphql-kimera/docs/glossary#resolver) for all mutation we want to handle:
 
 ```javascript
 // ...
@@ -60,8 +60,8 @@ const executableSchema = getExecutableSchema(
 
 The `getMutationResolvers` function receives:
 
-- a reference to the data `Query` tree as the [`cache` argument](/graphql-mirage/docs/api-get-executable-schema#cache)
-- the [`buildMocks`](/graphql-mirage/docs/api-build-mocks) function that allows us to build a new object with generated data from a specific Object Type. It accepts the `type` name, and a [Scenario](/graphql-mirage/docs/scenario) which specifies what fields need to be set.
+- a reference to the data `Query` tree as the [`cache` argument](/graphql-kimera/docs/api-get-executable-schema#cache)
+- the [`buildMocks`](/graphql-kimera/docs/api-build-mocks) function that allows us to build a new object with generated data from a specific Object Type. It accepts the `type` name, and a [Scenario](/graphql-kimera/docs/scenario) which specifies what fields need to be set.
 
 The resolver:
 
@@ -111,7 +111,7 @@ function getMutationResolvers(cache, buildMocks) {
 // ...
 ```
 
-Running this code and executing an `addPersona` mutation will result in a `cache.personas is not iterable` error. Can you figure out why? A clue can be found by comparing [the `cities` builder](/graphql-mirage/docs/tutorial-fields-with-args#faking-dependencies) to [the `personas` builder](/graphql-mirage/docs/tutorial-fields-with-args).
+Running this code and executing an `addPersona` mutation will result in a `cache.personas is not iterable` error. Can you figure out why? A clue can be found by comparing [the `cities` builder](/graphql-kimera/docs/tutorial-fields-with-args#faking-dependencies) to [the `personas` builder](/graphql-kimera/docs/tutorial-fields-with-args).
 
 ```javascript
 const typeBuilders = {
@@ -137,17 +137,17 @@ type Query {
 
 As you may now remember, `personas` is a field that accepts arguments, which prompted us to implement a resolver factory (ie. a function that returns a resolver function) for it. The builder for the `cities` field is just an Array.
 
-This means that when building the `Query` type data tree (the one that gets passed down as the `cache` argument in our `buildMocks` function), Mirage sets static values only for fields without any arguments.
+This means that when building the `Query` type data tree (the one that gets passed down as the `cache` argument in our `buildMocks` function), Kimera sets static values only for fields without any arguments.
 
 However, when a field meets the following two conditions...
 
 - the field has arguments,
-- and Mirage can find a resolver factory in an Object Type builder for it,
+- and Kimera can find a resolver factory in an Object Type builder for it,
   ...the value set in the `cache` for the field is the resolver function.
 
 In our case, our `personas` field from the `Query` type is a field with arguments, and Miage can find a resolver factory function for it in the `Query` Object Type Builder, so it sets its value to the `personasResolver` function.
 
-That explains our `cache.personas is not iterable` error, since the spread operator works on [iterables](https://javascript.info/iterable), and the `personasResolver` function is not an iterable. For these cases, Mirage adds a handy `getData` function on the resolver function that allows us to get the data.
+That explains our `cache.personas is not iterable` error, since the spread operator works on [iterables](https://javascript.info/iterable), and the `personasResolver` function is not an iterable. For these cases, Kimera adds a handy `getData` function on the resolver function that allows us to get the data.
 
 ```javascript
 // ...
@@ -177,4 +177,4 @@ function getMutationResolvers(cache, buildMocks) {
 
 Running the mutation again will return the expected result.
 
-This concludes our tutorial. You should now be able to conquer the world. If you can't, open an issue in the [graphql-mirage repo](https://github.com/lola-tech/graphql-mirage).
+This concludes our tutorial. You should now be able to conquer the world. If you can't, open an issue in the [graphql-kimera repo](https://github.com/lola-tech/graphql-kimera).

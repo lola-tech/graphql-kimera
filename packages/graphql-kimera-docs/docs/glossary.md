@@ -8,21 +8,21 @@ Definitions of terms you'll be encountering across the documentation
 
 # Builder
 
-Builders are functions that used to generate data for specific fields in Object Types. When Mirage walks the `Query` Object Type tree to generate data, it will use these functions to generate data for fields.
+Builders are functions that used to generate data for specific fields in Object Types. When Kimera walks the `Query` Object Type tree to generate data, it will use these functions to generate data for fields.
 
-Read more about the various builders in the [Data Sources section](/graphql-mirage/docs/data-sources).
+Read more about the various builders in the [Data Sources section](/graphql-kimera/docs/data-sources).
 
 # Data Source
 
-Refer to [scenarios](/graphql-mirage/docs/scenarios), [Object Type Builders](/graphql-mirage/docs/object-type-builders), [Field Name Builders](field-name-builders) or [Scalar Type Builders](/graphql-mirage/docs/scalar-type-builders), which are all used to determine how to generate data.
+Refer to [scenarios](/graphql-kimera/docs/scenarios), [Object Type Builders](/graphql-kimera/docs/object-type-builders), [Field Name Builders](field-name-builders) or [Scalar Type Builders](/graphql-kimera/docs/scalar-type-builders), which are all used to determine how to generate data.
 
-Read more about them in the [Data Sources section](/graphql-mirage/docs/data-sources).
+Read more about them in the [Data Sources section](/graphql-kimera/docs/data-sources).
 
 # Scenario
 
 Scenarios are objects that mirror the structure of the query response tree, and are used to specify values for specific fields.
 
-Read more about them in the [Scenario section](/graphql-mirage/docs/scenarios).
+Read more about them in the [Scenario section](/graphql-kimera/docs/scenarios).
 
 # Context
 

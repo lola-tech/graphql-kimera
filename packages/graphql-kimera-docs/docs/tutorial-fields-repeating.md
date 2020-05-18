@@ -26,11 +26,11 @@ type Persona {
 # ...
 ```
 
-In order to generate something that looks like an address for those fields, we'd need to add them each both to their respective Object Type Builders like we did with `name` for `City` in the [second part of the tutorial](/graphql-mirage/docs/tutorial-first-builder), but that introduces what seems like needles repetition.
+In order to generate something that looks like an address for those fields, we'd need to add them each both to their respective Object Type Builders like we did with `name` for `City` in the [second part of the tutorial](/graphql-kimera/docs/tutorial-first-builder), but that introduces what seems like needles repetition.
 
 Moreover, what if we grow our schema with more types that require and address field? This could be address with some indirection, ie. adding an `Address` type, but lets assume we want the field to be a built-in scalar.
 
-For these cases Mirage allows you to define [Field Name Builders](/graphql-mirage/docs/field-name-builders).
+For these cases Kimera allows you to define [Field Name Builders](/graphql-kimera/docs/field-name-builders).
 
 ```javascript
 // ...
@@ -66,4 +66,4 @@ query {
 
 Links:
 
-- Read more on [how Field Name Builders work](/graphql-mirage/docs/field-name-builders)
+- Read more on [how Field Name Builders work](/graphql-kimera/docs/field-name-builders)

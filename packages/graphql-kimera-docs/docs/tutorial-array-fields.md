@@ -23,7 +23,7 @@ type Airport {
 # ...
 ```
 
-Lets say we want our mock server to return two airports for our city, and the first airport be called `Avram Iancu`. To do that, we can use a [Scenario](/graphql-mirage/docs/scenarios) for our field.
+Lets say we want our mock server to return two airports for our city, and the first airport be called `Avram Iancu`. To do that, we can use a [Scenario](/graphql-kimera/docs/scenarios) for our field.
 
 ```javascript
 // ...
@@ -62,5 +62,5 @@ Running a `city` `query` will predictably return two airports:
 
 Links:
 
-- Read more on [how Object Type Builders work](/graphql-mirage/docs/object-type-builders).
-- Read more on [how Scenarios work](/graphql-mirage/docs/scenarios).
+- Read more on [how Object Type Builders work](/graphql-kimera/docs/object-type-builders).
+- Read more on [how Scenarios work](/graphql-kimera/docs/scenarios).

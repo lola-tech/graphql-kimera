@@ -1,16 +1,16 @@
 module.exports = {
-  title: 'Mirage',
+  title: 'Kimera',
   tagline: 'A tool for building mock servers with precision',
   url: 'https://lola-tech.github.io',
-  baseUrl: '/graphql-mirage/',
+  baseUrl: '/graphql-kimera/',
   favicon: 'img/favicon.ico',
   organizationName: 'lola-tech',
-  projectName: 'graphql-mirage',
+  projectName: 'graphql-kimera',
   themeConfig: {
     navbar: {
-      title: 'Mirage',
+      title: 'Kimera',
       logo: {
-        alt: 'Mirage Logo',
+        alt: 'Kimera Logo',
         src: 'img/logo-dark.png',
       },
       links: [
@@ -21,7 +21,7 @@ module.exports = {
           position: 'left',
         },
         {
-          href: 'https://github.com/lola-tech/graphql-mirage',
+          href: 'https://github.com/lola-tech/graphql-kimera',
           label: 'GitHub',
           position: 'right',
         },
@@ -65,7 +65,7 @@ module.exports = {
       //       },
       //       {
       //         label: 'GitHub',
-      //         href: 'https://github.com/lola-tech/graphql-mirage',
+      //         href: 'https://github.com/lola-tech/graphql-kimera',
       //       },
       //       {
       //         label: 'Twitter',
@@ -74,7 +74,7 @@ module.exports = {
       //     ],
       //   },
       // ],
-      copyright: `Copyright © ${new Date().getFullYear()} lola.tech Mirage`,
+      copyright: `Copyright © ${new Date().getFullYear()} lola.tech Kimera`,
     },
   },
   presets: [
@@ -84,7 +84,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/lola-tech/graphql-mirage/edit/master/website/',
+            'https://github.com/lola-tech/graphql-kimera/edit/master/website/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

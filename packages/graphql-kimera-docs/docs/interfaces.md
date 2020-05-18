@@ -6,7 +6,7 @@ sidebar_label: Interfaces
 
 Use \_\_typename to specify a concrete type for an abstract field
 
-When Mirage walks the `Query` tree to generate data, and it encounters a field that's an Object Type, it automatically sets the `__typename` field to its type name.
+When Kimera walks the `Query` tree to generate data, and it encounters a field that's an Object Type, it automatically sets the `__typename` field to its type name.
 
 When the type of the field is an interface, absent any instruction, it selects the first type in the schema that implements that interface, and generates data for that field as if it were that selected type.
 
@@ -35,7 +35,7 @@ type Query {
 
 For the example above, if not instructed otherwise, the menu query will return an array composed of `ExpandableMenuItem`s.
 
-We can tell Mirage what concrete types to build for our interface fields by setting the `__typename` in the field scenario.
+We can tell Kimera what concrete types to build for our interface fields by setting the `__typename` in the field scenario.
 
 ```javascript
 {
@@ -43,4 +43,4 @@ We can tell Mirage what concrete types to build for our interface fields by sett
 }
 ```
 
-The scenario above will force Mirage to generate a menu with exactly five `NavigationMenuItem`s and no `ExpandableMenuItem`s.
+The scenario above will force Kimera to generate a menu with exactly five `NavigationMenuItem`s and no `ExpandableMenuItem`s.
