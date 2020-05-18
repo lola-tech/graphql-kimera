@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "documentation for mirage graphql auto-mocking took",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
-    "test": "echo test"
+    "test": "echo \"Docusaurus doesn't need to run any test!\""
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.50",

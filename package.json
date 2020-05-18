@@ -22,10 +22,12 @@
     }
   },
   "scripts": {
-    "release": "lerna publish",
     "postinstall": "lerna bootstrap",
-    "prerelease": "eslint .",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "lerna:publish": "lerna publish --yes --dist-tag latest --create-release github --conventional-commits",
+    "publish:release": "npm run lerna:publish -- -m 'chore: publish release'",
+    "publish:prerelease": "npm run lerna:publish -- -m 'chore: publish prerelease' --conventional-prerelease",
+    "publish:graduate": "npm run lerna:publish -- -m 'chore: graduate prerelease' --conventional-graduate"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",

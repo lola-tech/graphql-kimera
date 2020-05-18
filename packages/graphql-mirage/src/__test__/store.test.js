@@ -24,8 +24,7 @@ describe("store.get", () => {
     resolver.__mocks = initializeStore([{ inResolver: deepResolver }]);
     deepResolver.__mocks = initializeStore({ inDeepResolver: [42] });
     const store = initializeStore({ one: { two: resolver } });
-
-    expect(store.get("one.two[0].inResolver.inDeepResolver[0]")).toBe(42);
+    expect(store.get("one.two.0.inResolver.inDeepResolver.0")).toBe(42);
   });
 });
 

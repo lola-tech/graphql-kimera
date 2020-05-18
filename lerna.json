@@ -1,4 +1,10 @@
 {
   "packages": ["packages/*"],
-  "version": "independent"
+  "version": "independent",
+  "command": {
+    "version": {
+      "allowBranch": "master"
+    },
+    "noPrivate": true
+  }
 }
