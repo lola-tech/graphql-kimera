@@ -14,20 +14,33 @@ type Query {
     siteFilter: String
   ): LaunchConnection!
   launch(id: ID!): Launch
+  metadata: Markdown
+  rockets: [Rocket]
   me: User
 }
 
 type Mutation {
   # if false, signup failed -- check errors
-  bookTrips(launchIds: [ID]!): TripUpdateResponse!
+  bookTrips(launchIds: [ID]!): TripUpdatePayload!
+  createRocket(input: CreateRocketInput!): CreateRocketPayload!
   # if false, cancellation failed -- check errors
-  cancelTrip(launchId: ID!): TripUpdateResponse!
+  cancelTrip(launchId: ID!): TripUpdatePayload!
   login(email: String): String # login token
-  # for use with the iOS tutorial
-  uploadProfileImage(file: Upload!): User
 }
 
-type TripUpdateResponse {
+scalar Markdown
+
+input CreateRocketInput {
+  name: String!
+  type: String!
+}
+
+type CreateRocketPayload {
+  rockets: [Rocket]
+  successful: Boolean!
+}
+
+type TripUpdatePayload {
   success: Boolean!
   message: String
   launches: [Launch]
@@ -65,9 +78,16 @@ type User {
   profileImage: String
   gender: Gender
   dateOfBirth: Date
+  address: Address
   allergies: [String]
   trips: [Launch]!
   hobbies: [Hobby]
+}
+
+type Address {
+  street: String
+  city: String
+  country: String
 }
 
 type Mission {

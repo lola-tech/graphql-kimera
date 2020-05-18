@@ -1,46 +1,35 @@
 const {
   makeExecutableSchema,
   addMockFunctionsToSchema,
-} = require('graphql-tools');
-const schemaParser = require('easygraphql-parser');
-const { mapValues, memoize } = require('lodash');
+} = require("graphql-tools");
+const schemaParser = require("easygraphql-parser");
 
-const { mockType, defaultBuiltInScalarBuilders } = require('./engine');
-const { getScenarioFn, mergeDataSources } = require('./helpers');
+const { memoize, zipObject } = require("./helpers");
+const { buildMocks } = require("./engine");
+const { useResolver, mergeBuilders } = require("./mockProviders");
+const { initializeStore } = require("./store");
 
-// Returns the same cached result if the `type`, `defaults`, `custom`,
-// and `selector` arguments do not change.
-const buildMocks = memoize(
-  function buildMocks(type, schema, defaults = {}, custom = {}) {
-    // if (type !== 'Query' && selector) {
-    //   // When we use `buildMocks` to generate Object Types (in the context of mutations)
-    //   // we want to sub-select a part of the scenario in order to have `mockType`
-    //   // walk the correct tree of scenario data.
-    //   defaults = {
-    //     ...defaults,
-    //     scenario: jmespath.search(defaults.scenario, selector),
-    //   };
-    // }
-
-    return mockType(type, schema, mergeDataSources(defaults, custom));
-  },
-  (type, _, defaults, custom, selector) =>
-    JSON.stringify({
-      type,
-      defaults,
-      custom,
-      selector,
-    })
-);
-
-// Uses buldMocks to generate data and serve it in an Executable Schema context
+/**
+ * Uses buildMocks to generate data and serve it in an Executable Schema context
+ *
+ * @see ResolverScenario
+ * @public
+ *
+ * @param {string} typeDefs The Schema SDL string.
+ * @param {Function} getDefaultMockProviders A function that gets the context as
+ * an argument, and returns an object with the mock providers
+ * @param {Object} customMockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
+ * @param {Function} getMutationResolvers A function that returns an object with resolvers for mutations.
+ * @param {Function} getCustomResolvers A function that returns a list of custom resolver.
+ * @returns {Object} An Executable Schema object.
+ */
 function getExecutableSchema(
   // Schema SDL string
   typeDefs,
-  // fn (context) => ({ scenario: ..., nameBuilders: ..., typeBuilders: ... })
-  getDefaultDataSources = () => ({}),
-  // { scenario: ..., nameBuilders: ..., typeBuilders: ... }
-  customDataSources = {},
+  // fn (context) => ({ scenario: ..., builders: ... })
+  getDefaultMockProviders = () => ({}),
+  // { scenario: ..., builders: ... }
+  customMockProviders = {},
   // fn (mockedQueryType, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
   getMutationResolvers = () => ({}),
   // fn () => ({ URI: () => {...}, ... })
@@ -49,19 +38,9 @@ function getExecutableSchema(
   // Parse the schema string into a custom data structure
   const schema = schemaParser(typeDefs);
 
-  const getMemoizedDefaultDataSources = memoize(
-    (context) => {
-      const defaultDataSources = getDefaultDataSources(context);
-
-      return {
-        ...defaultDataSources,
-        typeBuilders: {
-          ...defaultBuiltInScalarBuilders,
-          ...defaultDataSources.typeBuilders,
-        },
-      };
-    },
-    (context) => JSON.stringify(context)
+  const getMemoizedDefaultMockProviders = memoize(
+    getDefaultMockProviders,
+    (context) => ["__DEFAULT_MOCK_PROVIDERS__", JSON.stringify(context)]
   );
 
   // Start building the apollo executable schema
@@ -72,52 +51,61 @@ function getExecutableSchema(
     },
   });
 
-  const _getBuildMocksFn = (context) =>
-    // Partial application of buildMocks to be passed down to the Mutation resolvers
-    // This function will be called to generate data for a certain type in the Mutation
-    // resolver
-    function buildMocksForType(type, selector = '', scenario = {}) {
-      return buildMocks(
-        type,
+  // Creates a unique global store that's used in queries, and that's passed to
+  // resolvers.
+  const getGlobalStore = memoize(
+    (context) => {
+      const mockedQuery = buildMocks(
+        "Query",
         schema,
-        // When generating data for a Type in a mutation, see as default the merged version of
-        // default data sources, and custom data sources. The custom data sources is what comes
-        // from a frontend app in a test, or in Mockery.
-        mergeDataSources(
-          getMemoizedDefaultDataSources(context),
-          customDataSources
-        ),
-        // This scenario is provided in the mutation to overwrite the above defaults.
-        { scenario },
-        selector
+        getMemoizedDefaultMockProviders(context),
+        customMockProviders
       );
-    };
-
-  // Generates mocks for the Query node. Essentially our initial data store.
-  const _getMockedQuery = (context) => {
-    return buildMocks(
-      'Query',
-      schema,
-      getMemoizedDefaultDataSources(context),
-      customDataSources
-    );
-  };
+      return {
+        store: initializeStore(mockedQuery),
+        queries: Object.keys(mockedQuery),
+      };
+    },
+    () => ["__GLOBAL_STORE__"]
+  );
 
   // Add the mocks to the exectuable schema
   addMockFunctionsToSchema({
     schema: executableSchema,
     mocks: {
-      Query: (root, args, context) =>
-        mapValues(_getMockedQuery(context), (val) =>
-          typeof val === 'function' ? val : () => val
-        ),
-
-      Mutation: (root, args, context) =>
-        getMutationResolvers(
-          _getMockedQuery(context), // The cache to be modified in the mutation
-          _getBuildMocksFn(context), // The `buildMocks` function used to generate data in the mutation
-          context // The apollo context
-        ),
+      Query: (root, args, context) => {
+        const { queries, store } = getGlobalStore(context);
+        return zipObject(
+          queries,
+          queries.map((queryName) => {
+            const mockedQueryField = store.get(queryName);
+            return typeof mockedQueryField === "function"
+              ? mockedQueryField
+              : // Getting anew in order to make sure
+                // changes from mutations will propagate.
+                () => store.get(queryName);
+          })
+        );
+      },
+      Mutation: (root, args, context) => {
+        return getMutationResolvers(
+          // The store which will be used to retrieve and mutate data.
+          getGlobalStore(context).store,
+          // The `buildMocks` function used to mock types in mutations.
+          (type, scenario = {}) =>
+            buildMocks(type, schema, {
+              // Use the mutation resolver scenario.
+              scenario,
+              // Use the predefined builders.
+              builders: mergeBuilders(
+                getMemoizedDefaultMockProviders(context).builders,
+                customMockProviders.builders
+              ),
+            }),
+          // The GraphQL context.
+          context
+        );
+      },
       ...getCustomResolvers(),
     },
     preserveResolvers: false,
@@ -127,8 +115,6 @@ function getExecutableSchema(
 }
 
 module.exports = {
-  mergeScenario: (defaultScenario, customScenario) =>
-    getScenarioFn(defaultScenario)(customScenario),
-  buildMocks,
+  useResolver,
   getExecutableSchema,
 };

@@ -1,279 +1,319 @@
-const { merge, times, random } = require('lodash');
-const MultiKeyMap = require('multikeymap');
-
+const { validateFieldScenario } = require("./validation");
 const {
-  hasProp,
-  isUndefined,
-  getDebugger,
   getEnumVal,
   getConcreteType,
   isEnumType,
-  isScalarType,
+  isCustomScalarType,
+  isObjectType,
+  isAbstractType,
   isBuiltInScalarType,
-  isInterfaceType,
-  isUnionType,
-  getUnionVal,
-  // debugCacheDuplicates,
-} = require('./helpers');
-const constants = require('./constants');
+  getAppendedPath,
+  memoize,
+  isFunction,
+  isUndefined,
+  isNull,
+  times,
+  get,
+} = require("./helpers");
+const {
+  mergeScenarios,
+  reduceToScenario,
+  useResolver,
+  isResolverScenario,
+  mergeMockProviders,
+} = require("./mockProviders");
+const { initializeStore } = require("./store");
+const { DEFAULT_LIST_LENGTH, ...constants } = require("./constants");
 
-const DEFAULT_ARRAY_LENGTH = 3;
-const DEBUGGING = false;
-const debug = getDebugger(DEBUGGING);
+// Used to track a potentially recursive branch so we can warn the user.
+let recursiveBranch = "";
+const RECURSIVITY_DEPTH_LIMIT = 200;
 
-const defaultBuiltInScalarBuilders = {
-  [constants.ID]: () => Math.random().toString(36).substr(2, 9),
-  [constants.string]: () => 'GENERATED_STRING',
-  [constants.int]: () => random(0, 1000),
-  [constants.float]: () => random(0.1, 1000.1),
-  [constants.boolean]: () => [true, false][random(0, 1)],
+const defaultMockProviders = {
+  [constants.ID]: "Mocked ID Scalar",
+  [constants.string]: "Mocked String Scalar",
+  [constants.int]: 42,
+  [constants.float]: 4.2,
+  [constants.boolean]: true,
+  [constants.customScalar]: "Mocked Custom Scalar",
 };
 
-function createData(field, schema, dataSources) {
-  const { scenario, nameBuilders, typeBuilders } = dataSources;
+/**
+ * Mocks an Object Type by recursively mocking each of its fields.
+ *
+ * @see mockType
+ *
+ * @param {String} type The type that needs to be mocked
+ * @param {Object} schema The parsed schema.
+ * @param {Object} mockProviders An object with the user-defined Scenario and
+ * the Builders.
+ * @param {Object} meta An object containing meta information about the mocked
+ * type. For the complete list of meta keys @see mockType.
+ * @returns {Object} Returns the mocked Object Type.
+ */
+const mockObjectType = (type, schema, mockProviders, meta) => {
+  // Initialize the object that will hold the mocked data.
+  const mockedObjectType = {
+    __typename: type,
+  };
 
-  let arrayLength =
-    field.isArray && Array.isArray(scenario)
-      ? scenario.length
-      : DEFAULT_ARRAY_LENGTH;
+  // Mock every Object Type field
+  schema[type].fields.forEach((field) => {
+    // Compute a new string path for this field to be used in validation errors.
+    // e.g. Query:me.address.city
+    const fieldPath = getAppendedPath(meta.path, field, type);
 
-  // Hold the function used to generate array fields in `arrayBuilderFn`, and
-  // the value in `singleValue` for non-array fields.
-  let arrayBuilderFn, singleValue;
-  // Generating data only at the leafs of the tree, ie. when the field
-  // is a built-in scalar (ID, String, Int, Float, Boolean), a custom scalar , or an enum.
-  if (
-    isBuiltInScalarType(field.type) ||
-    isEnumType(field.type, schema) ||
-    isScalarType(field.type, schema)
-  ) {
-    if (!isUndefined(scenario)) {
-      arrayBuilderFn = function customArrayBuilder(index) {
-        if (!Array.isArray(scenario)) {
-          throw new Error(
-            `Scenario value for "${field.name}" expected to be array.`
-          );
-        }
-        return scenario[index];
-      };
-      singleValue = () => scenario;
-    } else if (nameBuilders && nameBuilders[field.name]) {
-      arrayBuilderFn = function fieldNameArrayBuilder() {
-        const builder = nameBuilders[field.name];
-        return typeof builder === 'function' ? builder() : builder;
-      };
-      singleValue = arrayBuilderFn;
-    } else if (isEnumType(field.type, schema)) {
-      arrayBuilderFn = function enumArrayBuilder() {
-        return getEnumVal(field.type, schema);
-      };
-      singleValue = arrayBuilderFn;
-    } else if (typeBuilders[field.type]) {
-      // TODO: Merge with nameBuilders if branch after tests pass,
-      // but don't forget that we can always expect typeBuilders,
-      // but nameBuilders may not exist (useful for the if condition)
-      arrayBuilderFn = function fieldTypeArrayBuilder() {
-        const builder = typeBuilders[field.type];
-        return typeof builder === 'function' ? builder() : builder;
-      };
-      singleValue = arrayBuilderFn;
-      // arrayBuilderFn = typeBuilders[field.type];
-      // singleValue = arrayBuilderFn();
-    } else if (isScalarType(field.type, schema)) {
-      arrayBuilderFn = function defaultScalarArrayBuilder() {
-        return 'Random Scalar Value';
-      };
-      singleValue = arrayBuilderFn;
-    }
-  } else if (schema[field.type]) {
-    // If it's a Object Type, ie. defined by us in our schema, mock it.
-    // The mocking function will run this function for each of the type fields.
-    arrayBuilderFn = function objectTypeArrayBuilder(index) {
-      const itemScenario = scenario ? scenario[index] : scenario;
-      return mockType(
-        field.type,
-        schema,
-        {
-          ...dataSources,
-          scenario: itemScenario,
-        },
-        index
+    if (
+      meta.depth > RECURSIVITY_DEPTH_LIMIT &&
+      (!recursiveBranch || !meta.path.includes(recursiveBranch))
+    ) {
+      console.warn(
+        `Risk of "Maximum call stack size exceeded" error. Mocking depth exceeded "${RECURSIVITY_DEPTH_LIMIT}". This might be caused by a recursive field. You need to explicitly mock this in order to limit depth.\nWarning triggered by mocking: "${meta.path}...".`
       );
+      recursiveBranch = meta.path;
+    }
+
+    let fieldScenario = get(mockProviders.scenario, field.name);
+    const fieldMockProviders = {
+      ...mockProviders,
+      scenario: fieldScenario,
     };
-    singleValue = () => mockType(field.type, schema, dataSources);
-  }
 
-  return field.isArray ? times(arrayLength, arrayBuilderFn) : singleValue();
-}
+    // Custom resolvers are only allowed in Object Type fields
+    let resolverFactoryFn = undefined;
+    if (isResolverScenario(fieldScenario)) {
+      resolverFactoryFn = fieldScenario.resolverFactory;
+      fieldMockProviders.scenario = fieldScenario.scenario;
+    }
 
-const cacheStore = new MultiKeyMap();
-cacheStore.getCacheKeyFromField = (field, arrayIndex) => {
-  // TODO: In the future, add noNullArray and noNull if these
-  // will matter for data generation.
-  if (field.isArray) {
-    return `[${field.type}]`;
-  }
+    const mockedField = mockType(field.type, schema, fieldMockProviders, {
+      ...field,
+      arrayIndex: meta.arrayIndex,
+      depth: meta.depth + 1,
+      path: fieldPath,
+    });
 
-  // Make ids of items part of a list unique
-  return Number.isInteger(arrayIndex) && field.type === 'ID'
-    ? `${field.type}[${arrayIndex}]`
-    : field.type;
+    // If a resolver factory has been defined in scenario,
+    // make use of the resolver.
+    if (resolverFactoryFn) {
+      const resolverStore = initializeStore(mockedField);
+
+      const fieldResolver = resolverFactoryFn(
+        resolverStore,
+        (type, customScenario = {}) =>
+          mockType(type, schema, {
+            ...fieldMockProviders,
+            scenario: mergeScenarios(
+              fieldMockProviders.scenario,
+              customScenario
+            ),
+          })
+      );
+
+      if (!isFunction(fieldResolver)) {
+        throw new TypeError(
+          `The argument passed to "useResolver" for field "${meta.path}" is a simple function "() => {}", and needs to be a resolver factory function "() => () => {}"`
+        );
+      }
+
+      fieldResolver.__mocks = resolverStore;
+
+      mockedObjectType[field.name] = fieldResolver;
+    } else {
+      mockedObjectType[field.name] = mockedField;
+    }
+  });
+
+  return mockedObjectType;
 };
 
-// Takes a schema type, and mocks data for each of its fields by using
-// the `createData` function.
-function mockType(type, schema, dataSources, arrayIndex = false) {
-  let { scenario, nameBuilders, typeBuilders } = dataSources;
+/**
+ * Decides on a GraphQL Type "__typename" value by having a strategy for
+ * abstract fields: If a value is set in a mock provider, select that, otherise,
+ * select the first concrete type defined in the schema.
+ *
+ * @see mockType
+ *
+ * @param {String} type The GraphQL Type name for which we need the __typename
+ * @param {Object} schema The parsed schema.
+ * @param {Object} scenario The scenario for field attempted to be mocked.
+ * @returns {string} Returns the __typename value.
+ */
+const getTypename = (type, schema, scenario, meta) => {
+  // Allow selecting concrete types for abstract types
+  type =
+    get(
+      scenario,
+      meta.isArray ? `[${meta.arrayIndex}].__typename` : "__typename"
+    ) || type;
 
-  // Allow setting more concrete implementation of interface types in scenarios
-  type = (scenario && scenario.__typename) || type;
-
-  if (isInterfaceType(type, schema)) {
-    // https://github.com/EasyGraphQL/easygraphql-parser/issues/9
+  if (isAbstractType(type, schema)) {
     const concreteType = getConcreteType(type, schema);
+
     if (!concreteType) {
       throw new Error(
         `Your schema doesn't have any type that implements the Interface "${type}".\n` +
           `Either remove the unused interface "${type}", or add a concrete implementation of it to the schema.`
       );
     }
-    type = concreteType;
-  } else if (isUnionType(type, schema)) {
-    type = getUnionVal(type, schema);
+    return concreteType;
   }
 
-  debug(`${type}`);
+  return type;
+};
 
-  const mockedField = { __typename: type };
+/**
+ * Takes any GraphQL type, and mocks data for it.
+ *
+ * @see mockObjectType
+ *
+ * @param {String} type The GraphQL Type that needs to be mocked.
+ * @param {Object} schema The parsed schema.
+ * @param {Object} mockProviders An object with the user-defined Scenario and
+ * the Builders.
+ * @param {Object} meta An object containing meta information about the field
+ * that's being mocked. The important options that it contains:
+ *  - {string} name: The name of the field for which this type is mocked.
+ *  - {string} type: The GraphQL type.
+ *  - {boolean} noNull: Wether the field for which this type is mocked is
+ *    nullable.
+ *  - {boolean} isArray: Wether this is a List type.
+ *  - {number} arrayIndex: If the current type is mocked as part of a list, its
+ *    index.
+ *  - {Object} depth: The Query depth of the mocked field whose type we are
+ *    mocking.
+ *  - {Object} path: The field path through the Query object. E.g:
+ *    me.address.city. Used for validation errors and debugging.
+ * @returns {Object} Returns the mocked Object Type.
+ */
+const mockType = memoize(
+  (type, schema, mockProviders = {}, meta = {}) => {
+    meta = {
+      type,
+      depth: 0,
+      path: "",
+      ...meta,
+    };
 
-  let typeFieldsBuilders =
-    typeBuilders && typeBuilders[type] && typeBuilders[type]();
+    if (!schema[type] && !isBuiltInScalarType(type)) {
+      throw new Error(`Type "${type}" not found in schema.`);
+    }
 
-  if (schema[type].fields.length) {
-    schema[type].fields.forEach((field) => {
-      if (
-        hasProp(typeFieldsBuilders, field.name) &&
-        !hasProp(scenario, field.name) &&
-        // If function, this is meant to be a resolver
-        typeof typeFieldsBuilders[field.name] !== 'function'
-      ) {
-        scenario = isUndefined(scenario) ? {} : scenario;
-        scenario[field.name] = typeFieldsBuilders[field.name];
-      }
-      let data = null;
-      let fieldScenario;
+    if (
+      !meta.depth &&
+      (isFunction(mockProviders.scenario) ||
+        isResolverScenario(mockProviders.scenario))
+    ) {
+      throw new TypeError(
+        `mockProviders.Root scenario for "${type}" cannot be a function or a ResolverScenario. Supplied a "${
+          isFunction(mockProviders.scenario) ? "function" : "ResolverScenario"
+        }".`
+      );
+    }
 
-      if (
-        field.noNull ||
-        !hasProp(scenario, field.name) ||
-        scenario[field.name] !== null
-      ) {
-        if (field.isArray) {
-          debug(undefined, `${field.name}: [${field.type}]`);
-        } else {
-          debug(undefined, `${field.name}: ${field.type}`);
-        }
+    // Reduce the Scenario and the Builders to a single scenario which represents
+    // the single source of truth for how the user wants to mock this field.
+    const reducedScenario = reduceToScenario(mockProviders, meta);
 
-        const getCache = (fieldKey, nameBuilders, typeBuilders, scenario) => {
-          if (
-            cacheStore.get([fieldKey, nameBuilders, typeBuilders, scenario])
-          ) {
-            return cacheStore.get([
-              fieldKey,
-              nameBuilders,
-              typeBuilders,
-              scenario,
-            ]);
-          }
+    // Validate the reduced scenario
+    validateFieldScenario(reducedScenario, meta);
 
-          // Performance debugging
-          // debugCacheDuplicates(cacheStore, {
-          //   type,
-          //   scenario,
-          //   showDifferenceForType: 'ExpendableMenuItem',
-          // });
-          return undefined;
-        };
+    if (isNull(reducedScenario)) {
+      return null;
+    }
 
-        fieldScenario = hasProp(scenario, field.name)
-          ? scenario[field.name]
-          : undefined;
-
-        const cache = getCache(
-          cacheStore.getCacheKeyFromField(field, arrayIndex),
-          nameBuilders,
-          typeBuilders,
-          fieldScenario
-        );
-
-        if (typeof cache !== 'undefined') {
-          data = cache;
-        } else {
-          data = createData(field, schema, {
-            scenario: hasProp(scenario, field.name)
-              ? scenario[field.name]
-              : undefined,
-            nameBuilders,
-            typeBuilders,
-          });
-
-          cacheStore.set(
-            [
-              cacheStore.getCacheKeyFromField(field, arrayIndex),
-              nameBuilders,
-              typeBuilders,
-              fieldScenario,
-            ],
-            data
+    if (meta.isArray) {
+      return times(
+        Array.isArray(reducedScenario)
+          ? reducedScenario.length
+          : DEFAULT_LIST_LENGTH,
+        (index) => {
+          return mockType(
+            type,
+            schema,
+            {
+              ...mockProviders,
+              scenario: Array.isArray(reducedScenario)
+                ? reducedScenario[index]
+                : reducedScenario,
+            },
+            { ...meta, arrayIndex: index, isArray: false }
           );
         }
+      );
+    }
+
+    // If an abstract field, select a concrete typename
+    const typename = getTypename(type, schema, reducedScenario, meta);
+
+    // For types without sub-fields like Scalar and Enumeration types, return the
+    // value directly.
+    if (!isObjectType(typename, schema)) {
+      // If a user defined value is defined, return that.
+      if (!isUndefined(reducedScenario)) {
+        return reducedScenario;
       }
 
-      if (isUndefined(data)) {
-        throw new Error(`Type "${field.type}" not found in document.`);
-      } else if (
-        hasProp(typeFieldsBuilders, field.name) &&
-        typeof typeFieldsBuilders[field.name] === 'function'
-      ) {
-        const store = {
-          data,
-          get: function () {
-            return store.data;
-          },
-        };
+      // If code got here, then no user defined mock providers could be found, so
+      // depending on the field type, use a different strategy to mock data.
 
-        const fieldResolver = typeFieldsBuilders[field.name](
-          store.get,
-          function buildMocks(type, customScenario = {}) {
-            return mockType(type, schema, {
-              scenario: merge(fieldScenario, customScenario),
-              typeBuilders,
-              nameBuilders,
-            });
-          }
-        );
-
-        fieldResolver.getData = store.get;
-
-        Object.defineProperty(mockedField, field.name, {
-          get() {
-            return fieldResolver;
-          },
-          set(value) {
-            store.data = value;
-          },
-          enumerable: true,
-        });
-      } else {
-        mockedField[field.name] = data;
+      if (isEnumType(typename, schema)) {
+        // For Enumeration types select the first possible value defined in the
+        // schema.
+        return getEnumVal(typename, schema);
+      } else if (isCustomScalarType(typename, schema)) {
+        // For custom scalars use the "Mocked Custom Scalar" string.
+        return defaultMockProviders[constants.customScalar];
+      } else if (isBuiltInScalarType(typename)) {
+        // For built-in scalars use the respective Scalar value defined in
+        // `defaultMockProviders`.
+        return defaultMockProviders[typename];
       }
-    });
+    }
+
+    return mockObjectType(
+      typename,
+      schema,
+      { ...mockProviders, scenario: reducedScenario },
+      meta
+    );
+  },
+  function resolveMemoCacheKey(type, _, mockProviders = {}, meta = {}) {
+    const fieldKeyPart = meta.isArray
+      ? `[${type}]`
+      : // Make ids of items part of a List unique
+      Number.isInteger(meta.arrayIndex) && type === constants.ID
+      ? `${type}[${meta.arrayIndex}]`
+      : type;
+
+    return [
+      "__NODE__",
+      fieldKeyPart + (meta.noNull ? "!" : ""),
+      mockProviders.builders,
+      mockProviders.scenario,
+    ];
   }
-  return mockedField;
-}
+);
+
+/**
+ * Mocks a specific type, and allows definition for default and custom mock
+ * providers.
+ *
+ * @see mockType
+ *
+ * @param {String} type The GraphQL Type that needs to be mocked.
+ * @param {Object} schema The parsed schema.
+ * @param {Object} defaults The default mock providers that will be overwritten.
+ * @param {Object} custom The overwriting mock providers.
+ * @returns {Object} Returns the mocked Object Type.
+ */
+const buildMocks = (type, schema, defaults = {}, custom) =>
+  mockType(type, schema, mergeMockProviders(defaults, custom));
 
 module.exports = {
-  createData,
   mockType,
-  defaultBuiltInScalarBuilders,
+  buildMocks,
+  defaultMockProviders,
+  reduceToScenario,
+  useResolver,
 };

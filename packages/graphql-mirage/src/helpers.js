@@ -1,178 +1,124 @@
-const { mergeWith, memoize } = require('lodash');
+const MultiKeyMap = require("multikeymap");
+const {
+  get,
+  isFunction,
+  isUndefined,
+  isNull,
+  isNil,
+  times,
+  mergeWith,
+  isPlainObject,
+  negate,
+  partialRight,
+  partial,
+  mapValues,
+  cloneDeep,
+  isObjectLike,
+  zipObject,
+} = require("lodash");
+const memoize = require("lodash/memoize");
 
-const constants = require('./constants');
+const constants = require("./constants");
 
-function isUndefined(value) {
-  return typeof value === 'undefined';
-}
+// Useful to cache mocking of fields by multiple keys like the Mock Providers
+// and other meta data
+memoize.Cache = MultiKeyMap;
 
-function hasProp(object, prop) {
-  return !isUndefined(object) && !isUndefined(object[prop]);
-}
-
-function getEnumVal(type, schema) {
-  return schema[type].values[0];
-}
-
-function getUnionVal(type, schema) {
-  return schema[type].types[0];
-}
-
-function getConcreteType(type, schema) {
-  return schema[type].implementedTypes[0];
-}
-
-function getUnionVals(type, schema) {
-  return schema[type].types;
-}
-
-function isUnionType(type, schema) {
-  return schema[type] && schema[type].types.length > 0;
-}
-
-function isEnumType(type, schema) {
-  return schema[type] && schema[type].values.length > 0;
-}
-
-function isScalarType(type, schema) {
-  return schema[type] && schema[type].type === constants.scalar;
-}
-
-function isInterfaceType(type, schema) {
-  return schema[type] && schema[type].type === constants.interface;
-}
-
-function isBuiltInScalarType(type) {
-  return [
+/** Is this type a built-in Scalar? */
+const isBuiltInScalarType = (type) =>
+  [
     constants.int,
     constants.float,
     constants.string,
     constants.boolean,
     constants.ID,
   ].includes(type);
-}
 
-const getScenarioFn = (defaultScenario = {}) =>
-  memoize(function getScenario(customScenario = {}) {
-    return mergeWith(
-      {},
-      defaultScenario,
-      customScenario,
-      (defaultVal, newVal) => (Array.isArray(defaultVal) ? newVal : undefined)
-    );
-  }, JSON.stringify);
+/** Is this type a custom Scalar type? */
+const isCustomScalarType = (type, schema) =>
+  schema[type] && schema[type].type === constants.scalarTypeDefinition;
 
-const getNameBuildersFn = (defaults = {}) =>
-  memoize(function getNameBuilders(nameBuilders = {}) {
-    return {
-      ...defaults,
-      ...nameBuilders,
-    };
-  }, JSON.stringify);
+/** Is this type a built-in or a custom Scalar type? */
+const isScalarType = (type, schema) =>
+  isCustomScalarType(type, schema) || isBuiltInScalarType(type);
 
-const getTypeBuildersFn = (defaults = {}) =>
-  memoize(function getTypeBuilders(typeBuilders = {}) {
-    return {
-      ...defaults,
-      ...typeBuilders,
-    };
-  }, JSON.stringify);
+/** Is this type an Enumeration type? */
+const isEnumType = (type, schema) =>
+  schema[type] && schema[type].values.length > 0;
 
-function mergeDataSources(defaults = {}, custom = {}) {
-  return {
-    scenario: getScenarioFn(defaults.scenario)(custom.scenario),
-    nameBuilders: getNameBuildersFn(defaults.nameBuilders)(custom.nameBuilders),
-    typeBuilders: getTypeBuildersFn(defaults.typeBuilders)(custom.typeBuilders),
-  };
-}
+/** Is this type an Object type? */
+const isObjectType = (type, schema) =>
+  !isScalarType(type, schema) && !isEnumType(type, schema);
 
-function getDebugger(DEBUGGING) {
-  let debuggerState = {
-    types: new Set(),
-    fields: new Set(),
-  };
-  return function debug(type, field) {
-    if (!DEBUGGING) return;
-    console.log('DOES NOT WORK PROPERLY');
-    const { types, fields } = debuggerState;
-    const getSpaces = (size, char = '-') => {
-      return size ? `${char.repeat(size)}` : '';
-    };
-    if (type) {
-      types.add(type);
-      console.log(
-        `L${types.size - 1} ${getSpaces(types.size, '- ')} TYPE: ${type}`
-      );
-    } else if (field) {
-      fields.add(field);
+/** Is this type an Interface? */
+const isInterfaceType = (type, schema) =>
+  schema[type] && schema[type].type === constants.interfaceTypeDefinition;
 
-      console.log(
-        `L${types.size - 1} ${getSpaces(types.size, ' ')} FIELD: ${field}`
-      );
-    }
-  };
-}
+/** Is this type an Union type? */
+const isUnionType = (type, schema) =>
+  schema[type] && schema[type].types.length > 0;
 
-// Displays duplicates in the cache, and what part of the key is different.
-// Usually this happens for the scenario.
-// Helpful to debug performance.
-function debugCacheDuplicates(cache, meta = {}) {
-  const keys = cache._keys.map((key) => key[0]);
+/** Is this type an Interface or a Union type? */
+const isAbstractType = (type, schema) =>
+  isUnionType(type, schema) || isInterfaceType(type, schema);
 
-  // Lists the keys for inspection of duplication
-  // console.log(keys);
+/** Returns the first Enumeration type value from the schema. */
+const getEnumVal = (type, schema) => schema[type].values[0];
 
-  if (keys.length !== Array.from(new Set(keys)).length) {
-    const duplicates = cache._keys.filter(
-      // From those keys, select one type, and pass it as
-      // showDifferenceForType to show what's different for
-      // the duplicate types.
-      (key) => key[0] === meta.showDifferenceForType
-    );
-    if (duplicates.length > 2) {
-      const keyParts = ['type', 'names', 'types', 'scenario'];
-      duplicates.slice(0, -1).forEach((duplicate, index) => {
-        duplicates.slice(index + 1).forEach((nextDup, jindex) => {
-          duplicate.map((testedKeyPart, i) => {
-            if (testedKeyPart !== nextDup[i]) {
-              console.log(`${duplicates.length} DIFFERENT ${keyParts[i]}:`, {
-                [index]: testedKeyPart,
-                [jindex + 1 + index]: duplicates[jindex + index + 1][i],
-              });
-            }
-          });
-        });
-      });
-    } else if (duplicates.length) {
-      console.log(
-        'Are equal',
-        duplicates[0].reduce((res, keyPart, i) => {
-          if (keyPart !== duplicates[1][i]) {
-            console.log('DIFFERENT:', { zero: keyPart, one: duplicates[1][i] });
-          }
-          return res && keyPart === duplicates[1][i];
-        }, true)
-      );
-    }
+/** Returns the first concrete type for Interfaces and Union types. */
+const getConcreteType = (type, schema) => {
+  if (isInterfaceType(type, schema)) {
+    // https://github.com/EasyGraphQL/easygraphql-parser/issues/9
+    return schema[type].implementedTypes[0];
+  } else if (isUnionType(type, schema)) {
+    return schema[type].types[0];
   }
-}
+};
+
+/** Appends the path with the currently mocked field name. */
+const getAppendedPath = (path, field, parentType) => {
+  const typePrefix = (!path && `${parentType}:`) || "";
+  return typePrefix + path + (path ? "." : "") + field.name;
+};
+
+// Checks if two values have the same type. Considers null the same type as
+// objects and arrays.
+const haveDifferentTypes = (one, two) => {
+  return (
+    typeof one !== typeof two ||
+    (Array.isArray(one) && !Array.isArray(two)) ||
+    (isPlainObject(one) && !isPlainObject(two))
+  );
+};
 
 module.exports = {
-  getUnionVal,
-  getUnionVals,
   getEnumVal,
   getConcreteType,
-  isUnionType,
   isEnumType,
   isBuiltInScalarType,
+  isCustomScalarType,
   isScalarType,
+  isUnionType,
   isInterfaceType,
-  getScenarioFn,
-  getNameBuildersFn,
-  getTypeBuildersFn,
+  isAbstractType,
+  isObjectType,
+  getAppendedPath,
+  haveDifferentTypes,
+  // lodash
+  get,
+  memoize,
+  isFunction,
   isUndefined,
-  hasProp,
-  mergeDataSources,
-  getDebugger,
-  debugCacheDuplicates,
+  isNull,
+  isNil,
+  times,
+  mergeWith,
+  isPlainObject,
+  negate,
+  partialRight,
+  partial,
+  mapValues,
+  cloneDeep,
+  isObjectLike,
+  zipObject,
 };
