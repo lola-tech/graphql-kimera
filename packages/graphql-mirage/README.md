@@ -4,11 +4,11 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 [![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
 
-kimera is a graphQL automocking library.
+GraphQL Kimera is an automocking library that allows you to be very precise about how mocks should be generated.
 
 ## Getting Started
 
-To install the library you can install it via `npm` or `yarn`, it's totally up to you.
+To install Kimera you can install it via `npm` or `yarn`, it's totally up to you.
 
 ```
 npm install --save-dev kimera
@@ -20,11 +20,42 @@ or if you want to use yarn
 yarn add kimera --dev
 ```
 
-#### Example
+### Example
 
+```js
+const {
+  getExecutableSchema,
+  useResolver,
+} = require("@lola-tech/graphql-mirage")
+
+// ...
+
+const executableSchema = getExecutableSchema(
+  typeDefs,
+  () => ({
+  scenario: {
+    rockets: [{name: "Apollo", }, {}, {}, {}],
+  },
+  builders: {
+    Rocket: () => ({
+      type: "Shuttle",
+    }),
+  },
+},
+);
+
+const apollo = new ApolloServer({
+  schema: executableSchema,
+  introspection: true,
+  port: 4000,
+});
+
+apollo.listen().then(({ url }) => {
+  console.log(chalk.green.bold(`🚀 Server ready at ${url}`));
+});
 ```
-TODO
-```
+
+Running the `rockets` query will return four rockets, all of `Shuttle` type, with the first being called `Apollo`.
 
 ## Documentation
 
