@@ -1,8 +1,7 @@
-# graphql-kimera
+# graphql-kimera 
 
-[![Build Status](https://travis-ci.org/lola-tech/graphql-mirage.svg?branch=master)](https://travis-ci.org/lola-tech/graphql-mirage)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
-[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) ![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
+
 
 GraphQL Kimera is an automocking library that allows you to be very precise about how mocks should be generated.
 
