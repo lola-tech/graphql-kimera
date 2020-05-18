@@ -1,0 +1,34 @@
+# .github/workflows/gh-pages.yml
+
+name: github pages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/gh-pages.yml'
+      - 'packages/graphql-kimera-docs/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: packages/graphql-kimera-docs
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./packages/graphql-kimera-/build
