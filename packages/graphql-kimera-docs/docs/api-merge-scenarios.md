@@ -10,7 +10,7 @@ Merges two scenarios into one.
 mergeScenarios(defaultScenario, customScenario);
 ```
 
-Both `defaultScenario` and `customScenario` are [scenarios](/graphql-mirage/docs/scenario). Objects are merged deeply, while Arrays are replaced. Useful in mutations, when we need to make sure we're using some defaults from a scenario when building data for an Object Type.
+Both `defaultScenario` and `customScenario` are [scenarios](/graphql-kimera/docs/scenario). Objects are merged deeply, while Arrays are replaced. Useful in mutations, when we need to make sure we're using some defaults from a scenario when building data for an Object Type.
 
 ## Example
 

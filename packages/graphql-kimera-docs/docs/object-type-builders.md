@@ -77,7 +77,7 @@ The argument for the first function (the resolver factory) is the generated resu
 
 > **Note**
 >
-> See it in action in the ["Mutations" section of the Tutorial](/graphql-mirage/docs/tutorial-mutations#modifying-fields-with-arguments).
+> See it in action in the ["Mutations" section of the Tutorial](/graphql-kimera/docs/tutorial-mutations#modifying-fields-with-arguments).
 
 ### Fields with Object Types
 
