@@ -4,7 +4,7 @@ title: Data Sources
 sidebar_label: Data Sources
 ---
 
-When constructing the `Query` resolver tree, Mirage accepts multiple data sources which are used to generate data for a specific field.
+When constructing the `Query` resolver tree, Kimera accepts multiple data sources which are used to generate data for a specific field.
 
 The data sources have different priorities: a field found in a **higher priority** data source will never be overwritten by a conflicting field found in a **lower priority** source.
 

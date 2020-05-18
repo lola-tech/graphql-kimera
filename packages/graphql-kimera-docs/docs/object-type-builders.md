@@ -37,7 +37,7 @@ We could use the following `Persona` type builder to specify the data source for
 
 Looking at the example above, you've probably noticed that the value for the `name` field resolves to a static value. That's great
 
-What if [we need the field to accept arguments](https://graphql.org/learn/queries/#arguments)? Mirage's got us covered by allowing us to return field resolvers from Object Type builders fields:
+What if [we need the field to accept arguments](https://graphql.org/learn/queries/#arguments)? Kimera's got us covered by allowing us to return field resolvers from Object Type builders fields:
 
 ```graphql
 type Citizen {
@@ -107,4 +107,4 @@ type Order {
 
 > Note
 
-When a field couldn't be found in neither the Scenario nor a Object Type Builder, Mirage looks for it in the next, lower priority data source: the Field Name Builders.
+When a field couldn't be found in neither the Scenario nor a Object Type Builder, Kimera looks for it in the next, lower priority data source: the Field Name Builders.

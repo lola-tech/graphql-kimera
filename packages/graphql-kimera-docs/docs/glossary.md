@@ -8,7 +8,7 @@ Definitions of terms you'll be encountering across the documentation
 
 # Builder
 
-Builders are functions that used to generate data for specific fields in Object Types. When Mirage walks the `Query` Object Type tree to generate data, it will use these functions to generate data for fields.
+Builders are functions that used to generate data for specific fields in Object Types. When Kimera walks the `Query` Object Type tree to generate data, it will use these functions to generate data for fields.
 
 Read more about the various builders in the [Data Sources section](/graphql-kimera/docs/data-sources).
 

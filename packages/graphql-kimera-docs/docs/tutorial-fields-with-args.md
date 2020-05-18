@@ -24,7 +24,7 @@ type Query {
 # ...
 ```
 
-To deal with the newly added `personas` field with arguments, Mirage allows us to write field resolvers in our Object Type Builders.
+To deal with the newly added `personas` field with arguments, Kimera allows us to write field resolvers in our Object Type Builders.
 
 ```javascript
 // ...
@@ -44,7 +44,7 @@ const typeBuilders = {
 // ..
 ```
 
-The `personasResolver` function needs access to the list of available `personas` in order to do filtering, so Mirage conveniently passes a `getPersonas` function which returns the total list of available personas to our resolver.
+The `personasResolver` function needs access to the list of available `personas` in order to do filtering, so Kimera conveniently passes a `getPersonas` function which returns the total list of available personas to our resolver.
 
 > **Note**
 >
@@ -90,7 +90,7 @@ const typeBuilders = {
 
 > **Important Note**
 >
-> Mirage doesn't actually link the `city` field to an object in the `cities` list. All it does is that when it generates a persona, it will generate another city with a shape that respects the one set in the Scenario. Internally, the object that you see as part of the `cities` list result, and the ones set as `city` fields on `Persona`s, have different references.
+> Kimera doesn't actually link the `city` field to an object in the `cities` list. All it does is that when it generates a persona, it will generate another city with a shape that respects the one set in the Scenario. Internally, the object that you see as part of the `cities` list result, and the ones set as `city` fields on `Persona`s, have different references.
 >
 > Understanding this is important when working with mutations, because as a consequence, in some situations we might need to update separate objects in the `Query` tree even though they might seem the same from an UI point of view.
 >

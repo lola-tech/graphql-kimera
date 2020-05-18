@@ -1,14 +1,14 @@
 ---
 id: introduction
-title: Introducing GraphQL Mirage
+title: Introducing GraphQL Kimera
 sidebar_label: Introduction
 ---
 
-GraphQL Mirage is a tool for auto-generating mocks from custom data sources.
+GraphQL Kimera is a tool for auto-generating mocks from custom data sources.
 
-Its name is inspired from a [testing solution for Ember.js](http://www.ember-cli-mirage.com/).
+Kimera's name is inspired from greek mythology [Chimera (mythology)](https://en.wikipedia.org/wiki/Chimera_(mythology)).
 
-Mirage is a tool that allows us to create an [executable schema](/graphql-kimera/docs/glossary#executable-schema) with mock data, while allowing us to be very precise about how data should be generated.
+Kimera is a tool that allows us to create an [executable schema](/graphql-kimera/docs/glossary#executable-schema) with mock data, while allowing us to be very precise about how data should be generated.
 
 ## The problem
 
@@ -21,7 +21,7 @@ Our previous implementation of the mocking server had several issues:
 
 ## The solution
 
-GraphQL Mirage solves each of the problems above by:
+GraphQL Kimera solves each of the problems above by:
 
 - Walking the [schema SDL](/graphql-kimera/docs/glossary#schema-definition-language) directly and constructing the resolver tree as it does so. This means there's no need for manually replicating the schema structure.
 - By default it can generate data for any kind of field, which allows us to only focus on the fields we care about.

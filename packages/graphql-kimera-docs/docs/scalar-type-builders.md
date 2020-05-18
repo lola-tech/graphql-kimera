@@ -10,9 +10,9 @@ How generate data for the Built-in or our Custom Scalar Types
 
 GraphQL ships with five built-in scalar types: `ID`, `String`, `Int`, `Float`, and `Boolean`.
 
-Builders for these are considered to be the lowest priority data sources. When Mirage can't find instructions for a field in neither a Scenario, an Object Type Builder, nor a Field Name Builder, it uses the field type to decide how to generate data for it.
+Builders for these are considered to be the lowest priority data sources. When Kimera can't find instructions for a field in neither a Scenario, an Object Type Builder, nor a Field Name Builder, it uses the field type to decide how to generate data for it.
 
-If we don't specify our own collection of Built-in Scalar Types Builders, Mirage will use its defaults:
+If we don't specify our own collection of Built-in Scalar Types Builders, Kimera will use its defaults:
 
 ```javascript
 {

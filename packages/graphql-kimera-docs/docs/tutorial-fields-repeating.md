@@ -30,7 +30,7 @@ In order to generate something that looks like an address for those fields, we'd
 
 Moreover, what if we grow our schema with more types that require and address field? This could be address with some indirection, ie. adding an `Address` type, but lets assume we want the field to be a built-in scalar.
 
-For these cases Mirage allows you to define [Field Name Builders](/graphql-kimera/docs/field-name-builders).
+For these cases Kimera allows you to define [Field Name Builders](/graphql-kimera/docs/field-name-builders).
 
 ```javascript
 // ...

@@ -27,7 +27,7 @@ schema {
 # ...
 ```
 
-In order to pass a resolver for that mutation to Mirage, we need to pass a [getMutationResolvers function](/graphql-kimera/docs/api-get-executable-schema#getmutationresolverscache-buildmocks-context) as an argument to `getExecutableSchema`. The `getMutationResolvers` function needs to return an object with [resolvers](/graphql-kimera/docs/glossary#resolver) for all mutation we want to handle:
+In order to pass a resolver for that mutation to Kimera, we need to pass a [getMutationResolvers function](/graphql-kimera/docs/api-get-executable-schema#getmutationresolverscache-buildmocks-context) as an argument to `getExecutableSchema`. The `getMutationResolvers` function needs to return an object with [resolvers](/graphql-kimera/docs/glossary#resolver) for all mutation we want to handle:
 
 ```javascript
 // ...
@@ -137,17 +137,17 @@ type Query {
 
 As you may now remember, `personas` is a field that accepts arguments, which prompted us to implement a resolver factory (ie. a function that returns a resolver function) for it. The builder for the `cities` field is just an Array.
 
-This means that when building the `Query` type data tree (the one that gets passed down as the `cache` argument in our `buildMocks` function), Mirage sets static values only for fields without any arguments.
+This means that when building the `Query` type data tree (the one that gets passed down as the `cache` argument in our `buildMocks` function), Kimera sets static values only for fields without any arguments.
 
 However, when a field meets the following two conditions...
 
 - the field has arguments,
-- and Mirage can find a resolver factory in an Object Type builder for it,
+- and Kimera can find a resolver factory in an Object Type builder for it,
   ...the value set in the `cache` for the field is the resolver function.
 
 In our case, our `personas` field from the `Query` type is a field with arguments, and Miage can find a resolver factory function for it in the `Query` Object Type Builder, so it sets its value to the `personasResolver` function.
 
-That explains our `cache.personas is not iterable` error, since the spread operator works on [iterables](https://javascript.info/iterable), and the `personasResolver` function is not an iterable. For these cases, Mirage adds a handy `getData` function on the resolver function that allows us to get the data.
+That explains our `cache.personas is not iterable` error, since the spread operator works on [iterables](https://javascript.info/iterable), and the `personasResolver` function is not an iterable. For these cases, Kimera adds a handy `getData` function on the resolver function that allows us to get the data.
 
 ```javascript
 // ...

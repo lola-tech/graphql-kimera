@@ -4,11 +4,11 @@ title: Under the hood
 sidebar_label: Under the hood
 ---
 
-This section explains how Mirage works under the hood. This will help you understand the API better.
+This section explains how Kimera works under the hood. This will help you understand the API better.
 
 ## 1. Converting the schema
 
-For Mirage to work, we need to supply it with [Schema Definition Language (SDL) string](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl), which it converts to a custom data structure with the help of [easygraphql-parser](https://github.com/EasyGraphQL/easygraphql-parser). Taking the following SDL string as an example:
+For Kimera to work, we need to supply it with [Schema Definition Language (SDL) string](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl), which it converts to a custom data structure with the help of [easygraphql-parser](https://github.com/EasyGraphQL/easygraphql-parser). Taking the following SDL string as an example:
 
 ```
 type Query {
@@ -83,13 +83,13 @@ The [SDL](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755
 
 ## 2. Walking the `Query` type tree
 
-In order to generate data, Mirage takes the `Query` node from the parsed schema, and [starts processing its fields array recursively](https://github.com/lola-tech/graphql-kimera/src/engine.js#L142-L194) looking for [scalars and enums](https://www.apollographql.com/docs/graphql-tools/scalars.html) for which it can [generate data](https://github.com/lola-tech/graphql-kimera/src/engine.js#L46-L91).
+In order to generate data, Kimera takes the `Query` node from the parsed schema, and [starts processing its fields array recursively](https://github.com/lola-tech/graphql-kimera/src/engine.js#L142-L194) looking for [scalars and enums](https://www.apollographql.com/docs/graphql-tools/scalars.html) for which it can [generate data](https://github.com/lola-tech/graphql-kimera/src/engine.js#L46-L91).
 
 Generating data while walking the `Query` tree, allows us to get the correct resolver structure for free, and helps us focus on the important part when mocking: having the data we want for the fields we want.
 
 ## 3.1 Generating data - Defaults
 
-Without any configuration, when deciding how generate data for a field, Mirage will:
+Without any configuration, when deciding how generate data for a field, Kimera will:
 
 - for enum fields, it will [select the first value from the schema definition of the enum](https://github.com/lola-tech/graphql-kimera/src/engine.js#L69-L73), or
 - for the default `Int`, `Float`, `String`, `Boolean` and `ID` scalars, [it will supply random values](https://github.com/lola-tech/graphql-kimera/src/engine.js#L21-L29), or
@@ -98,7 +98,7 @@ Without any configuration, when deciding how generate data for a field, Mirage w
 
 ## 3.2 Generating data - Custom
 
-In order to customize the data Mirage generates, you need to supply it with [data sources](/graphql-kimera/docs/data-sources). Mirage will prioritize the supplied data sources, and figue out what is the best data source for a specific field. If no data source could be found, it will default to the behavior described above.
+In order to customize the data Kimera generates, you need to supply it with [data sources](/graphql-kimera/docs/data-sources). Kimera will prioritize the supplied data sources, and figue out what is the best data source for a specific field. If no data source could be found, it will default to the behavior described above.
 
-- Read more how [data sources work](/graphql-kimera/docs/data-sources) to undersand how Mirage prioritizes them
-- See [how you get started with Mirage](/graphql-kimera/docs/tutorial-getting-started) in order to see how the concepts above are applied
+- Read more how [data sources work](/graphql-kimera/docs/data-sources) to undersand how Kimera prioritizes them
+- See [how you get started with Kimera](/graphql-kimera/docs/tutorial-getting-started) in order to see how the concepts above are applied
