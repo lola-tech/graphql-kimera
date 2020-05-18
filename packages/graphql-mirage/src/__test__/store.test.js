@@ -18,14 +18,14 @@ const mockQuery = ({ scenario, builders } = {}) => {
 };
 
 describe("store.get", () => {
-  // it("It retrieves data from behind muliple resolvers", () => {
-  //   const resolver = () => {};
-  //   const deepResolver = () => {};
-  //   resolver.__mocks = initializeStore([{ inResolver: deepResolver }]);
-  //   deepResolver.__mocks = initializeStore({ inDeepResolver: [42] });
-  //   const store = initializeStore({ one: { two: resolver } });
-  //   expect(store.get("one.two[0].inResolver.inDeepResolver[0]")).toBe(42);
-  // });
+  it("It retrieves data from behind muliple resolvers", () => {
+    const resolver = () => {};
+    const deepResolver = () => {};
+    resolver.__mocks = initializeStore([{ inResolver: deepResolver }]);
+    deepResolver.__mocks = initializeStore({ inDeepResolver: [42] });
+    const store = initializeStore({ one: { two: resolver } });
+    expect(store.get("one.two.0.inResolver.inDeepResolver.0")).toBe(42);
+  });
 });
 
 describe("store.update", () => {
