@@ -1,5 +1,5 @@
 {
-  "name": "@lola-tech/graphql-mirage-docs",
+  "name": "@lola-tech/graphql-kimera-docs",
   "version": "1.0.0",
   "description": "documentation for mirage graphql auto-mocking took",
   "main": "index.js",
@@ -21,14 +21,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lola-tech/graphql-mirage.git"
+    "url": "git+https://github.com/lola-tech/graphql-kimera.git"
   },
   "author": "Lucian Samson <sickmav@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lola-tech/graphql-mirage/issues"
+    "url": "https://github.com/lola-tech/graphql-kimera/issues"
   },
-  "homepage": "https://github.com/lola-tech/graphql-mirage#readme",
+  "homepage": "https://github.com/lola-tech/graphql-kimera#readme",
   "browserslist": {
     "production": [
       ">0.2%",

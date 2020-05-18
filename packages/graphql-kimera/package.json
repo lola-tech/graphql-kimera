@@ -1,5 +1,5 @@
 {
-  "name": "@lola-tech/graphql-mirage",
+  "name": "@lola-tech/graphql-kimera",
   "version": "1.0.0",
   "description": "Automocking GraphQL Engine",
   "main": "src/index.js",
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lola-tech/graphql-mirage.git"
+    "url": "git+https://github.com/lola-tech/graphql-kimera.git"
   },
   "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lola-tech/graphql-mirage/issues"
+    "url": "https://github.com/lola-tech/graphql-kimera/issues"
   },
-  "homepage": "https://github.com/lola-tech/graphql-mirage#readme"
+  "homepage": "https://github.com/lola-tech/graphql-kimera#readme"
 }
