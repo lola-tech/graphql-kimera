@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@lola-tech/graphql-kimera": "^0.10.0-alpha.0",
+    "apollo-server": "2.9.12",
+    "chalk": "^4.0.0",
+    "graphql": "14.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.4"
+  },
+  "scripts": {
+    "start": "nodemon --watch ./ --ext js,json,graphql"
+  },
+  "author": "",
+  "license": "ISC"
+}

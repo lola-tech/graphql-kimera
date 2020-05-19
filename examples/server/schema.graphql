@@ -1,0 +1,137 @@
+type Query {
+  launches(
+    """
+    The number of results to show. Must be >= 1. Default = 20
+    """
+    pageSize: Int
+    """
+    If you add a cursor here, it will only return results _after_ this cursor
+    """
+    after: String
+    """
+    If you add this, the lauches will be filter by launch site name
+    """
+    siteFilter: String
+  ): LaunchConnection!
+  launch(id: ID!): Launch
+  metadata: Markdown
+  rockets: [Rocket]
+  me: User
+}
+
+type Mutation {
+  # if false, signup failed -- check errors
+  bookTrips(launchIds: [ID]!): TripUpdatePayload!
+  createRocket(input: CreateRocketInput!): CreateRocketPayload!
+  # if false, cancellation failed -- check errors
+  cancelTrip(launchId: ID!): TripUpdatePayload!
+  login(email: String): String # login token
+}
+
+scalar Markdown
+
+input CreateRocketInput {
+  name: String!
+  type: String
+}
+
+type CreateRocketPayload {
+  rockets: [Rocket]
+  successful: Boolean!
+}
+
+type TripUpdatePayload {
+  success: Boolean!
+  message: String
+  launches: [Launch]
+}
+
+"""
+Simple wrapper around our list of launches that contains a cursor to the
+last item in the list. Pass this cursor to the launches query to fetch results
+after these.
+"""
+type LaunchConnection {
+  cursor: String!
+  hasMore: Boolean!
+  list: [Launch]!
+}
+
+type Launch {
+  id: ID!
+  site: String
+  mission: Mission
+  rockets: [Rocket]
+  isBooked: Boolean!
+  destination: LaunchDestination
+}
+
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+}
+
+type User {
+  id: ID!
+  email: String!
+  profileImage: String
+  gender: Gender
+  dateOfBirth: Date
+  address: Address
+  allergies: [String]
+  trips: [Launch]!
+  hobbies: [Hobby]
+}
+
+type Address {
+  street: String
+  city: String
+  country: String
+}
+
+type Mission {
+  name: String
+  missionPatch(size: PatchSize): String
+}
+
+interface LaunchDestination {
+  id: ID!
+  name: String
+}
+
+type Planet implements LaunchDestination {
+  id: ID!
+  name: String
+  description: String
+}
+
+type Star implements LaunchDestination {
+  id: ID!
+  name: String
+  class: String
+}
+
+union Hobby = ReadingHobby | KarateHobby
+
+type ReadingHobby {
+  favoriteBook: String
+  favoriteGenre: String
+}
+
+type KarateHobby {
+  belt: String
+}
+
+scalar Date
+
+enum Gender {
+  FEMALE
+  MALE
+  NON_BINARY
+}
+
+enum PatchSize {
+  SMALL
+  LARGE
+}
