@@ -1,7 +1,7 @@
 {
   "name": "@lola-tech/graphql-kimera",
   "version": "1.0.0",
-  "description": "Automocking GraphQL Engine",
+  "description": "Kimera allows you to mock GraphQL schemas with precision.",
   "main": "src/index.js",
   "scripts": {
     "test": "jest --collectCoverage --runInBand"
@@ -23,7 +23,7 @@
     "directory": "packages/graphql-kimera"
   },
   "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/lola-tech/graphql-kimera/issues"
   },
