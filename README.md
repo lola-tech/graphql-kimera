@@ -14,16 +14,16 @@ Kimera is useful to:
 
 ## Getting Started
 
-To install Kimera you can install it via `npm` or `yarn`, it's totally up to you.
+To install Kimera you can install it via `npm` or `yarn`, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```
-npm install @lola-tech/graphql-kimera
+npm install --save-dev @lola-tech/graphql-kimera
 ```
 
 or if you want to use yarn
 
 ```
-yarn add @lola-tech/graphql-kimera
+yarn add --dev @lola-tech/graphql-kimera
 ```
 
 ### Examples
