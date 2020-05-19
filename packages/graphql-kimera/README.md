@@ -1,3 +1,5 @@
+# Kimera
+
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
 
 [![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) ![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/lola-tech/graphql-kimera/badge.svg)](https://coveralls.io/github/lola-tech/graphql-kimera) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
