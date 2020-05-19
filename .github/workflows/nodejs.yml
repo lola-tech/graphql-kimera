@@ -33,7 +33,7 @@ jobs:
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v1.1.1
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ github.GITHUB_TOKEN }}
           # Path to lcov file
           path-to-lcov: ./packages/graphql-kimera/coverage/lcov.info # default is ./coverage/lcov.info
           # Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.

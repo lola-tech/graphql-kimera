@@ -4,7 +4,7 @@
   "description": "Kimera allows you to mock GraphQL schemas with precision.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --verbose --collectCoverage --runInBand "
+    "test": "jest --verbose --collectCoverage"
   },
   "dependencies": {
     "easygraphql-parser": "0.0.12",
