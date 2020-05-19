@@ -9,21 +9,21 @@ Kimera is an automocking library for GraphQL that allows you to be very precise 
 Kimera is useful to:
 
 - **Speed up the prototyping process**. It's very easy to get a mocked server up and running by just updating the schema definition and optionally customizing the mocks providers.
-- **Allow large teams to better coordinate**. Frontend developers can negotiate changes to the schema with the backend developers and then quickly add mocks for the changes in a Kimera mocked version of the server while the backend team gets to implementing the changes.
+- **Allow large teams to better coordinate**. Frontend developers can negotiate changes to the schema with the backend developers and then quickly add mocks for the changes in a Kimera mocked version of the server while the backend team gets to implmenting the changes.
 - **Improve testing in front end applications that use GraphQL**. Using Kimera allows one to customize query responses by defining _a single scenario_ as opposed to exhaustively mocking each query response, which is extremely useful for large component trees where queries are used at different levels of the component hierarchy.
 
 ## Getting Started
 
-To install Kimera you can install it via `npm` or `yarn`, it's totally up to you.
+To install Kimera you can install it via `npm` or `yarn`, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```
-npm install @lola-tech/graphql-kimera
+npm install --save-dev @lola-tech/graphql-kimera
 ```
 
 or if you want to use yarn
 
 ```
-yarn add @lola-tech/graphql-kimera
+yarn add --dev @lola-tech/graphql-kimera
 ```
 
 ### Examples
@@ -56,10 +56,9 @@ const executableSchema = getExecutableSchema({
 const apollo = new ApolloServer({
   schema: executableSchema,
   introspection: true,
-  port: 4000,
 });
 
-apollo.listen().then(({ url }) => {
+apollo.listen({ port: 4000 }).then(({ url }) => {
   console.log(chalk.green.bold(`🚀 Server ready at ${url}`));
 });
 ```

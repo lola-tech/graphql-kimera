@@ -56,10 +56,9 @@ const executableSchema = getExecutableSchema({
 const apollo = new ApolloServer({
   schema: executableSchema,
   introspection: true,
-  port: 4000,
 });
 
-apollo.listen().then(({ url }) => {
+apollo.listen({ port: 4000 }).then(({ url }) => {
   console.log(chalk.green.bold(`🚀 Server ready at ${url}`));
 });
 ```
