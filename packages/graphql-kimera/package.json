@@ -27,6 +27,13 @@
   },
   "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
   "license": "MIT",
+  "keywords": [
+    "graphql",
+    "prototyping",
+    "mocking",
+    "automocking",
+    "testing"
+  ],
   "bugs": {
     "url": "https://github.com/lola-tech/graphql-kimera/issues"
   },
