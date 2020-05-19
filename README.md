@@ -1,4 +1,4 @@
-# GraphQL Kimera
+# Kimera
 
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
 
