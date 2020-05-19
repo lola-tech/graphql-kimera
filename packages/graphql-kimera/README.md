@@ -43,7 +43,7 @@ const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvividersFn: () => ({
     scenario: {
-      rockets: [{name: "Apollo", }, {}, {}, {}],
+      rockets: [{ name: "Apollo" }, {}, {}, {}],
     },
     builders: {
       Rocket: () => ({
