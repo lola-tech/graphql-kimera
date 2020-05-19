@@ -16,30 +16,30 @@ const { initializeStore } = require("./store");
  * @public
  *
  * @param {string} typeDefs The Schema SDL string.
- * @param {Function} getDefaultMockProviders A function that gets the context as
+ * @param {Function} mockProvidersFn A function that gets the context as
  * an argument, and returns an object with the mock providers
  * @param {Object} customMockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
- * @param {Function} getMutationResolvers A function that returns an object with resolvers for mutations.
- * @param {Function} getCustomResolvers A function that returns a list of custom resolver.
+ * @param {Function} mutationResolversFn A function that returns an object with resolvers for mutations.
+ * @param {Function} customResolversFn A function that returns a list of custom resolvers.
  * @returns {Object} An Executable Schema object.
  */
-function getExecutableSchema(
+function getExecutableSchema({
   // Schema SDL string
   typeDefs,
   // fn (context) => ({ scenario: ..., builders: ... })
-  getDefaultMockProviders = () => ({}),
+  mockProvidersFn = () => ({}),
   // { scenario: ..., builders: ... }
   customMockProviders = {},
-  // fn (mockedQueryType, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
-  getMutationResolvers = () => ({}),
+  // fn (store, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
+  mutationResolversFn = () => ({}),
   // fn () => ({ URI: () => {...}, ... })
-  getCustomResolvers = () => ({})
-) {
+  customResolversFn = () => ({}),
+}) {
   // Parse the schema string into a custom data structure
   const schema = schemaParser(typeDefs);
 
   const getMemoizedDefaultMockProviders = memoize(
-    getDefaultMockProviders,
+    mockProvidersFn,
     (context) => ["__DEFAULT_MOCK_PROVIDERS__", JSON.stringify(context)]
   );
 
@@ -88,7 +88,7 @@ function getExecutableSchema(
         );
       },
       Mutation: (root, args, context) => {
-        return getMutationResolvers(
+        return mutationResolversFn(
           // The store which will be used to retrieve and mutate data.
           getGlobalStore(context).store,
           // The `buildMocks` function used to mock types in mutations.
@@ -106,7 +106,7 @@ function getExecutableSchema(
           context
         );
       },
-      ...getCustomResolvers(),
+      ...customResolversFn(),
     },
     preserveResolvers: false,
   });
