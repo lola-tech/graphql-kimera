@@ -39,7 +39,7 @@ const { getExecutableSchema } = require("@lola-tech/graphql-kimera")
 
 const executableSchema = getExecutableSchema({
   typeDefs,
-  mockProvividersFn: () => ({
+  mockProvidersFn: () => ({
     scenario: {
       rockets: [{ name: "Apollo" }, {}, {}, {}],
     },
@@ -77,7 +77,7 @@ const {
 
 const executableSchema = getExecutableSchema({
   typeDefs,
-  mockProvividersFn: () => ({
+  mockProvidersFn: () => ({
     scenario: {
       rockets: useResolver(
         // Define a resolver factory
