@@ -22,6 +22,9 @@
     "url": "https://github.com/lola-tech/graphql-kimera.git",
     "directory": "packages/graphql-kimera"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Alex Ciobica <alex.ciobica@gmail.com>>",
   "license": "MIT",
   "bugs": {
