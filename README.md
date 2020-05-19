@@ -147,11 +147,11 @@ The main purpose of this repository is to continue to evolve Kimera. Development
 
 ### Contributing Guide
 
-Please read [CONTRIBUTING.md](https://github.com/lola-tech/graphql-kimera/CONTRIBUTING.md) for the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/lola-tech/graphql-kimera/blob/master/CONTRIBUTING.md) for the process for submitting pull requests to us.
 
 ### Code of conduct
 
-[lola.tech](https://www.lola.tech/) has adopted a Code of Conduct that we expect project participants to adhere to. Please read [CODE_OF_CONDUCT.md](https://github.com/lola-tech/graphql-kimera/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+[lola.tech](https://www.lola.tech/) has adopted a Code of Conduct that we expect project participants to adhere to. Please read [CODE_OF_CONDUCT.md](https://github.com/lola-tech/graphql-kimera/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
 
 ## Versioning
 

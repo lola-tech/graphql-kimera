@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) [lola.tech](https://www.lola.tech) and its affiliates.
+Copyright (c) [Lola Tech](https://www.lola.tech) and its affiliates.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

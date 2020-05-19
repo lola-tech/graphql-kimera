@@ -41,7 +41,7 @@ Running the `rockets` query will return four rockets, all of type `Shuttle`, wit
 ```js
 const { getExecutableSchema } = require("@lola-tech/graphql-kimera")
 
-// ...importing the typeDefs from the `schema.graphql` file
+// Importing the typeDefs from the `schema.graphql` file...
 
 const executableSchema = getExecutableSchema({
   typeDefs,
@@ -140,3 +140,27 @@ const executableSchema = getExecutableSchema({
 
 // Starting your server using the above defined executable schema ....
 ```
+
+## Contributing
+
+The main purpose of this repository is to continue to evolve Kimera. Development of Kimera happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving Kimera.
+
+### Contributing Guide
+
+Please read [CONTRIBUTING.md](https://github.com/lola-tech/graphql-kimera/blob/master/CONTRIBUTING.md) for the process for submitting pull requests to us.
+
+### Code of conduct
+
+[lola.tech](https://www.lola.tech/) has adopted a Code of Conduct that we expect project participants to adhere to. Please read [CODE_OF_CONDUCT.md](https://github.com/lola-tech/graphql-kimera/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+
+## Versioning
+
+We use [lerna](https://lerna.js.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/lola-tech/graphql-kimera/tags).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+- Kimera library name has been inspired from greek mythology - [Chimera](<https://en.wikipedia.org/wiki/Chimera_(mythology)>)
