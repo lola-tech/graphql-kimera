@@ -33,7 +33,7 @@ These examples assume the use of the [example schema we are using for testing](h
 Running the `rockets` query will return four rockets, all of type `Shuttle`, with the first being called `Apollo`.
 
 ```js
-const { getExecutableSchema } = require("@lola-tech/graphql-kimera")
+const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -48,7 +48,7 @@ const executableSchema = getExecutableSchema({
         type: "Shuttle",
       }),
     },
-  },
+  }),
 });
 
 const apollo = new ApolloServer({
@@ -70,8 +70,8 @@ a resolver uing the `useResolver` function.
 ```js
 const {
   getExecutableSchema,
-  useResolver
-} = require("@lola-tech/graphql-kimera")
+  useResolver,
+} = require("@lola-tech/graphql-kimera");
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -81,13 +81,15 @@ const executableSchema = getExecutableSchema({
     scenario: {
       rockets: useResolver(
         // Define a resolver factory
-        mocks => (_, { type }) => {
+        (mocks) => (_, { type }) => {
           // `mocks` is a store that contains the mocks for the `rockets` query
           const rockets = mocks.get();
-          return type ? rockets.filter(rocket => rocket.type === type) : rockets;
+          return type
+            ? rockets.filter((rocket) => rocket.type === type)
+            : rockets;
         },
         // Optionally define a node scenario
-        [{}, { type: "Starship" }, { type: "Starship" }],
+        [{}, { type: "Starship" }, { type: "Starship" }]
       ),
     },
     builders: {
@@ -95,7 +97,7 @@ const executableSchema = getExecutableSchema({
         type: "Shuttle",
       }),
     },
-  },
+  }),
 });
 
 // Starting your server using the above defined executable schema ....
@@ -117,9 +119,7 @@ Should return two rockets. Changing the `type` argument to `Shuttle` should retu
 #### Mutations resolvers example
 
 ```js
-const {
-  getExecutableSchema,
-} = require("@lola-tech/graphql-kimera")
+const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -142,7 +142,7 @@ const executableSchema = getExecutableSchema({
         rockets: store.get("rockets"),
       };
     },
-  },
+  }),
 });
 
 // Starting your server using the above defined executable schema ....

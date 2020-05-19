@@ -15,7 +15,7 @@ const { initializeStore } = require("./store");
  * @see ResolverScenario
  * @public
  *
- * @param {string} typeDefs The Schema SDL string.
+ * @param {Object|string} typeDefs The Schema SDL string.
  * @param {Function} mockProvidersFn A function that gets the context as
  * an argument, and returns an object with the mock providers
  * @param {Object} customMockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
