@@ -1,6 +1,6 @@
 {
   "name": "@lola-tech/graphql-kimera-docs",
-  "version": "0.9.1",
+  "version": "0.9.0",
   "description": "documentation for graphql-kimera auto-mocking tool",
   "main": "index.js",
   "private": true,
