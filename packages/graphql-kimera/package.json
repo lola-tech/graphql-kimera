@@ -1,7 +1,7 @@
 {
   "name": "@lola-tech/graphql-kimera",
   "version": "0.10.0-alpha.0",
-  "description": "Kimera allows you to mock GraphQL schemas with precision.",
+  "description": "KIMERA allows you to mock GraphQL schemas with precision.",
   "main": "src/index.js",
   "scripts": {
     "test": "jest --verbose --collectCoverage"
