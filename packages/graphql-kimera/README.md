@@ -147,7 +147,7 @@ Please read [CONTRIBUTING.md](https://github.com/lola-tech/graphql-kimera/blob/m
 
 ### Code of conduct
 
-[lola.tech](https://www.lola.tech/) has adopted a Code of Conduct that we expect project participants to adhere to. Please read [CODE_OF_CONDUCT.md](https://github.com/lola-tech/graphql-kimera/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+[Lola Tech](https://www.lola.tech/) has adopted a Code of Conduct that we expect project participants to adhere to. Please read [CODE_OF_CONDUCT.md](https://github.com/lola-tech/graphql-kimera/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
 
 ## Versioning
 
@@ -155,7 +155,7 @@ We use [lerna](https://lerna.js.org/) for versioning. For the versions available
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License. See the [LICENSE.md](https://github.com/lola-tech/graphql-kimera/blob/master/LICENSE.md) file for details.
 
 ## Acknowledgments
 
