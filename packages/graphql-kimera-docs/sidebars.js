@@ -1,30 +1,48 @@
 module.exports = {
-  someSidebar: {
-    Fundamentals: ['introduction', 'under-the-hood', 'glossary', 'todo'],
-    'Main Concepts': [
-      'data-sources',
-      'scenarios',
-      'object-type-builders',
-      'field-name-builders',
-      'scalar-type-builders',
-      'enums',
-      'interfaces',
-      'mutations',
-    ],
-    Tutorial: [
-      'tutorial-getting-started',
-      'tutorial-first-builder',
-      'tutorial-array-fields',
-      'tutorial-fields-with-args',
-      'tutorial-fields-repeating',
-      'tutorial-scenarios',
-      'tutorial-mutations',
-    ],
-    API: [
-      'api-build-mocks',
-      'api-cache',
-      'api-get-executable-schema',
-      'api-merge-scenarios',
-    ],
-  },
+  docs: [
+    {
+      type: "doc",
+      id: "getting-started",
+    },
+    {
+      type: "category",
+      label: "Using Kimera",
+      items: [
+        "setup",
+        "introducing-scenario",
+        "mocking-types",
+        "mocking-list-types",
+        "resolvers",
+        "abstract-types",
+        "mocking-mutations",
+        // "data-sources",
+        // "scenarios",
+        // "object-type-builders",
+        // "field-name-builders",
+        // "scalar-type-builders",
+        // "enums",
+        // "interfaces",
+        // "mutations",
+      ],
+    },
+    {
+      type: "category",
+      label: "Advanced",
+      items: [],
+    },
+    {
+      type: "doc",
+      id: "glossary",
+    },
+    {
+      type: "category",
+      label: "API",
+      items: [
+        "api-build-mocks",
+        "api-cache",
+        "api-get-executable-schema",
+        "api-merge-scenarios",
+      ],
+    },
+  ],
 };

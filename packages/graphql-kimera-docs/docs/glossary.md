@@ -52,6 +52,10 @@ Read more about resolvers in the [Apollo Docs](https://www.apollographql.com/doc
 >
 > -- [Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
 
+# "Kimera"
+
+Kimera's name is inspired from greek mythology: [Chimera (mythology)](<https://en.wikipedia.org/wiki/Chimera_(mythology)>).
+
 Read more:
 
 - [What is GraphQL SDL - Prisma Blog](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)

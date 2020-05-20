@@ -1,34 +1,37 @@
 module.exports = {
-  title: 'Kimera',
-  tagline: 'A tool for building mock servers with precision',
-  url: 'https://lola-tech.github.io',
-  baseUrl: '/graphql-kimera/',
-  favicon: 'img/favicon.ico',
-  organizationName: 'lola-tech',
-  projectName: 'graphql-kimera',
+  title: "Kimera",
+  tagline: "A tool for building mock servers with precision",
+  url: "https://lola-tech.github.io",
+  baseUrl: "/graphql-kimera/",
+  // url: "localhost",
+  // baseUrl: "/",
+  favicon: "img/favicon.ico",
+  organizationName: "lola-tech",
+  projectName: "graphql-kimera",
   themeConfig: {
+    sidebarCollapsible: false,
     navbar: {
-      title: 'Kimera',
+      title: "Kimera",
       logo: {
-        alt: 'Kimera Logo',
-        src: 'img/logo-dark.png',
+        alt: "Kimera Logo",
+        src: "img/logo-dark.png",
       },
       links: [
         {
-          to: '/docs/introduction',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
+          to: "/docs/getting-started",
+          activeBasePath: "docs",
+          label: "Docs",
+          position: "left",
         },
         {
-          href: 'https://github.com/lola-tech/graphql-kimera',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/lola-tech/graphql-kimera",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       // links: [
       //   {
       //     title: 'Docs',
@@ -74,20 +77,21 @@ module.exports = {
       //     ],
       //   },
       // ],
-      copyright: `Copyright © ${new Date().getFullYear()} lola.tech Kimera`,
+      copyright: `Copyright © ${new Date().getFullYear()} Lola Tech`,
     },
   },
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          path: "./docs/",
+          sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            'https://github.com/lola-tech/graphql-kimera/edit/master/website/',
+            "https://github.com/lola-tech/graphql-kimera/edit/master/website/",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       },
     ],
