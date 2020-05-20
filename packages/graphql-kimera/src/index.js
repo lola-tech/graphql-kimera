@@ -10,7 +10,7 @@ const { useResolver, mergeBuilders } = require("./mockProviders");
 const { initializeStore } = require("./store");
 
 /**
- * Uses buildMocks to generate data and serve it in an Executable Schema context
+ * Generates an executable schema with resolvers which return mocks accourding to the mock providers definitions.
  *
  * @see ResolverScenario
  * @public
