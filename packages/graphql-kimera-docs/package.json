@@ -9,8 +9,9 @@
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
-    "test": "echo \"Docusaurus doesn't need to run any test!\"",
-    "cypress:open": "cypress open"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test start http://localhost:3000 cy:open"
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.50",
@@ -43,6 +44,7 @@
     ]
   },
   "devDependencies": {
-    "cypress": "^4.5.0"
+    "cypress": "^4.5.0",
+    "start-server-and-test": "^1.11.0"
   }
 }
