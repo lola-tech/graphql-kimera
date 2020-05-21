@@ -1,3 +1,5 @@
+![kimera-logo_padding-left](https://user-images.githubusercontent.com/306633/82577670-f9b35a00-9b93-11ea-9036-ca2f4fd7c82e.png)
+
 # Kimera
 
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
