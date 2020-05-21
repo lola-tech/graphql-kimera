@@ -52,7 +52,7 @@ Kimera allows you get a mocked server up and running by just providing the schem
 
 ### Allow large teams to better coordinate
 
-In larger teams, frontend developers can negotiate changes to the schema with the backend developers and then quickly add mocks for the changes in a Kimera version of the server while the backend team gets to implmenting the changes.
+In larger teams, frontend developers can negotiate changes to the schema with the backend developers and then quickly add mocks for the changes in a Kimera version of the server while the backend team gets to implementing the changes.
 
 ### Improve testing in frontend applications that use GraphQL
 

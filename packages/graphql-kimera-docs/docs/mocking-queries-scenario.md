@@ -253,4 +253,4 @@ These are all valid scenarios:
 }
 ```
 
-[Next](/graphql-kimera/docs/mocking-types), we'll learn how to mock individual types using another mock provider: builders.
+[Next](/graphql-kimera/docs/mocking-types-builders), we'll learn how to mock individual types using another mock provider: builders.

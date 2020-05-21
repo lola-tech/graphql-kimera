@@ -1,5 +1,5 @@
 ---
-id: mocking-types
+id: mocking-types-builders
 title: Mocking types with builders
 sidebar_label: Mocking types
 ---
@@ -38,7 +38,7 @@ enum Fuel {
 }
 ```
 
-By defining the following scenario:
+Defining the following scenario...
 
 ```js
 const executableSchema = getExecutableSchema({
@@ -52,7 +52,7 @@ const executableSchema = getExecutableSchema({
 });
 ```
 
-our query will be mocked with we will get four rockets:
+...will yield the following mocks:
 
 ```json
 {
@@ -151,7 +151,7 @@ Using the above mock providers will result in:
 }
 ```
 
-We will now explain what builders are, and other subtelties of their use.
+We will now explain what builders are, and other subtleties of their use.
 
 ## Scenario mocks take precedence over builder mocks
 

@@ -10,7 +10,7 @@ module.exports = {
       items: [
         "setup",
         "mocking-queries-scenario",
-        "mocking-types",
+        "mocking-types-builders",
         "resolvers",
         "abstract-types",
         "mocking-mutations",
