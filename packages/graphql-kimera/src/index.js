@@ -18,7 +18,7 @@ const { initializeStore } = require("./store");
  * @param {Object|string} typeDefs The Schema SDL string.
  * @param {Function} mockProvidersFn A function that gets the context as
  * an argument, and returns an object with the mock providers
- * @param {Object} customMockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
+ * @param {Object} mockProviders An object with mock providers that will overwrite the default definitions returned by the previous argument.
  * @param {Function} mutationResolversFn A function that returns an object with resolvers for mutations.
  * @param {Function} customResolversFn A function that returns a list of custom resolvers.
  * @returns {Object} An Executable Schema object.
@@ -29,7 +29,7 @@ function getExecutableSchema({
   // fn (context) => ({ scenario: ..., builders: ... })
   mockProvidersFn = () => ({}),
   // { scenario: ..., builders: ... }
-  customMockProviders = {},
+  mockProviders = {},
   // fn (store, buildMocks, apolloContext) => {[MUTATION_NAME]: (root, args) => {...}}
   mutationResolversFn = () => ({}),
   // fn () => ({ URI: () => {...}, ... })
@@ -59,7 +59,7 @@ function getExecutableSchema({
         "Query",
         schema,
         getMemoizedDefaultMockProviders(context),
-        customMockProviders
+        mockProviders
       );
       return {
         store: initializeStore(mockedQuery),
@@ -99,7 +99,7 @@ function getExecutableSchema({
               // Use the predefined builders.
               builders: mergeBuilders(
                 getMemoizedDefaultMockProviders(context).builders,
-                customMockProviders.builders
+                mockProviders.builders
               ),
             }),
           // The GraphQL context.
