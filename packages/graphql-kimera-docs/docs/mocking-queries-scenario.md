@@ -65,18 +65,22 @@ apollo.listen({ port: 3337 }).then(({ url }) => {
 
 In order to customize the mocks, we'll need to define our first mock provider: the Query scenario.
 
-Pass this scenario to the `getExecutableSchema` function in order to customize the `query` response.
+In order to use our scenario we need to define a function that we will pass as the `mockProvidersFn` option to the `getExecutableSchema` API function.
+
+This `mockProvidersFn` function needs to return an object with our scenario.
 
 ```js
 const executableSchema = getExecutableSchema({
   typeDefs,
-  scenario: {
-    launch: {
-      site: "Kennedy Space Station",
-      rockets: [{}, { type: "Exploration Vessel", fuel: "DILITHIUM" }],
-      isBooked: true,
+  mockProvidersFn: (context) => ({
+    scenario: {
+      launch: {
+        site: "Kennedy Space Station",
+        rockets: [{}, { type: "Exploration Vessel", fuel: "DILITHIUM" }],
+        isBooked: true,
+      },
     },
-  },
+  }),
 });
 ```
 

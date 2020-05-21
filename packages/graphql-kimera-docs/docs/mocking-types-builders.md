@@ -43,12 +43,14 @@ Defining the following scenario...
 ```js
 const executableSchema = getExecutableSchema({
   typeDefs,
-  scenario: {
-    launch: {
-      rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }, {}],
+  mockProvidersFn: (context) => ({
+    scenario: {
+      launch: {
+        rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }, {}],
+      },
+      rockets: [{}],
     },
-    rockets: [{}],
-  },
+  }),
 });
 ```
 
@@ -95,23 +97,25 @@ To do that we'll need to make use of another type of mock provider: the builder.
 
 ## Mocking types using builders
 
-To add a builder, we'll need to use the `builders` option from `getExecutableSchema`.
+To add a builder, we'll need to make it part of a `builders` object returned from our `mockProvidersFn` function.
 
 ```js title="Scenario + Builder"
 const executableSchema = getExecutableSchema({
   typeDefs,
-  scenario: {
-    launch: {
-      rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }],
+  mockProvidersFn: (context) => ({
+    scenario: {
+      launch: {
+        rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }],
+      },
+      rockets: [{}],
     },
-    rockets: [{}],
-  },
-  builders: {
-    Rocket: () => ({
-      type: ["Orion", "Apollo"][_.random(0, 1)],
-      name: "Rocket name",
-    }),
-  },
+    builders: {
+      Rocket: () => ({
+        type: ["Orion", "Apollo"][_.random(0, 1)],
+        name: "Rocket name",
+      }),
+    },
+  }),
 });
 ```
 
@@ -166,16 +170,18 @@ You can have multiple builders defined, each for a separate type.
 ```js title="Multiple builders"
 const executableSchema = getExecutableSchema({
   // ...
-  builders: {
-    Rocket: () => ({
-      type: ["Orion", "Apollo"][_.random(0, 1)],
-      name: "Rocket name",
-    }),
-    Launch: () => ({
-      site: "Kennedy Space Center"
-      rockets: [{}]
-    }),
-  },
+  mockProvidersFn: (context) => ({
+    builders: {
+      Rocket: () => ({
+        type: ["Orion", "Apollo"][_.random(0, 1)],
+        name: "Rocket name",
+      }),
+      Launch: () => ({
+        site: "Kennedy Space Center"
+        rockets: [{}]
+      }),
+    },
+  })
 });
 ```
 

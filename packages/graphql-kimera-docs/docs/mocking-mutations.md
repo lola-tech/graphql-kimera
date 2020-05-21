@@ -4,6 +4,12 @@ title: Mutations
 sidebar_label: Mocking Mutations ❌
 ---
 
+> _Mock mutations by._
+
+:::note
+This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+:::
+
 Managing changes to data in Mutation resolvers
 
 Lets modify the schema to add support for a `addCity` mutation that accepts the name of the city, and returns the complete list of cities, including the new one.

@@ -5,7 +5,7 @@ module.exports = {
   baseUrl: "/graphql-kimera/",
   // url: "localhost",
   // baseUrl: "/",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.png",
   organizationName: "lola-tech",
   projectName: "graphql-kimera",
   themeConfig: {

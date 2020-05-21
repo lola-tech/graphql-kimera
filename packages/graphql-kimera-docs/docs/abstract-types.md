@@ -1,46 +1,65 @@
 ---
 id: abstract-types
-title: Interfaces
-sidebar_label: Abstract Types ❌
+title: Abstract Types
+sidebar_label: Abstract Types
 ---
 
-Use \_\_typename to specify a concrete type for an abstract field
+> _Use \_\_typename to specify a concrete type for an abstract field._
 
-When Kimera walks the `Query` tree to generate data, and it encounters a field that's an Object Type, it automatically sets the `__typename` field to its type name.
+:::note
+This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+:::
 
-When the type of the field is an interface, absent any instruction, it selects the first type in the schema that implements that interface, and generates data for that field as if it were that selected type.
+By default, when Kimera needs to generate mocks for fields which are interfaces or unions, it will do so as if the field were of a concrete type. It will do so by automatically selecting the first concrete type defined in the schema.
+
+Let's use the following schema as an example:
 
 ```graphql
-interface MenuItem {
-  id: ID!
-  url: String
-}
-
-type ExpandableMenuItem implements MenuItem {
-  id: ID!
-  url: String
-  expanded: Boolean
-}
-
-type NavigationMenuItem implements MenuItem {
-  id: ID!
-  url: String
-  label: String
-}
-
 type Query {
-  menu: [MenuItem]
+  ships(type: String!): [Ship]!
+  assets: [Asset]!
+}
+
+interface Ship {
+  id: ID!
+  type: String!
+}
+
+union Asset = Powerplant | Starship | Rocket
+
+type Rocket implements Ship {
+  id: ID!
+  type: String!
+}
+
+type Starship implements Ship {
+  id: ID!
+  type: String!
+  class: String!
+}
+
+type Powerplant {
+  address: String!
 }
 ```
 
-For the example above, if not instructed otherwise, the menu query will return an array composed of `ExpandableMenuItem`s.
+With no configuration, Kimera will return:
 
-We can tell Kimera what concrete types to build for our interface fields by setting the `__typename` in the field scenario.
+- a list of `Powerplants` for the `assets` query because the first concrete type defined for in the schema for the `Asset` union is `Powerplant`;
+- a list of `Rocket`s for the `ships` query because the first concrete type defined for the `Ship` interface is `Rocket`.
 
-```javascript
-{
-  menu: [times(5, () => ({ __typename: "NavigationMenuItem" }))];
-}
+### Customize mocks using `__typename`
+
+Using `__typename` in your scenario will allow you to select the concrete type you want Kimera to mock.
+
+```js
+const executableSchema = getExecutableSchema({
+  typeDefs: schema,
+  mockProvidersFn: (context) => ({
+    scenario: {
+      ships: [{ __typename: "Starship" }, { __typename: "Rocket" }],
+      assets: [{ __typename: "Starship" }, { __typename: "Rocket" }, {}],
+    },
+  }),
+});
 ```
-
-The scenario above will force Kimera to generate a menu with exactly five `NavigationMenuItem`s and no `ExpandableMenuItem`s.
