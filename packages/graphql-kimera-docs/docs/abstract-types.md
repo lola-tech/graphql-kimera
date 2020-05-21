@@ -1,7 +1,7 @@
 ---
 id: abstract-types
 title: Interfaces
-sidebar_label: Abstract Types
+sidebar_label: Abstract Types ❌
 ---
 
 Use \_\_typename to specify a concrete type for an abstract field

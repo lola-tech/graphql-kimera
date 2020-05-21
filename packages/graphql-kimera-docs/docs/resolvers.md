@@ -1,7 +1,7 @@
 ---
 id: resolvers
 title: Fields with arguments
-sidebar_label: Resolvers
+sidebar_label: Query Resolvers ❌
 ---
 
 Write resolvers for [fields with arguments](https://graphql.org/learn/schema/#arguments)

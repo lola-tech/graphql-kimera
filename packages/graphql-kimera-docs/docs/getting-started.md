@@ -4,13 +4,9 @@ title: Getting Started
 sidebar_label: Getting Started
 ---
 
-_This page explains what Kimera is, and what it is good for._
+> _This page explains what Kimera is, and problems it's designed to solve._
 
-**Kimera** is a JavaScript library for mocking GraphQL APIs. Learn how to use Kimera in the ["Using Kimera"](/graphql-kimera/docs/setup) section of the docs.
-
-:::note Your Title
-The content and title _can_ include markdown.
-:::
+**Kimera** is a JavaScript library for mocking GraphQL APIs. Learn how to use Kimera in the ["Using Kimera"](/graphql-kimera/docs/setup) section of the docs. See it's API in the ["API"](/graphql-kimera/docs/api) section of the docs.
 
 ## What does Kimera do
 

@@ -1,7 +1,7 @@
 ---
 id: mocking-mutations
 title: Mutations
-sidebar_label: Mocking Mutations
+sidebar_label: Mocking Mutations ❌
 ---
 
 Managing changes to data in Mutation resolvers

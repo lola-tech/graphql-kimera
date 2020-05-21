@@ -1,7 +1,7 @@
 ---
 id: api-merge-scenarios
-title: mergeScenarios
-sidebar_label: mergeScenarios
+title: mergeScenarios ❌
+sidebar_label: mergeScenarios ❌
 ---
 
 Merges two scenarios into one.

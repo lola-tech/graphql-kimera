@@ -1,7 +1,7 @@
 ---
 id: glossary
 title: Glossary
-sidebar_label: Glossary
+sidebar_label: Glossary ❌
 ---
 
 Definitions of terms you'll be encountering across the documentation

@@ -1,42 +1,40 @@
 ---
-id: introducing-scenario
-title: The Scenario
-sidebar_label: Introducing the Scenario
+id: mocking-queries-scenario
+title: Mocking queries
+sidebar_label: Mocking queries
 ---
 
-_Customize mocks by defining a scenario._
+> _Customize mocks for queries by defining a Query scenario._
 
-Let's start with the following Space X themed schema.
+Let's start with the following schema:
 
-```js title="server.js"
-const schema = `
-  type Query {
-    launch: Launch
-  }
+```graphql
+type Query {
+  launch: Launch
+}
 
-  type Launch {
-    id: ID!
-    site: String
-    rockets: [Rocket]
-    isBooked: Boolean!
-  }
+type Launch {
+  id: ID!
+  site: String
+  rockets: [Rocket]
+  isBooked: Boolean!
+}
 
-  type Rocket {
-    id: ID!
-    name: String
-    type: String
-    fuel: Fuel
-  }
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+  fuel: Fuel
+}
 
-  enum Fuel {
-    PLASMA
-    ION
-    DILITHIUM
-  }
-`;
+enum Fuel {
+  PLASMA
+  ION
+  DILITHIUM
+}
 ```
 
-We have a single query `launch` that will return information about the ongoing rocket launch.
+We have a single query: `launch` which will return information about the ongoing rocket launch.
 
 ## Default mocks using no configuration
 
@@ -63,11 +61,11 @@ apollo.listen({ port: 3337 }).then(({ url }) => {
 });
 ```
 
-## Customize mocks using the scenario
+## Customize mocks by defining the Query scenario
 
-In order to customize the mocks, we'll need to defined our first mock provider: the scenario.
+In order to customize the mocks, we'll need to define our first mock provider: the Query scenario.
 
-Pass the scenario to the `getExecutableSchema` function in order to customize the query response.
+Pass this scenario to the `getExecutableSchema` function in order to customize the `query` response.
 
 ```js
 const executableSchema = getExecutableSchema({
@@ -82,12 +80,12 @@ const executableSchema = getExecutableSchema({
 });
 ```
 
-This will make it so the `launch` query will be mocked with its:
+This will make it so the `launch` query is mocked with its:
 
 - `site` field set to `Kennedy Space Station`;
 - `rockets` field containing two rockets, and the second rocket being of type "Exploration Vessel":
 
-```
+```json
 {
   "data": {
     "launch": {
@@ -113,59 +111,64 @@ This will make it so the `launch` query will be mocked with its:
 
 All other fields that haven't been explicitly mocked will be mocked with default values.
 
-## What is the Scenario?
+## What is the Query scenario?
 
-In order to build the correct intuition about what is a scenario, let's think about how the `Query` type would look in its object form.
+In order to build the correct intuition about what the Query scenario is, let's think about how the `Query` type would look in its object form.
 
 For example, take the following slightly modified schema:
 
-```js
-const schema = `
-  type Query {
-    launch: Launch
-    rockets(type: String!): [Rockets]!
-  }
+```graphql
+type Query {
+  launch: Launch
+  rockets(type: String!): [Rockets]!
+}
 
-  type Launch {
-    id: ID!
-    site: String
-    rockets: [Rocket]
-    isBooked: Boolean!
-  }
+type Launch {
+  id: ID!
+  site: String
+  rockets: [Rocket]
+  isBooked: Boolean!
+}
 
-  type Rocket {
-    id: ID!
-    name: String
-    type: String
-  }
-`;
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+}
 ```
 
-The `Query` type _object form_ (or in short the **`Query` object form**) is:
+The `Query` _object form_ (or in short the **`Query` object**) would be:
 
 ```js
 {
   launch: {
-    id: ...,
-    site: ...,
+    id: "...",
+    site: "...",
     rockets: [
-      { id: ..., name: ..., type: ...},
+      { id: "...", name: "...", type: "..."},
       ...
     ],
-    isBooked: ...
+    isBooked: "..."
   },
   rockets: [
-    { id: ..., name: ..., type: ...},
+    { id: "...", name: "...", type: "..."},
     ...
   ],
 }
 ```
 
-The scenario is an object with **the same structure as the `Query` object form**.
+Keeping all of this in mind, the `Query scenario` (or simply "the scenario") is an object that:
 
-### The scenario can mock fewer fields than what's in the schema
+- contains mocks for `Query` type;
+- has the same structure as the `Query` object.
 
-A scenario doesn't need to contain all of its fields. In fact, **it can contain as few or as many fields we want to mock**, as long as it matches the structure of the `Query` object form.
+:::note
+Kimera allows you to define scenarios for other types than `Query` in the context of builders (another type of mock provider) or in resolvers, but we'll talk more about that in other sections of the docs.
+:::
+
+### A scenario can mock fewer fields than what's in the schema
+
+A scenario doesn't need to contain all of the fields of the type it mocks. In fact, **it can contain as few or as many fields we want to mock**, as long as it matches the structure of - in this case - the `Query` object.
 
 These are all valid scenarios:
 
@@ -194,7 +197,7 @@ These are all valid scenarios:
 }
 ```
 
-### It can go as deep as possible
+### The scenario can go as deep as possible
 
 A scenario can be as deep or as shallow we want, type permitting. Take the following schema:
 
@@ -205,6 +208,7 @@ type Query {
 
 type User {
   address: Address!
+  name: String!
 }
 
 type Address {
@@ -237,6 +241,14 @@ These are all valid scenarios:
     address: {
       city: "Berlin",
     }
+  }
+}
+```
+
+```js
+{
+  me: {
+    name: "Dumitru Prunariu",
   }
 }
 ```

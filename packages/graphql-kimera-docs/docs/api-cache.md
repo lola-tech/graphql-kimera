@@ -1,7 +1,7 @@
 ---
 id: api-cache
-title: getMutationResolvers/cache
-sidebar_label: ↳getMutationResolvers/cache
+title: getMutationResolvers/cache ❌
+sidebar_label: ↳getMutationResolvers/cache ❌
 ---
 
 A reference to the generated `Query` tree.
@@ -29,11 +29,11 @@ type Query {
 ```javascript
 // ...
 const typeBuilders = {
-  ['Query']: () => ({
-    personas: getPersonas => {
+  ["Query"]: () => ({
+    personas: (getPersonas) => {
       return function personasResolver(_, { name }) {
         return city
-          ? getPersonas().filter(persona => persona.name === name)
+          ? getPersonas().filter((persona) => persona.name === name)
           : getPersonas();
       };
     },
@@ -51,7 +51,7 @@ We can write a resolver for an `addPersona` mutation like this:
 function getMutationResolvers(cache, buildMocks) {
   return {
     addPersona: (_, { cityName, name }) => {
-      const newPersona = buildMocks('Persona', {
+      const newPersona = buildMocks("Persona", {
         name,
         city: { name: cityName },
       });

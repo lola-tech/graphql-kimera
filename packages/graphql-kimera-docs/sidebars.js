@@ -9,9 +9,8 @@ module.exports = {
       label: "Using Kimera",
       items: [
         "setup",
-        "introducing-scenario",
+        "mocking-queries-scenario",
         "mocking-types",
-        "mocking-list-types",
         "resolvers",
         "abstract-types",
         "mocking-mutations",
@@ -36,7 +35,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "API",
+      label: "API ❌ (none below)",
       items: [
         "api-build-mocks",
         "api-cache",

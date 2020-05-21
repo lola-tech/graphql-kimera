@@ -1,52 +1,240 @@
 ---
 id: mocking-types
-title: First Builder
-sidebar_label: Mocking Types
+title: Mocking types with builders
+sidebar_label: Mocking types
 ---
 
-Creating the first Object Type Builder
+_Customize mocks for types by defining a builders._
 
-As you remember from the previous section, running a `city` query will return randomly generated data:
+:::note
+This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+:::
+
+Let's start with the following schema:
+
+```graphql
+type Query {
+  launch: Launch
+  rockets: [Rockets]
+}
+
+type Launch {
+  id: ID!
+  site: String
+  rockets: Rocket
+}
+
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+  fuel: Fuel
+}
+
+enum Fuel {
+  PLASMA
+  ION
+  DILITHIUM
+}
+```
+
+By defining the following scenario:
+
+```js
+const executableSchema = getExecutableSchema({
+  typeDefs,
+  scenario: {
+    launch: {
+      rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }, {}],
+    },
+    rockets: [{}],
+  },
+});
+```
+
+our query will be mocked with we will get four rockets:
 
 ```json
 {
   "data": {
-    "city": {
-      "id": "irg5btv90",
-      "name": "GENERATED_STRING",
-      "population": 695
-    }
+    "launch": {
+      // ...
+      "rockets": [
+        {
+          "name": "Saturn V",
+          "type": "Mocked String Scalar",
+          "fuel": "PLASMA"
+        },
+        {
+          "name": "Mocked String Scalar",
+          "type": "Mocked String Scalar",
+          "fuel": "DILITHIUM"
+        },
+        {
+          "name": "Mocked String Scalar",
+          "type": "Mocked String Scalar",
+          "fuel": "PLASMA"
+        },
+      ],
+      "isBooked": true
+    },
+    "rockets": [{
+        {
+          "name": "Mocked String Scalar",
+          "type": "Mocked String Scalar",
+          "fuel": "PLASMA"
+        },
+    }]
   }
 }
 ```
 
-At this point we may realize that we'd prefer having an actual city instead of an unappealing `GENERATED_STRING` for its name. That means it's time to use our first builder.
+What if we wanted to have a way of defining mocks for the `Rocket` type once, and have Kimera use those mocks everywhere it encounters the `Rocket` type?
 
-Since `name` is a pretty common field name, there's no point in writing a [Field Name Builder](/graphql-kimera/docs/field-name-builder). What we want is to set the field in the context of the `City` type. For that, we'll use an [Object Type Builder](/graphql-kimera/docs/object-type-builder).
+To do that we'll need to make use of another type of mock provider: the builder.
 
-First, lets install a fake data generator library. For this tutorial, we'll use [casual](https://github.com/boo1ean/casual): `yarn add casual`.
+## Mocking types using builders
 
-```javascript
-// ...
-const typeBuilders = {
-  ["City"]: () => ({
-    name: casual.city,
-  }),
-};
+To add a builder, we'll need to use the `builders` option from `getExecutableSchema`.
 
-function getDefaultDataSources() {
-  return {
-    typeBuilders,
-  };
-}
-
-const executableSchema = getExecutableSchema(typeDefs, getDefaultDataSources);
-// ...
+```js title="Scenario + Builder"
+const executableSchema = getExecutableSchema({
+  typeDefs,
+  scenario: {
+    launch: {
+      rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }],
+    },
+    rockets: [{}],
+  },
+  builders: {
+    Rocket: () => ({
+      type: ["Orion", "Apollo"][_.random(0, 1)],
+      name: "Rocket name",
+    }),
+  },
+});
 ```
 
-Re-runing the query will return an actual fake city for the `name` field.
+Using the above mock providers will result in:
 
-Links:
+```json title="The scenario takes precedence"
+{
+  "data": {
+    "launch": {
+      // ...
+      "rockets": [
+        {
+          "name": "Saturn V", // From scenario
+          "type": "Orion", // From builder
+          "fuel": "PLASMA" // Default. No mock providers definition.
+        },
+        {
+          "name": "Rocket name", // From builder
+          "type": "Orion", // From builder
+          "fuel": "DILITHIUM" // From scenario
+        },
+        {
+          "name": "Rocket name", // From builder
+          "type": "Apollo", // From builder
+          "fuel": "PLASMA" // Default
+        },
+      ],
+    },
+    "rockets": [{
+        {
+          "name": "Rocket Name", // From builder
+          "type": "Apollo", // From builder
+          "fuel": "PLASMA" // Default
+        },
+    }]
+  }
+}
+```
 
-- Read more on [how `getDefaultDataSources` works](/graphql-kimera/docs/get-executable-schema#getdefaultdatasourcescontext).
-- Read more on [how Object Type Builders work](/graphql-kimera/docs/object-type-builders).
+We will now explain what builders are, and other subtelties of their use.
+
+## Scenario mocks take precedence over builder mocks
+
+You may notice in the example above that where fields are mocked in both a builder and in the scenario, **the scenario mock will take precedence**.
+
+## Builders are functions
+
+A **builder is a function** that's used to build mocks for a specific type.
+
+You can have multiple builders defined, each for a separate type.
+
+```js title="Multiple builders"
+const executableSchema = getExecutableSchema({
+  // ...
+  builders: {
+    Rocket: () => ({
+      type: ["Orion", "Apollo"][_.random(0, 1)],
+      name: "Rocket name",
+    }),
+    Launch: () => ({
+      site: "Kennedy Space Center"
+      rockets: [{}]
+    }),
+  },
+});
+```
+
+## Builders don't need to mock all fields of a type
+
+[As with the Query scenario](/graphql-kimera/docs/mocking-queries-scenario#a-scenario-can-mock-fewer-fields-than-whats-in-the-schema), the builder can mock as many or as few fields you need it to.
+
+These are all valid builders for the `Rocket` type.
+
+```js
+() => ({
+  type: "Exploration Vessel",
+  name: "Enterprise",
+});
+```
+
+```js
+() => ({
+  type: "Exploration Vessel",
+});
+```
+
+```js
+() => ({
+  name: "Enterprise",
+});
+```
+
+## Builder field mocks are scenarios
+
+:::tip
+**You can think of a builder as a function that returns a collection of mocks for each of a type's fields**. For example, the `Rocket` builder can contain mocks for the `type` and / or `name` field(s).
+:::
+
+The mocks for each of fields in a builder are scenarios. Building on [the `Query` scenario definition from the "Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario#what-is-the-query-scenario) section of the docs, a type `scenario` is an object that:
+
+- contains mocks for that specific type;
+- has the same structure as the type's object form.
+
+For example, these are all valid builders for the `Launch` type:
+
+```js
+() => ({
+  site: "Kennedy Space Center"
+  rockets: [{}]
+})
+```
+
+```js
+() => ({
+  site: "Kennedy Space Center"
+  rockets: [{ name: "Enterprise" }, {}]
+})
+```
+
+```js
+() => ({
+  rockets: [{}, {}],
+});
+```
+
+[Next](/graphql-kimera/docs/query-resolvers), we'll learn how to mock query resolvers.

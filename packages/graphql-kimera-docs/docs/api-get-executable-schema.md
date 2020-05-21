@@ -1,7 +1,7 @@
 ---
 id: api-get-executable-schema
-title: getExecutableSchema
-sidebar_label: getExecutableSchema
+title: getExecutableSchema ❌
+sidebar_label: getExecutableSchema ❌
 ---
 
 Returns an executable schema with custom `Mutation` resolvers, and with `Query` resolvers that return data based on custom data sources
@@ -82,13 +82,13 @@ The code above will result in having the `viewer` query have the following shape
 ```javascript
 const defaultScenario = {
   viewer: {
-    userName: 'fancypants2019', // Default
-    fullName: 'Jane', // Custom
+    userName: "fancypants2019", // Default
+    fullName: "Jane", // Custom
     subscribed: true, // Default
     watchList: [], // Custom
     address: {
-      city: 'Iasi', // Custom
-      country: 'Romania', // Default
+      city: "Iasi", // Custom
+      country: "Romania", // Default
     },
   },
 };

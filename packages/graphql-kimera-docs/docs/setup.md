@@ -4,9 +4,11 @@ title: Setup
 sidebar_label: Setup
 ---
 
-_Install Kimera and a GraphQL server to get started._
+> _Install Kimera and a GraphQL server to get started._
 
-This page walks you through the steps you need to take in order to get a Kimera server working. You can see an [example Kimera server in the GitHub repository](https://github.com/lola-tech/graphql-kimera/tree/master/examples/server).
+:::note
+This page walks you through the steps you need to take in order to get a Kimera server working. You can see an [example of a working Kimera server in the GitHub repository](https://github.com/lola-tech/graphql-kimera/tree/master/examples/server).
+:::
 
 ### Installing Kimera
 
@@ -94,4 +96,4 @@ query {
 }
 ```
 
-Next, let's see how we can customize those mocks.
+[ Next ](/graphql-kimera/docs/mocking-queries-scenario), let's see how we can customize those mocks.

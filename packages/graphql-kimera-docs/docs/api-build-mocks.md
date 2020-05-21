@@ -1,7 +1,7 @@
 ---
 id: api-build-mocks
-title: buildMocks
-sidebar_label: ↳getMutationResolvers/buildMocks
+title: buildMocks ❌
+sidebar_label: ↳getMutationResolvers/buildMocks ❌
 ---
 
 A function that allows us to generate data for a specific Object Type
