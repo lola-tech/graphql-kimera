@@ -15688,7 +15688,7 @@ type Country {
     }
   }
 }
-`)),Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("p",null,`Next, we'll learn how to mock individual types using another mock provider: builders.`));};MDXContent.isMDXComponent=true;
+`)),Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("p",null,Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("a",Object(_home_runner_work_graphql_kimera_graphql_kimera_packages_graphql_kimera_docs_node_modules_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])({parentName:"p"},{"href":"/graphql-kimera/docs/mocking-types"}),`Next`),`, we'll learn how to mock individual types using another mock provider: builders.`));};MDXContent.isMDXComponent=true;
 
 /***/ }),
 /* 121 */
