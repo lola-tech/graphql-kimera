@@ -15,7 +15,7 @@ Let's start with the following schema:
 ```graphql
 type Query {
   launch: Launch
-  rockets: [Rockets]
+  rockets: [Rockets]!
 }
 
 type Launch {
@@ -98,7 +98,7 @@ To do that we'll need to make use of another type of mock provider: the builder.
 
 To add a builder, we'll need to make it part of a `builders` object returned from our `mockProvidersFn` function.
 
-```js title="Scenario + Builder"
+```js title="Scenario + Builder" {3,10-16}
 const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvidersFn: (context) => ({
@@ -166,7 +166,9 @@ A **builder is a function** that's used to build mocks for a specific type.
 
 You can have multiple builders defined, each for a separate type.
 
-```js title="Multiple builders" {5,9}
+You define builders on the root of the `builders` object just as you would resolvers for types in a resolver map, or the definitions of types in your schema.
+
+```js title="Multiple builders" {4,5,9,13}
 const executableSchema = getExecutableSchema({
   // ...
   mockProvidersFn: (context) => ({

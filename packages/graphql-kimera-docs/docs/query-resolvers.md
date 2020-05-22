@@ -14,7 +14,7 @@ Suppose we have a schema with a `rocket` query that can be filtered by passing t
 
 ```graphql
 type Query {
-  rockets(type: String!): [Rocket]
+  rockets(type: String): [Rocket]
 }
 
 type Rocket {
@@ -27,7 +27,7 @@ type Rocket {
 
 To implement the filtering, Kimera allows us to define resolvers in our scenarios.
 
-```js
+```js {15-27}
 const {
   getExecutableSchema,
   useResolver,
@@ -136,4 +136,4 @@ const executableSchema = getExecutableSchema({
 });
 ```
 
-[Next](/graphql-kimera/docs/mocking-mutations), we'll talk about mocking Interfaces and Union types.
+[Next](/graphql-kimera/docs/mocking-mutations), we'll talk about how we can mock Mutations.

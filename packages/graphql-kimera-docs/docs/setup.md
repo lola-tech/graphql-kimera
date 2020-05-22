@@ -30,7 +30,7 @@ To use Kimera, you'll need a GraphQL server, and the schema definitions.
 
 We'll use Apollo Server for the server, but any GraphQL server would work. See [how to install Apollo Server in the Apollo docs](https://www.apollographql.com/docs/apollo-server/getting-started/#step-2-install-dependencies).
 
-```javascript title="server.js"
+```javascript title="server.js" {2,26,29}
 const { ApolloServer, gql } = require("apollo-server");
 const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
 

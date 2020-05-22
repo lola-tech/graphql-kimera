@@ -69,7 +69,7 @@ In order to use our scenario we need to define a function that we will pass as t
 
 This `mockProvidersFn` function needs to return an object with our scenario.
 
-```js
+```js {4-10}
 const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvidersFn: (context) => ({
@@ -197,7 +197,7 @@ Next, we'll talk about some of the characteristics of a scenario.
 
 ### A scenario can mock fewer fields than what's in the schema
 
-A scenario doesn't need to contain all of the fields of the type it mocks. In fact, **it can contain as few or as many fields we want to mock**, as long as it matches the structure of - in this case - the `Query` object.
+A scenario doesn't need to contain all of the fields of the type it mocks. In fact, **it can contain as few or as many fields we want to mock**, as long as it matches the structure of - in the case of the `Query` scenario - the `Query` object.
 
 These are all valid scenarios:
 

@@ -6,23 +6,31 @@ sidebar_label: Glossary
 
 > _Definitions of terms you find in the documentation._
 
-# Builder
+The terms addressed in on this page are:
 
-Builders are functions that used to generate data for specific fields in Object Types. When Kimera walks the `Query` Object Type tree to generate data, it will use these functions to generate data for fields.
-
-Read more about the various builders in the [Data Sources section](/graphql-kimera/docs/data-sources).
-
-# Data Source
-
-Refer to [scenarios](/graphql-kimera/docs/scenarios), [Object Type Builders](/graphql-kimera/docs/object-type-builders), [Field Name Builders](field-name-builders) or [Scalar Type Builders](/graphql-kimera/docs/scalar-type-builders), which are all used to determine how to generate data.
-
-Read more about them in the [Data Sources section](/graphql-kimera/docs/data-sources).
+- [Builder](/graphql-kimera/docs/glossary#builder)
+- [Context](/graphql-kimera/docs/glossary#context)
+- [Executable Schema](/graphql-kimera/docs/glossary#executable-schema)
+- [Mock providers](/graphql-kimera/docs/glossary#mock-providers)
+- [SDL / Schema Definition Language](/graphql-kimera/docs/glossary#schema-definition-language-sdl)
+- [Scenario](/graphql-kimera/docs/glossary#scenario)
 
 # Scenario
 
-Scenarios are objects that mirror the structure of the query response tree, and are used to specify values for specific fields.
+Scenarios are objects that mirror the structure of the specific type they are mocking.
 
-Read more about them in the [Scenario section](/graphql-kimera/docs/scenarios).
+You can find the mental model for scenarios in the ["What is a Scenario" section of "Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario#what-is-a-scenario).
+
+# Builder
+
+A builder is a function that's used to build mocks for a specific type.
+You can have one builder per type. Whenever builder mocks collide with scenario mocks, the scenario mock wins.
+
+Read more about how builders work in the [Mocking types section of the docs](/graphql-kimera/docs/mocking-types-builders#mocking-types-using-builders).
+
+# Mock providers
+
+Refer to collection builders and the scenario defined to customize the mocking in Kimera.
 
 # Context
 
@@ -36,7 +44,9 @@ Read more:
 
 A schema that has a schema definition as well as resolver functions, is an executable schema.
 
-Read more about [how an executable schema is created in Apollo](https://www.apollographql.com/docs/graphql-tools/generate-schema.html#makeExecutableSchema).
+Read more:
+
+- [How an executable schema is created in Apollo](https://www.apollographql.com/docs/graphql-tools/generate-schema.html#makeExecutableSchema).
 
 # Resolver
 
@@ -44,7 +54,7 @@ Read more about [how an executable schema is created in Apollo](https://www.apol
 >
 > -- [Apollo Docs](https://www.apollographql.com/docs/tutorial/resolvers.html#resolver-api)
 
-Read more about resolvers in the [Apollo Docs](https://www.apollographql.com/docs/tutorial/resolvers.html#resolver-api)
+Read [more about resolvers in the Apollo docs](https://www.apollographql.com/docs/tutorial/resolvers.html#resolver-api).
 
 # Schema Definition Language (SDL)
 
@@ -52,11 +62,7 @@ Read more about resolvers in the [Apollo Docs](https://www.apollographql.com/doc
 >
 > -- [Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
 
-# "Kimera"
-
-Kimera's name is inspired from greek mythology: [Chimera (mythology)](<https://en.wikipedia.org/wiki/Chimera_(mythology)>).
-
 Read more:
 
-- [What is GraphQL SDL - Prisma Blog](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)
 - [Understanding schema concepts - Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
+- [What is GraphQL SDL - Prisma Blog](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)

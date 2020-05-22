@@ -7,7 +7,7 @@ sidebar_label: Mocking Mutations
 > _Manage change by updating the store in mutation resolvers._
 
 :::note
-This page assumes you know you to setup your app to use the Kimera executable schema. If you don't, check out the [Setup section of the docs](/graphql-kimera/docs/mocking-mutations).
+This page assumes you know you to setup your app to use the Kimera executable schema. If you don't, check out the [Setup section of the docs](/graphql-kimera/docs/setup).
 :::
 
 Let's start with a schema that has `createRocket` mutation.
