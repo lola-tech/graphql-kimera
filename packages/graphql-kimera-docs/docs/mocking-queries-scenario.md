@@ -41,7 +41,7 @@ We have a single query: `launch` which will return information about the ongoing
 To start mocking with Kimera, pass the schema definition to the `getExecutableSchema` function from Kimera as the `typeDefs` option. This will generate mocks for all queries in the schema, with zero configuration.
 
 ```js title="server.js"
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer } = require("apollo-server");
 const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
 
 const schema = `
@@ -56,7 +56,7 @@ const apollo = new ApolloServer({
   introspection: true,
 });
 
-apollo.listen({ port: 3337 }).then(({ url }) => {
+apollo.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
 });
 ```
@@ -65,7 +65,7 @@ apollo.listen({ port: 3337 }).then(({ url }) => {
 
 In order to customize the mocks, we'll need to define our first mock provider: the Query scenario.
 
-In order to use our scenario we need to define a function that we will pass as the `mockProvidersFn` option to the `getExecutableSchema` API function.
+In order to use our scenario we need to define a function that we will pass as the `mockProvidersFn` option to `getExecutableSchema`.
 
 This `mockProvidersFn` function needs to return an object with our scenario.
 

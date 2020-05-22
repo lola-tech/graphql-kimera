@@ -7,7 +7,7 @@ sidebar_label: Query Resolvers
 > _Custom query resolvers are useful for fields with arguments._
 
 :::note
-This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+This page assumes familiarity with the concept of _scenario_. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
 :::
 
 Suppose we have a schema with a `rocket` query that can be filtered by passing the a rocket `type` argument.

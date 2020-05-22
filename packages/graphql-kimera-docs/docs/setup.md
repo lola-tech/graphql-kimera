@@ -63,12 +63,12 @@ const apollo = new ApolloServer({
   introspection: true,
 });
 
-apollo.listen({ port: 3337 }).then(({ url }) => {
+apollo.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
 });
 ```
 
-Running this code with `node` will start a server on `localhost:3337`. Visiting the URL will predictably take us to the GraphQL Playground.
+Running this code with `node` will start a server on `localhost:4000`. Visiting the URL will predictably take us to the GraphQL Playground.
 
 Running the `me` query...
 

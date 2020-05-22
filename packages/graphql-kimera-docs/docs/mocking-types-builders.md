@@ -7,7 +7,7 @@ sidebar_label: Mocking types
 _Customize mocks for types by defining a builders._
 
 :::note
-This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+This page assumes familiarity with the concept of _scenario_. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
 :::
 
 Let's start with the following schema:
