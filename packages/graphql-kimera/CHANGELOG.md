@@ -3,17 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.10.0-alpha.2](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.1...@lola-tech/graphql-kimera@0.10.0-alpha.2) (2020-05-22)
-
-
-### Bug Fixes
-
-* make it so it uses custom query resolvers ([8f0587a](https://github.com/lola-tech/graphql-kimera/commit/8f0587aecbc6c4d6bb05bcc2ccf9c2c18a7aa343))
-
-
-
-
-
 # [0.10.0-alpha.1](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.0...@lola-tech/graphql-kimera@0.10.0-alpha.1) (2020-05-20)
 
 **Note:** Version bump only for package @lola-tech/graphql-kimera
