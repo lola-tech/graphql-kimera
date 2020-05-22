@@ -35,12 +35,13 @@ module.exports = {
     },
     {
       type: "category",
-      label: "API ❌ (none below)",
+      label: "API",
       items: [
-        "api-build-mocks",
-        "api-cache",
+        // "api-build-mocks",
+        // "api-cache",
         "api-get-executable-schema",
-        "api-merge-scenarios",
+        "api-mock-resolver",
+        // "api-merge-scenarios",
       ],
     },
   ],

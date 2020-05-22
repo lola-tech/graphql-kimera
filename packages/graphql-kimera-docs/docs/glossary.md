@@ -12,6 +12,7 @@ The terms addressed in on this page are:
 - [Context](/graphql-kimera/docs/glossary#context)
 - [Executable Schema](/graphql-kimera/docs/glossary#executable-schema)
 - [Mock providers](/graphql-kimera/docs/glossary#mock-providers)
+- [Resolver](/graphql-kimera/docs/glossary#resolver)
 - [SDL / Schema Definition Language](/graphql-kimera/docs/glossary#schema-definition-language-sdl)
 - [Scenario](/graphql-kimera/docs/glossary#scenario)
 
@@ -30,15 +31,15 @@ Read more about how builders work in the [Mocking types section of the docs](/gr
 
 # Mock providers
 
-Refer to collection builders and the scenario defined to customize the mocking in Kimera.
+"Mock providers" is just another way of saying "the scenario and all of the builders that were defined" or "collection builders and the scenario defined to customize the mocking in Kimera".
 
 # Context
 
-Context refers to a value meant to act as a global that get passed to resolvers.
+`Context` refers to a value meant to act as a global that gets passed to [resolvers](/graphql-kimera/docs/glossary#resolver).
 
 Read more:
 
-- Context in [Apollo Server](https://www.apollographql.com/docs/apollo-server/essentials/data.html#context)
+- Context in [Apollo Server](https://www.apollographql.com/docs/apollo-server/data/resolvers/#resolver-arguments)
 
 # Executable Schema
 
@@ -50,19 +51,17 @@ Read more:
 
 # Resolver
 
-> Resolvers provide the instructions for turning a GraphQL operation (a query, mutation, or subscription) into data.
->
-> -- [Apollo Docs](https://www.apollographql.com/docs/tutorial/resolvers.html#resolver-api)
+Resolvers provide the instructions for turning a GraphQL operation (a query, mutation, or subscription) into data.
 
-Read [more about resolvers in the Apollo docs](https://www.apollographql.com/docs/tutorial/resolvers.html#resolver-api).
+Read [more about resolvers in the Apollo docs](https://www.apollographql.com/docs/apollo-server/data/resolvers/).
 
 # Schema Definition Language (SDL)
 
 > To make it easy to understand the capabilities of a server, GraphQL implements a human-readable schema syntax known as its Schema Definition Language, or “SDL”. The SDL is used to express the types available within a schema and how those types relate to each other.
 >
-> -- [Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
+> -- Apollo Server Docs
 
 Read more:
 
-- [Understanding schema concepts - Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
+- [Schema basics - Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
 - [What is GraphQL SDL - Prisma Blog](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)

@@ -1,33 +1,12 @@
 ---
-id: query-resolvers
-title: Query Resolvers
-sidebar_label: Query Resolvers
+id: api-mock-resolver
+title: mockResolver
+sidebar_label: mockResolver
 ---
 
-> _Custom query resolvers are useful for fields with arguments._
+This is a function with which you can create resolvers for `Query` fields and subfields.
 
-:::note
-This page assumes familiarity with the concept of _scenario_. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
-:::
-
-Suppose we have a schema with a `rocket` query that can be filtered by passing the a rocket `type` argument.
-
-```graphql
-type Query {
-  rockets(type: String): [Rocket]
-}
-
-type Rocket {
-  id: ID!
-  name: String
-  type: String
-  fuel: Fuel
-}
-```
-
-To implement the filtering, Kimera allows us to define resolvers in our scenarios.
-
-```js {15-27}
+```js {3,15-28}
 const {
   getExecutableSchema,
   mockResolver,
@@ -43,7 +22,7 @@ const executableSchema = getExecutableSchema({
   mockProvidersFn: (context) => ({
     scenario: {
       rockets: mockResolver(
-        // First `mockResolver` arg: the resolver factory
+        // 1st argument: `resolverFactoryFn`
         (store) => (_, { type }) => {
           // `mocks` is the store containing the mocks for the `rockets` field.
           const mockedRockets = store.get();
@@ -52,34 +31,45 @@ const executableSchema = getExecutableSchema({
             ? mockedRockets.filter((rocket) => rocket.type === type)
             : mockedRockets;
         },
-        // Second `mockResolver` arg (optional):  the scenario
-        [{ type: "Shuttle" }, {}, { type: "Shuttle" }]
+        // 2nd argument: `scenario`
+        [{ type: "Shuttle" }, {}, { type: "Shuttle" }] // Optional
       ),
     },
   }),
 });
 ```
 
-To define a resolver, we use the `mockResolver` function imported from the `@lola-tech/graphql-kimera` package.
+## API
 
-## `mockResolver` API
+### mockResolver(resolverFactoryFn, scenario)
 
 `mockResolver` accepts two arguments:
 
-1. The resolver factory function
+1. `resolverFactoryFn`\* is a `required` function that gets the field mocks store as its argument, and needs to return a [resolver](/graphql-kimera/docs/glossary#resolver).
+2. The field `scenario`, which is _Optional_.
 
-- _Function_: `(store) => (info, args, ...) => {...}`
+Here's each argument in greater detail:
+
+#### `resolverFactoryFn`
+
+`(store) => (info, args, ...) => {...}`
+
 - The argument to factory function is the field `store`: an object that contains the mocked data for the field we are defining the resolver for. The store defines a `get` method that returns the mocked data.
-- The `store` `get` method accepts an optional `string` argument, that represents the path
-- You need to always use the `get` `store` method to retrieve data
-- The resolver factory function needs to return a [valid graphql resolver](/graphql-kimera/docs/glossary#resolver)
+- The `store` `get` method accepts an optional `string` argument, that represents the path.
+- You need to always use the `get` `store` method to retrieve data.
+- The factory function needs to return a valid [resolver](/graphql-kimera/docs/glossary#resolver).
 
-2. (Optional) The field scenario
+You can see an example of this in action on the [Query Resolvers page](/graphql-kimera/docs/query-resolvers#mockresolver-examples).
 
-- If omitted, the field will be mocked as it would if no scenario was defined for this field.
-- The mocked data will be set in the field store, which is supplied to the resolver factory function as its argument.
+---
 
-## `mockResolver` examples
+#### `scenario`
+
+An object that represents the scenario for the specific field we are mocking the resolver for.
+
+If omitted, the field will be mocked as it would if no scenario was defined for this field.
+
+## Example
 
 Let's use the following schema:
 
@@ -109,7 +99,9 @@ enum Fuel {
 }
 ```
 
-```js {5-17}
+Here's an example of mocking a resolver for the `launches` field of the `Query` type.
+
+```js
 const executableSchema = getExecutableSchema({
   typeDefs: schema,
   mockProvidersFn: (context) => ({
@@ -124,6 +116,8 @@ const executableSchema = getExecutableSchema({
 
           // ...
         },
+        // `store.get()` will retrieve mocks that
+        // are build according to this scenario.
         [{ site: "Vandenberg Base Space" }, {}, {}, {}, {}]
       ),
     },
@@ -135,5 +129,3 @@ const executableSchema = getExecutableSchema({
   }),
 });
 ```
-
-[Next](/graphql-kimera/docs/mocking-mutations), we'll talk about how we can mock Mutations.

@@ -1,6 +1,6 @@
 ---
 id: mocking-mutations
-title: Mutations
+title: Mocking Mutations
 sidebar_label: Mocking Mutations
 ---
 
@@ -76,7 +76,7 @@ const executableSchema = getExecutableSchema({
 
 Kimera passes two arguments to `mutationResolversFn`:
 
-- `store`: This is an object which holds all of the mocks for our app. It defines two methods:
+- `store`: This is an object which holds all of the mocks for our schema. It defines two methods:
   - `store.get(path = '')`: The `get` method will accept an optional `path` string, and return the mocked value stored at that specific path.
   - `store.update(path, updateValue)`: The `update` will update the value at the supplied `path` with the new value. If the updated value is an object, the new value will be deeply merged over the existing value.
 - `buildMocks('TypeName', scenario)`: This is a function mocks a specific type using existing mock providers, and optionally, a custom scenario that we can provide at execution.
