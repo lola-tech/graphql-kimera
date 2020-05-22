@@ -1,7 +1,7 @@
 ---
 id: query-resolvers
 title: Query Resolvers
-sidebar_label: Query Resolvers - ON GOING
+sidebar_label: Query Resolvers
 ---
 
 > _Custom query resolvers are useful for fields with arguments._
@@ -40,7 +40,7 @@ const schema = `
 
 const executableSchema = getExecutableSchema({
   typeDefs: schema,
-  mockProviders: {
+  mockProvidersFn: (context) => ({
     scenario: {
       rockets: useResolver(
         // First `useResolver` arg: the resolver factory
@@ -56,7 +56,7 @@ const executableSchema = getExecutableSchema({
         [{ type: "Shuttle" }, {}, { type: "Shuttle" }]
       ),
     },
-  },
+  }),
 });
 ```
 
@@ -112,25 +112,27 @@ enum Fuel {
 ```js
 const executableSchema = getExecutableSchema({
   typeDefs: schema,
-  scenario: {
-    launches: useResolver(
-      (store) => (_, { site }) => {
-        // Get all launches mocked
-        const launches = store.get();
+  mockProvidersFn: (context) => ({
+    scenario: {
+      launches: useResolver(
+        (store) => (_, { site }) => {
+          // Get all launches mocked
+          const launches = store.get();
 
-        // Get rockets from the first launch
-        const firstLaunchRockets = store.get("launches.0.rockets");
+          // Get rockets from the first launch
+          const firstLaunchRockets = store.get("launches.0.rockets");
 
-        // ...
-      },
-      [{ site: "Vandenberg Base Space" }, {}, {}, {}, {}]
-    ),
-  },
-  builders: {
-    Launch: () => ({
-      site: "Kennedy Space Center",
-    }),
-  },
+          // ...
+        },
+        [{ site: "Vandenberg Base Space" }, {}, {}, {}, {}]
+      ),
+    },
+    builders: {
+      Launch: () => ({
+        site: "Kennedy Space Center",
+      }),
+    },
+  }),
 });
 ```
 

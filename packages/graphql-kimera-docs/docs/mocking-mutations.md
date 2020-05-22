@@ -1,186 +1,165 @@
 ---
 id: mocking-mutations
 title: Mutations
-sidebar_label: Mocking Mutations ❌
+sidebar_label: Mocking Mutations
 ---
 
-> _Mock mutations by._
+> _Manage change by updating the store in mutation resolvers._
 
 :::note
-This page assumes familiarity with the concept of a scenario. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
+This page assumes you know you to setup your app to use the Kimera executable schema. If you don't, check out the [Setup section of the docs](/graphql-kimera/docs/mocking-mutations).
 :::
 
-Managing changes to data in Mutation resolvers
-
-Lets modify the schema to add support for a `addCity` mutation that accepts the name of the city, and returns the complete list of cities, including the new one.
+Let's start with a schema that has `createRocket` mutation.
 
 ```graphql
 # ...
 
-type AddCityResult {
-  cities: [City]
-}}
-
 type Mutation {
-   addCity(name: String): AddCityResultt
+  createRocket(input: CreateRocketInput!): CreateRocketPayload!
 }
 
-schema {
-  query: Query
-  mutation: Mutation
+input CreateRocketInput {
+  name: String!
+  type: String!
 }
 
-# ...
+type CreateRocketPayload {
+  rockets: [Rocket]
+  successful: Boolean!
+}
+
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+}
 ```
 
-In order to pass a resolver for that mutation to Kimera, we need to pass a [getMutationResolvers function](/graphql-kimera/docs/api-get-executable-schema#getmutationresolverscache-buildmocks-context) as an argument to `getExecutableSchema`. The `getMutationResolvers` function needs to return an object with [resolvers](/graphql-kimera/docs/glossary#resolver) for all mutation we want to handle:
+The `createRocket` mutation takes a `name` and a `type` for the new rocket, and returns the complete list of rockets, including the new one if it's successful.
 
-```javascript
-// ...
+## `mutationResolversFn` example
 
-function getMutationResolvers(cache, buildMocks) {
-  return {
-    addCity: (_, { name }) => {
-      const newCity = buildMocks("City", { name });
+In order to pass this new mutation, we'll have to do it as part of the return object of a new `getExecutableSchema` option: **`mutationResolversFn`**.
 
-      cache.cities = cache.cities ? [...cache.cities, newCity] : [newCity];
+To define a resolver for a mutation with Kimera, we need use a new `getExecutableSchema` option: the `mutationResolversFn` function.
+
+`mutationResolversFn` needs to return an object with all mutation resolvers we want to define.
+
+```js
+const executableSchema = getExecutableSchema({
+  // typeDefs & mockProviders
+  mutationResolversFn: (store, buildMocks) => ({
+    // Example of how you would use buildMocks to build a node of a specific
+    // type. If the Rocket `type` is omitted from the `input`, the `Shuttle`
+    // value defined in the `Rocket` builder is used.
+    createRocket: (_, { input }) => {
+      let newRocket = null;
+      // Example of mocking the unhappy path
+      if (input.name !== "Fail") {
+        newRocket = buildMocks("Rocket", { ...input }, true);
+        store.update({ rockets: [...store.get("rockets"), newRocket] });
+      }
 
       return {
-        cities: cache.cities,
-      };
-    },
-  };
-}
-
-// ...
-
-const executableSchema = getExecutableSchema(
-  typeDefs,
-  getDefaultDataSources,
-  {},
-  getMutationResolvers
-);
-
-// ...
-```
-
-The `getMutationResolvers` function receives:
-
-- a reference to the data `Query` tree as the [`cache` argument](/graphql-kimera/docs/api-get-executable-schema#cache)
-- the [`buildMocks`](/graphql-kimera/docs/api-build-mocks) function that allows us to build a new object with generated data from a specific Object Type. It accepts the `type` name, and a [Scenario](/graphql-kimera/docs/scenario) which specifies what fields need to be set.
-
-The resolver:
-
-- creates a new `City` object using the `City` object type a template,
-- updates the `cities` query result by adding the newly created city, and
-- returns the result of the mutation in the expected `AddCityResult` format.
-
-### Modifying fields with arguments
-
-The previous example was pretty straight forward, but lets complicate things a bit by adding an `addPersona` mutation.
-
-```graphql
-type AddPersonaResult {
-  personas: [Persona]
-}
-
-type Mutation {
-  # ...
-  addPersona(cityName: String, name: String): AddPersonaResult
-}
-```
-
-This looks very similar to the `addCity` mutation, so lets implement its resolver in the same way.
-
-```javascript
-// ...
-
-function getMutationResolvers(cache, buildMocks) {
-  return {
-    addPersona: (_, { name, cityName }) => {
-      const newPersona = buildMocks("Persona", {
-        name,
-        city: { name: cityName },
-      });
-
-      cache.personas = cache.personas
-        ? [...cache.personas, newPersona]
-        : [newPersona];
-
-      return {
-        personas: cache.personas,
-      };
-    },
-  };
-}
-
-// ...
-```
-
-Running this code and executing an `addPersona` mutation will result in a `cache.personas is not iterable` error. Can you figure out why? A clue can be found by comparing [the `cities` builder](/graphql-kimera/docs/tutorial-fields-with-args#faking-dependencies) to [the `personas` builder](/graphql-kimera/docs/tutorial-fields-with-args).
-
-```javascript
-const typeBuilders = {
-  ['Query']: () => ({
-    cities: times(5, () => ({ name: casual.city }));,
-    personas: getPersonas => {
-      return function personasResolver(_, { city }) {
-        return city
-          ? getPersonas().filter(persona => persona.city.name === city)
-          : getPersonas();
+        successful: input.name !== "Fail",
+        rockets: store.get("rockets"),
       };
     },
   }),
-};
+});
 ```
+
+## `mutationResolversFn` API
+
+Kimera passes two arguments to `mutationResolversFn`:
+
+- `store`: This is an object which holds all of the mocks for our app. It defines two methods:
+  - `store.get(path = '')`: The `get` method will accept an optional `path` string, and return the mocked value stored at that specific path.
+  - `store.update(path, updateValue)`: The `update` will update the value at the supplied `path` with the new value. If the updated value is an object, the new value will be deeply merged over the existing value.
+- `buildMocks('TypeName', scenario)`: This is a function mocks a specific type using existing mock providers, and optionally, a custom scenario that we can provide at execution.
+
+Next we'll look at several examples of using these arguments.
+
+## `store` and `buildMocks` examples
+
+Starting with some form of the following schema:
 
 ```graphql
 type Query {
-  cities: [City]
-  personas(city: String): [Persona]
+  launch: Launch
+}
+
+type Launch {
+  rockets: [Rocket]
+  address: Address
+}
+
+type Address {
+  line1: String
+  country: String
+}
+
+type Rocket {
+  ...
 }
 ```
 
-As you may now remember, `personas` is a field that accepts arguments, which prompted us to implement a resolver factory (ie. a function that returns a resolver function) for it. The builder for the `cities` field is just an Array.
+Here are a few ways affect the mocked data in a mutation:
 
-This means that when building the `Query` type data tree (the one that gets passed down as the `cache` argument in our `buildMocks` function), Kimera sets static values only for fields without any arguments.
+```js
+getExecutableSchema({
+  typeDefs,
+  mockProvidersFn: (context) => ({
+    builders: {
+      Address: () => ({
+        line1: "Example Street",
+        country: "Examplestan"
+      })
+    }
+  }),
+  mutationResolversFn: (store, buildMocks) => ({
+    [mututationName]: function resolver(_, args, ...) {
+      // Returns the 'Query' type mocks.
+      store.get();
 
-However, when a field meets the following two conditions...
+      // Returns the mocks for a value deeper in the graph.
+      // This can go as deep as needed. e.g.: 'launch.rockets.0.name'.
+      store.get('launch.rockets.0');
 
-- the field has arguments,
-- and Kimera can find a resolver factory in an Object Type builder for it,
-  ...the value set in the `cache` for the field is the resolver function.
-
-In our case, our `personas` field from the `Query` type is a field with arguments, and Miage can find a resolver factory function for it in the `Query` Object Type Builder, so it sets its value to the `personasResolver` function.
-
-That explains our `cache.personas is not iterable` error, since the spread operator works on [iterables](https://javascript.info/iterable), and the `personasResolver` function is not an iterable. For these cases, Kimera adds a handy `getData` function on the resolver function that allows us to get the data.
-
-```javascript
-// ...
-
-function getMutationResolvers(cache, buildMocks) {
-  return {
-    addPersona: (_, { cityName, name }) => {
-      const newPersona = buildMocks("Persona", {
-        name,
-        city: { name: cityName },
+      // Partially update the value of an Object Type field.
+      store.update('launch.address', {
+        country: 'Cuba'
       });
 
-      const personaList = cache.personas.getData();
-      cache.personas = personaList
-        ? [...personaList, newPersona]
-        : [newPersona];
+      // Completely replace an Object Type.
+      store.update(
+        'launch.address',
 
-      return {
-        personas: cache.personas,
-      };
-    },
-  };
-}
+        // When the supplied scenario omits fields, like we do with `line1`
+        // here, Kimera will use a builder to figure out how mock it.
 
-// ...
+        // In this case, `buildMocks` will use `Example Street` mock for the `line1` field.
+
+        buildMocks('Address', { country: 'Cuba' }),
+      );
+
+      // Replace a list field with an empty list.
+      store.update('launch.rockets', [])
+
+      // Append a list field.
+      store.update('launch.rockets', [
+        ...store.get('launch.listField'),
+        // The `buildMocks` scenario can be omitted, and Kimera will use the
+        // 'Rocket' builder, if existing to figure out how to mock this type.
+        buildMocks('Rocket')
+      ]);
+      // ...
+    }
+  })
+})
 ```
 
-Running the mutation again will return the expected result.
-
-This concludes our tutorial. You should now be able to conquer the world. If you can't, open an issue in the [graphql-kimera repo](https://github.com/lola-tech/graphql-kimera).
+:::note
+For an example of using mutations, check out the [server example in the Kimera Github repository](https://github.com/lola-tech/graphql-kimera/tree/master/examples/server).
+:::
