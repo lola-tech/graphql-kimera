@@ -40,7 +40,7 @@ We have a single query: `launch` which will return information about the ongoing
 
 To start mocking with Kimera, pass the schema definition to the `getExecutableSchema` function from Kimera as the `typeDefs` option. This will generate mocks for all queries in the schema, with zero configuration.
 
-```js title="server.js"
+```js title="server.js" {2,9,12}
 const { ApolloServer } = require("apollo-server");
 const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
 
@@ -89,6 +89,8 @@ This will make it so the `launch` query is mocked with its:
 - `site` field set to `Kennedy Space Station`;
 - `rockets` field containing two rockets, and the second rocket being of type "Exploration Vessel":
 
+All other fields that haven't been explicitly mocked will be mocked with default values.
+
 Running:
 
 ```
@@ -106,9 +108,9 @@ query {
 }
 ```
 
-will yield:
+will yield (custom mocks highlighted):
 
-```json
+```json {5,14,15,18}
 {
   "data": {
     "launch": {
@@ -132,18 +134,20 @@ will yield:
 }
 ```
 
-All other fields that haven't been explicitly mocked will be mocked with default values.
+## What is a scenario?
 
-## What is the Query scenario?
+:::note
+When we refer to "the scenario" we refer to the `Query` scenario (ie. the scenario for the `Query` type).
+:::
 
-In order to build the correct intuition about what the Query scenario is, let's think about how the `Query` type would look in its object form.
+To understand what a scenario is, we'll focus on understanding the `Query` scenario. The build the correct mental model, think about how the `Query` type would look in an object form.
 
 For example, take the following slightly modified schema:
 
 ```graphql
 type Query {
   launch: Launch
-  rockets(type: String!): [Rockets]!
+  rockets: [Rockets]!
 }
 
 type Launch {
@@ -160,7 +164,7 @@ type Rocket {
 }
 ```
 
-The `Query` _object form_ (or in short the **`Query` object**) would be:
+The _`Query` type object form_ (or in short the **`Query` object**) would be:
 
 ```js
 {
@@ -188,6 +192,8 @@ Keeping all of this in mind, the `Query scenario` (or simply "the scenario") is 
 :::note
 Kimera allows you to define scenarios for other types than `Query` in the context of builders (another type of mock provider) or in resolvers, but we'll talk more about that in other sections of the docs.
 :::
+
+Next, we'll talk about some of the characteristics of a scenario.
 
 ### A scenario can mock fewer fields than what's in the schema
 
@@ -220,7 +226,7 @@ These are all valid scenarios:
 }
 ```
 
-### The scenario can go as deep as possible
+### A scenario can go as deep as possible
 
 A scenario can be as deep or as shallow we want, type permitting. Take the following schema:
 

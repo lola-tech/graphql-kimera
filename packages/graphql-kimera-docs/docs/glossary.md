@@ -1,10 +1,10 @@
 ---
 id: glossary
 title: Glossary
-sidebar_label: Glossary ❌
+sidebar_label: Glossary
 ---
 
-Definitions of terms you'll be encountering across the documentation
+> _Definitions of terms you find in the documentation._
 
 # Builder
 

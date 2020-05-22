@@ -46,7 +46,7 @@ To define a resolver for a mutation with Kimera, we need use a new `getExecutabl
 
 `mutationResolversFn` needs to return an object with all mutation resolvers we want to define.
 
-```js
+```js {3,7,12,14,19}
 const executableSchema = getExecutableSchema({
   // typeDefs & mockProviders
   mutationResolversFn: (store, buildMocks) => ({
@@ -57,7 +57,9 @@ const executableSchema = getExecutableSchema({
       let newRocket = null;
       // Example of mocking the unhappy path
       if (input.name !== "Fail") {
-        newRocket = buildMocks("Rocket", { ...input }, true);
+        // Mock a new `Rocket` using the `input` arg as a scenario
+        newRocket = buildMocks("Rocket", { ...input });
+        // Update the store by appending the new rocket
         store.update({ rockets: [...store.get("rockets"), newRocket] });
       }
 
@@ -135,12 +137,9 @@ getExecutableSchema({
       // Completely replace an Object Type.
       store.update(
         'launch.address',
-
         // When the supplied scenario omits fields, like we do with `line1`
         // here, Kimera will use a builder to figure out how mock it.
-
         // In this case, `buildMocks` will use `Example Street` mock for the `line1` field.
-
         buildMocks('Address', { country: 'Cuba' }),
       );
 

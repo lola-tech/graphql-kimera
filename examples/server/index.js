@@ -43,7 +43,7 @@ const executableSchema = getExecutableSchema({
       let newRocket = null;
       // Example of mocking the unhappy path
       if (input.name !== "Fail") {
-        newRocket = buildMocks("Rocket", { ...input }, true);
+        newRocket = buildMocks("Rocket", { ...input });
         store.update({ rockets: [...store.get("rockets"), newRocket] });
       }
 

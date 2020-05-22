@@ -56,7 +56,7 @@ const executableSchema = getExecutableSchema({
 
 ...will yield the following mocks:
 
-```json
+```json {7,14}
 {
   "data": {
     "launch": {
@@ -78,7 +78,6 @@ const executableSchema = getExecutableSchema({
           "fuel": "PLASMA"
         },
       ],
-      "isBooked": true
     },
     "rockets": [{
         {
@@ -167,7 +166,7 @@ A **builder is a function** that's used to build mocks for a specific type.
 
 You can have multiple builders defined, each for a separate type.
 
-```js title="Multiple builders"
+```js title="Multiple builders" {5,9}
 const executableSchema = getExecutableSchema({
   // ...
   mockProvidersFn: (context) => ({
