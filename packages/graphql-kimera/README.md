@@ -66,12 +66,12 @@ apollo.listen({ port: 4000 }).then(({ url }) => {
 #### Custom query resolvers examples
 
 If you want to implement filtering in the mocked `rockets` query, you can define
-a resolver uing the `useResolver` function.
+a resolver uing the `mockResolver` function.
 
 ```js
 const {
   getExecutableSchema,
-  useResolver,
+  mockResolver,
 } = require("@lola-tech/graphql-kimera");
 
 // Importing the typeDefs from the `schema.graphql` file...
@@ -80,7 +80,7 @@ const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvidersFn: () => ({
     scenario: {
-      rockets: useResolver(
+      rockets: mockResolver(
         // Define a resolver factory
         (mocks) => (_, { type }) => {
           // `mocks` is a store that contains the mocks for the `rockets` query

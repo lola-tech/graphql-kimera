@@ -4,9 +4,9 @@ const {
 } = require("graphql-tools");
 const schemaParser = require("easygraphql-parser");
 
-const { memoize, zipObject } = require("./helpers");
+const { memoize, isUndefined, zipObject } = require("./helpers");
 const { buildMocks } = require("./engine");
-const { useResolver, mergeBuilders } = require("./mockProviders");
+const { mockResolver, mergeBuilders } = require("./mockProviders");
 const { initializeStore } = require("./store");
 
 /**
@@ -35,6 +35,9 @@ function getExecutableSchema({
   // fn () => ({ URI: () => {...}, ... })
   customResolversFn = () => ({}),
 }) {
+  if (isUndefined(typeDefs)) {
+    throw Error('The "typeDefs" option is required for "getExecutableSchema".');
+  }
   // Parse the schema string into a custom data structure
   const schema = schemaParser(typeDefs);
 
@@ -115,6 +118,6 @@ function getExecutableSchema({
 }
 
 module.exports = {
-  useResolver,
+  mockResolver,
   getExecutableSchema,
 };

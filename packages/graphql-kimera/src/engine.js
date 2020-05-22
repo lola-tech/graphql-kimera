@@ -18,7 +18,7 @@ const {
 const {
   mergeScenarios,
   reduceToScenario,
-  useResolver,
+  mockResolver,
   isResolverScenario,
   mergeMockProviders,
 } = require("./mockProviders");
@@ -112,7 +112,7 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
 
       if (!isFunction(fieldResolver)) {
         throw new TypeError(
-          `The argument passed to "useResolver" for field "${meta.path}" is a simple function "() => {}", and needs to be a resolver factory function "() => () => {}"`
+          `The argument passed to "mockResolver" for field "${meta.path}" is a simple function "() => {}", and needs to be a resolver factory function "() => () => {}"`
         );
       }
 
@@ -315,5 +315,5 @@ module.exports = {
   buildMocks,
   defaultMockProviders,
   reduceToScenario,
-  useResolver,
+  mockResolver,
 };

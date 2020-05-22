@@ -25,7 +25,7 @@ const { DEFAULT_LIST_LENGTH } = require("./constants");
  * @param {scenario} scenario Optional. The scenario for this field
  * @returns {Object} Returns the merged mock providers scenario.
  */
-const useResolver = (resolverFactoryFn, scenario) => {
+const mockResolver = (resolverFactoryFn, scenario) => {
   return new ResolverScenario(resolverFactoryFn, scenario);
 };
 
@@ -159,7 +159,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
 
   if (isFunction(scenario)) {
     throw new TypeError(
-      `Field "${meta.path}" was attempted to be mocked with a function. If you meant to define a resolver, you need to do so using "useResolver".`
+      `Field "${meta.path}" was attempted to be mocked with a function. If you meant to define a resolver, you need to do so using "mockResolver".`
     );
   }
 
@@ -201,7 +201,7 @@ module.exports = {
   mergeScenarios,
   mergeBuilders,
   mergeMockProviders,
-  useResolver,
+  mockResolver,
   isResolverScenario,
   reduceToScenario,
 };

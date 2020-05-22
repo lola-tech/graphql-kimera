@@ -3,7 +3,7 @@ const path = require("path");
 const schemaParser = require("easygraphql-parser");
 
 const { initializeStore } = require("../store");
-const { mockType, useResolver } = require("../engine");
+const { mockType, mockResolver } = require("../engine");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -34,7 +34,7 @@ describe("store.update", () => {
       mockQuery({
         scenario: {
           launches: {
-            list: useResolver(() => () => {}, [{ site: "Mocked Site" }]),
+            list: mockResolver(() => () => {}, [{ site: "Mocked Site" }]),
           },
         },
       })
@@ -55,7 +55,7 @@ describe("store.update", () => {
       mockQuery({
         scenario: {
           launches: {
-            list: useResolver(() => () => {}, [{ site: "Mocked Site" }]),
+            list: mockResolver(() => () => {}, [{ site: "Mocked Site" }]),
           },
         },
       })
@@ -131,7 +131,7 @@ describe("store.update", () => {
   it("Throws when we are updating with resolvers", () => {
     const store = initializeStore({});
     expect(() =>
-      store.update({ test: useResolver(() => () => {}) })
+      store.update({ test: mockResolver(() => () => {}) })
     ).toThrowError();
   });
 });

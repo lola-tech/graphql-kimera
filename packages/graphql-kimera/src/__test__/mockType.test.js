@@ -5,7 +5,7 @@ const schemaParser = require("easygraphql-parser");
 
 const { mockType } = require("../engine");
 const { DEFAULT_LIST_LENGTH } = require("../constants");
-const { useResolver } = require("../mockProviders");
+const { mockResolver } = require("../mockProviders");
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "example.schema.graphql"),
@@ -268,7 +268,7 @@ describe("Custom Resolvers", () => {
     const actual = mockQuery({
       scenario: {
         launches: {
-          list: useResolver(
+          list: mockResolver(
             (launchesStore) => (_, { siteFilter }) => {
               return launchesStore.get().filter((launch) => {
                 return launch.site.includes(siteFilter);
@@ -296,7 +296,7 @@ describe("Custom Resolvers", () => {
     const actual = mockQuery({
       scenario: {
         launches: {
-          list: useResolver((_, mockType) => () => {
+          list: mockResolver((_, mockType) => () => {
             return [mockType("Launch", { site: "Mocked Site" })];
           }),
         },
@@ -313,7 +313,7 @@ describe("Custom Resolvers", () => {
     const actual = mockQuery({
       builders: {
         LaunchConnection: () => ({
-          list: useResolver(() => mockedResolver),
+          list: mockResolver(() => mockedResolver),
         }),
       },
     });
@@ -400,7 +400,7 @@ describe("Validation", () => {
   it("Throws when when the root Scenario is a ResolverScenario.", () => {
     expect(() =>
       mockQuery({
-        scenario: useResolver(() => {}),
+        scenario: mockResolver(() => {}),
       })
     ).toThrow(TypeError);
   });
@@ -429,14 +429,14 @@ describe("Validation", () => {
     ).toThrowError();
   });
 
-  it("Should throw a TypeError error when a useResolver callback is a simple function in a Builder scenario.", () => {
+  it("Should throw a TypeError error when a mockResolver callback is a simple function in a Builder scenario.", () => {
     expect(() =>
       mockQuery({
         builders: {
           LaunchConnection: () => ({
             list: [
               {
-                site: useResolver(jest.fn()),
+                site: mockResolver(jest.fn()),
               },
             ],
           }),
@@ -461,7 +461,7 @@ describe("Validation", () => {
     expect(() =>
       mockQuery({
         builders: {
-          Markdown: () => useResolver(() => mockedResolver),
+          Markdown: () => mockResolver(() => mockedResolver),
         },
       })
     ).toThrow(TypeError);
