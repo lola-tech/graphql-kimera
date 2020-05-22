@@ -48,7 +48,7 @@ For more about all the ways you can customize mocks, see the ["Using Kimera"](/g
 
 ### Speed up the prototyping process
 
-Kimera allows you get a mocked server up and running by just providing the schema definition. You can then customize the mocks using [mock providers](/graphql-kimera/docs/glossary#mock-providers).
+Kimera allows you to get a mocked server up and running by just providing the schema definition. You can then customize the mocks using [mock providers](/graphql-kimera/docs/glossary#mock-providers).
 
 ### Allow large teams to better coordinate
 

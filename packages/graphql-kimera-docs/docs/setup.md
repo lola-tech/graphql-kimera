@@ -28,7 +28,7 @@ yarn add --dev @lola-tech/graphql-kimera
 
 To use Kimera, you'll need a GraphQL server, and the schema definitions.
 
-We'll use [Apollo Server](https://www.apollographql.com/docs/apollo-server/getting-started/#step-2-install-dependencies) for the server, any GraphQL server would work.
+We'll use Apollo Server for the server, but any GraphQL server would work. See [how to install Apollo Server in the Apollo docs](https://www.apollographql.com/docs/apollo-server/getting-started/#step-2-install-dependencies).
 
 ```javascript title="server.js"
 const { ApolloServer, gql } = require("apollo-server");
@@ -68,7 +68,7 @@ apollo.listen({ port: 3337 }).then(({ url }) => {
 });
 ```
 
-Running this code with `node` will start a server on `localhost:4000`. Visiting the URL will predictably take us to the GraphQL Playground.
+Running this code with `node` will start a server on `localhost:3337`. Visiting the URL will predictably take us to the GraphQL Playground.
 
 Running the `me` query...
 

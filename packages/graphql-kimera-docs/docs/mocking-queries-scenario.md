@@ -89,6 +89,25 @@ This will make it so the `launch` query is mocked with its:
 - `site` field set to `Kennedy Space Station`;
 - `rockets` field containing two rockets, and the second rocket being of type "Exploration Vessel":
 
+Running:
+
+```
+query {
+  launch {
+    id
+    site
+    rockets {
+      name
+      type
+      fuel
+    }
+    isBooked
+  }
+}
+```
+
+will yield:
+
 ```json
 {
   "data": {
