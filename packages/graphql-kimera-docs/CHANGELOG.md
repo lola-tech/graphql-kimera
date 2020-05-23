@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera-docs@0.9.1...@lola-tech/graphql-kimera-docs@0.10.0) (2020-05-23)
+
+
+### Features
+
+* add logo and docs links to readme ([2c35898](https://github.com/lola-tech/graphql-kimera/commit/2c3589820edf1755480618604b7ab85a6fe4a7b2))
+* add logo and docs links to readme ([884ff01](https://github.com/lola-tech/graphql-kimera/commit/884ff010e95b6f095bf9311ae160f1d32199cc93))
+* add logo and docs links to readme, details ([b83692a](https://github.com/lola-tech/graphql-kimera/commit/b83692a858bebcef4608f7c5a32af09fe0934034))
+
+
+
+
+
 ## 0.9.1 (2020-05-19)
 
 
