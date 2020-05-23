@@ -77,7 +77,7 @@ function mockProvidersFn(context) {
 
 _Optional_. A function that returns an object that maps Mutation names to [resolvers](https://www.apollographql.com/docs/tutorial/resolvers.html#mutation).
 
-- `store` is an an object which holds all of the mocks for our schema. It defined two methods:
+- `store` is an object which holds all of the mocks for our schema. It defined two methods:
   - `store.get(path = '')`: The `get` method will accept an optional `path` string, and return the mocked value stored at that specific path.
   - `store.update(path, updateValue)`: The `update` method will update the value at the supplied path with the new value. If the updated value is an object, the new value will be deeply merged over the existing value.
 - `buildMocks('TypeName', scenario)` is a function that mocks a specific type using existing mock providers, and optionally, a custom scenario that we can provide at execution.
