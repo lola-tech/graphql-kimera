@@ -7,7 +7,7 @@
 ---
 
 <p align="center">
-  <img width="300" src="https://cdn.statically.io/gh/lola-tech/graphql-kimera/update-docs/packages/graphql-kimera-docs/static/img/kimera-logo.svg" alt="Kimera logo">
+  <img width="300" src="https://cdn.statically.io/gh/lola-tech/graphql-kimera/master/packages/graphql-kimera-docs/static/img/kimera-logo.svg" alt="Kimera logo">
 </p>
 
 # What is Kimera?
