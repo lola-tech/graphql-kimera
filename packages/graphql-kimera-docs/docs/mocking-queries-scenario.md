@@ -140,7 +140,7 @@ will yield (custom mocks highlighted):
 When we refer to "the scenario" we refer to the `Query` scenario (ie. the scenario for the `Query` type).
 :::
 
-To understand what a scenario is, we'll focus on understanding the `Query` scenario. The build the correct mental model, think about how the `Query` type would look in an object form.
+To understand what a scenario is, we'll focus on understanding the `Query` scenario. To build the correct mental model, think about how the `Query` type would look in an object form.
 
 For example, take the following slightly modified schema:
 
