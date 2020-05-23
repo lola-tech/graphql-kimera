@@ -12896,7 +12896,7 @@ const ButtonContainer=_emotion_styled__WEBPACK_IMPORTED_MODULE_1__[/* default */
     border: 0;
     background-color: var(--ifm-heading-color);
     &:hover {
-      background-color: #a50d33;
+      background-color: var(--ifm-color-primary);
     }
   }
 `;const Header=_emotion_styled__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].div`
