@@ -14,7 +14,7 @@ const ButtonContainer = styled.div`
     border: 0;
     background-color: var(--ifm-heading-color);
     &:hover {
-      background-color: #a50d33;
+      background-color: var(--ifm-color-primary);
     }
   }
 `;
