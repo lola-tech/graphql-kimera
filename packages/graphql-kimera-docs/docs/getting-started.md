@@ -4,9 +4,9 @@ title: Getting Started
 sidebar_label: Getting Started
 ---
 
-> _This page explains what Kimera is, and problems it's designed to solve._
+> _This page explains what Kimera is, and the problems it's designed to solve._
 
-**Kimera** is a JavaScript library for mocking GraphQL APIs. Learn how to use Kimera in the ["Using Kimera"](/graphql-kimera/docs/setup) section of the docs. See it's API in the ["API"](/graphql-kimera/docs/api) section of the docs.
+**Kimera** is a JavaScript library for mocking GraphQL APIs. Learn how to use Kimera in the ["Using Kimera"](/graphql-kimera/docs/setup) section of the docs. See it's API in the ["API"](/graphql-kimera/docs/api-get-executable-schema) section of the docs.
 
 ## What does Kimera do
 
@@ -52,8 +52,8 @@ Kimera allows you to get a mocked server up and running by just providing the sc
 
 ### Allow large teams to better coordinate
 
-In larger teams, frontend developers can negotiate changes to the schema with the backend developers and then quickly add mocks for the changes in a Kimera version of the server while the backend team gets to implementing the changes.
+In larger teams, frontend developers can negotiate schema changes with the backend developers and then quickly add mocks for the changes in a Kimera version of the server while the backend team gets to implementing the changes.
 
 ### Improve testing in frontend applications that use GraphQL
 
-Using Kimera allows you to customize query responses by defining a single scenario as opposed to exhaustively mocking each query response, which is extremely useful for large component trees where queries are used at different levels of the component hierarchy. You can see an [example of a React app using Kimera for testing](/TODO) in the GitHub repository.
+Using Kimera allows you to customize query responses by defining a single scenario as opposed to exhaustively mocking each query response, which is extremely useful for large component trees where queries are used at different levels of the component hierarchy.

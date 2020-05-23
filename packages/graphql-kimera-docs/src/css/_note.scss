@@ -1,0 +1,16 @@
+.alert {
+  &.alert--success {
+    --ifm-alert-background-color: rgba(255, 229, 100, 0.3);
+    --ra-admonition-icon-color: var(--ifm-font-color-base);
+    --ifm-alert-border-color: rgba(231, 207, 89, 0.3);
+    color: var(--ifm-font-color-base);
+  }
+
+  &.alert--secondary {
+    --ifm-alert-border-color: #e6e7e9;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}

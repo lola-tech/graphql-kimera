@@ -1,0 +1,14 @@
+header h1 {
+  font-size: var(--ifm-h1-font-size) !important;
+}
+
+.navbar {
+  .navbar__title {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .navbar__brand {
+    height: 45px;
+  }
+}
