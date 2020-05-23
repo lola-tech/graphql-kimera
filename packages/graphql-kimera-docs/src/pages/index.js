@@ -73,7 +73,7 @@ apollo.listen().then(({ url }) => {
         <p>You can write resolvers, but you don&apos;t need to.</p>
         <p>
           When you do, you&apos;ll get easy access to the mocks through the{" "}
-          <code>store</code>
+          <code>store</code>.
         </p>
       </>
     ),
