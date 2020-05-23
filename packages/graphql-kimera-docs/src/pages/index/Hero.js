@@ -43,6 +43,10 @@ const Heading1 = styled.h1`
   }
 `;
 
+const Subtitle = styled.p`
+  font-size: 1.5rem;
+`;
+
 const Hero = () => {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
@@ -53,7 +57,7 @@ const Hero = () => {
           <img src={useBaseUrl("img/kimera-logo.svg")} alt="Kimera logo" />
           <span>{siteConfig.title}</span>
         </Heading1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <Subtitle>{siteConfig.tagline}</Subtitle>
         <ButtonContainer>
           <Link
             className={"button button--lg"}

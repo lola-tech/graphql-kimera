@@ -2,7 +2,6 @@ import React from "react";
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styled from "@emotion/styled";
-import styles from "./styles.module.css";
 import Feature from "./index/Feature";
 import Hero from "./index/Hero";
 
@@ -110,9 +109,9 @@ function Home() {
       description="Description will go into a meta tag in <head />"
     >
       <Hero />
-      <main className="container">
+      <main className="home--container container">
         {features && features.length && (
-          <section className={styles.features}>
+          <section>
             <div className="row">
               {features.map((props, idx) => (
                 <>
