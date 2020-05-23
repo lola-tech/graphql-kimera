@@ -1,0 +1,128 @@
+/* stylelint-disable docusaurus/copyright-header */
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #ec174c;
+  --ifm-color-primary-dark: #d41142;
+  --ifm-color-primary-darker: #bd0f3b;
+  --ifm-color-primary-darkest: #a50d33;
+  --ifm-color-primary-light: #ee2b5b;
+  --ifm-color-primary-lighter: #f0426e;
+  --ifm-color-primary-lightest: #f47192;
+  --ifm-code-font-size: 95%;
+  --ifm-navbar-height: 80px;
+  --ifm-font-family-base: "Open Sans";
+  --ifm-heading-font-family: "Space Mono";
+  --ifm-h1-font-size: 2.3rem;
+  --ifm-h2-font-size: 1.8rem;
+  --ifm-font-family-monospace: "Space Mono";
+  --ifm-heading-color: #111010;
+  --ifm-font-color-base: #333333;
+  --ifm-link-color: #333333;
+  --ifm-link-decoration: none;
+  --ifm-link-hover-decoration: none;
+  --ifm-code-border-radius: 3px;
+  --ifm-code-background: #f1f2ff;
+  --ifm-pagination-nav-color-hover: #ec174c;
+  --ifm-alert-border-radius: 5px;
+  --ifm-global-radius: 5px;
+  --ifm-font-weight-semibold: 600;
+}
+
+@import "header";
+@import "footer";
+@import "sidebar";
+@import "note";
+
+h1,
+h2 {
+  font-weight: normal;
+  font-family: var(--ifm-heading-font-family);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  --ifm-heading-color: var(--ifm-color-gray-900);
+  font-weight: 600;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: #ffffff1a;
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+// First H1 on the page
+header h1 {
+  font-size: var(--ifm-h1-font-size) !important;
+}
+
+.markdown {
+  h2 .hash-link {
+    font-size: 1.5rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    a,
+    a:hover {
+      border-bottom: 0;
+      background-color: transparent;
+
+      &.hash-link {
+        font-family: var(--ifm-font-family-base);
+        font-weight: 400;
+        &:hover {
+          color: var(--ifm-color-heading-color);
+        }
+      }
+    }
+  }
+
+  a {
+    background-color: #ec174c0f;
+    border-bottom: 1px solid #ccc;
+    border-radius: var(--ifm-code-border-radius);
+
+    &:hover {
+      background-color: #ec174c17;
+      border-color: #555555;
+    }
+
+    code {
+      background: transparent;
+    }
+  }
+
+  > h2 {
+    --ifm-h2-font-size: 1.8rem;
+  }
+}
+
+// Pagination at the bottom of the page
+
+.pagination-nav__link {
+  border: 0;
+  background-color: #ec174c14;
+  border: 1px solid #ec174c0f;
+  &:hover {
+    background-color: #ec174c22;
+    border-color: white;
+  }
+}
+
+.home--container {
+  margin: 2rem auto;
+}

@@ -1,0 +1,47 @@
+.menu {
+  font-weight: var(--ifm-font-weight-normal);
+}
+
+.menu__list {
+  // font-family: var(--ifm-heading-font-family);
+  .menu__link {
+    color: black;
+
+    &[href="#!"] {
+      cursor: default;
+      &:hover {
+        font-weight: normal;
+      }
+    }
+
+    &:hover {
+      font-weight: 600;
+      background-color: transparent;
+    }
+
+    &.menu__link--active {
+      font-weight: 600;
+      color: var(--ifm-heading-color);
+      position: relative;
+      background-color: transparent;
+
+      &:not(.menu__link--sublist) {
+        background-color: transparent;
+      }
+      &::before {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        color: #ec174c;
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        z-index: 3;
+        background: currentColor;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}

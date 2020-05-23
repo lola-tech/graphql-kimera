@@ -1,7 +1,7 @@
 {
   "name": "@lola-tech/graphql-kimera-docs",
   "version": "0.9.1",
-  "description": "documentation for graphql-kimera auto-mocking tool",
+  "description": "The documentation for Kimera.",
   "main": "index.js",
   "private": true,
   "scripts": {
@@ -14,7 +14,11 @@
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.50",
     "@docusaurus/preset-classic": "^2.0.0-alpha.50",
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
     "classnames": "^2.2.6",
+    "docusaurus-plugin-sass": "^0.1.8",
+    "prism-react-renderer": "^1.1.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
@@ -24,7 +28,7 @@
     "url": "git+https://github.com/lola-tech/graphql-kimera.git"
   },
   "author": "Lucian Samson <sickmav@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/lola-tech/graphql-kimera/issues"
   },

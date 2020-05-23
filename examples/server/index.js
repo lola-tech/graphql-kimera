@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const { ApolloServer } = require("apollo-server");
 const {
   getExecutableSchema,
-  useResolver,
+  mockResolver,
 } = require("@lola-tech/graphql-kimera");
 
 const typeDefs = fs.readFileSync(
@@ -16,7 +16,7 @@ const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvidersFn: () => ({
     scenario: {
-      rockets: useResolver(
+      rockets: mockResolver(
         // Define a resolver factory
         (mocks) => (_, { type }) => {
           // `mocks` is a store that contains the mocks for the `rockets` query
@@ -43,7 +43,7 @@ const executableSchema = getExecutableSchema({
       let newRocket = null;
       // Example of mocking the unhappy path
       if (input.name !== "Fail") {
-        newRocket = buildMocks("Rocket", { ...input }, true);
+        newRocket = buildMocks("Rocket", { ...input });
         store.update({ rockets: [...store.get("rockets"), newRocket] });
       }
 

@@ -5,7 +5,7 @@ const {
   mergeScenarios,
   mergeBuilders,
   reduceToScenario,
-  useResolver,
+  mockResolver,
 } = require("../mockProviders");
 
 describe("mergeScenarios", () => {
@@ -264,7 +264,7 @@ describe("reduceToScenario", () => {
           },
           builders: {
             User: () => ({
-              emailAddress: useResolver(() => () => "resolver@example.com"),
+              emailAddress: mockResolver(() => () => "resolver@example.com"),
               trips: [{ isBooked: false }],
             }),
             String: () => "Mocked String",

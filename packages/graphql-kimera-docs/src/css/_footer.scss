@@ -1,0 +1,16 @@
+.footer--dark {
+  --ifm-footer-background-color: #292c34;
+  a {
+    color: white;
+    border-bottom: 1px solid #777;
+
+    &:hover {
+      border-radius: var(--ifm-code-border-radius);
+      border-bottom: 1px solid #ccc;
+    }
+
+    code {
+      background: transparent;
+    }
+  }
+}
