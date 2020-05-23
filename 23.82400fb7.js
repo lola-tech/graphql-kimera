@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[23],{168:function(e,t,n){"use strict";var a=n(0),c=n(169);t.a=function(){return Object(a.useContext)(c.a)}},169:function(e,t,n){"use strict";var a=n(0),c=n.n(a).a.createContext({isDarkTheme:!1,setLightTheme:function(){},setDarkTheme:function(){}});t.a=c}}]);
