@@ -105,8 +105,8 @@ function Home() {
   const { siteConfig = {} } = context;
   return (
     <Layout
-      title={`TST ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      title={`GraphQL ${siteConfig.title}`}
+      description="Kimera is a library for mocking GraphQL servers with precision."
     >
       <Hero />
       <main className="home--container container">
