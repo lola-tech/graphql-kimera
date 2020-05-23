@@ -1,10 +1,20 @@
-![kimera-logo_padding-left](https://user-images.githubusercontent.com/306633/82577670-f9b35a00-9b93-11ea-9036-ca2f4fd7c82e.png)
+<p align="center">
+  <strong>
+    <a href="https://lola-tech.github.io/graphql-kimera/">Read the docs<a/>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="https://github.com/lola-tech/graphql-kimera/tree/master/packages/graphql-kimera-docs/docs">Edit the docs<a/>
+  </strong>
+</p>
 
-# Kimera
+---
+
+<p align="center">
+  <img widht="300" src="https://cdn.statically.io/gh/lola-tech/graphql-kimera/update-docs/packages/graphql-kimera-docs/static/img/kimera-logo.svg" alt="Kimera logo">
+</p>
+
+# What is Kimera?
 
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
 
-[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) ![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/lola-tech/graphql-kimera/badge.svg)](https://coveralls.io/github/lola-tech/graphql-kimera) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
+[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) ![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
 
 ## Why?
 
