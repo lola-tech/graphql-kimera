@@ -10,7 +10,7 @@ const { mockResolver, mergeBuilders } = require("./mockProviders");
 const { initializeStore } = require("./store");
 
 /**
- * Generates an executable schema with resolvers which return mocks accourding to the mock providers definitions.
+ * Generates an executable schema with resolvers which return mocks according to the mock providers definitions.
  *
  * @see ResolverScenario
  * @public
@@ -66,6 +66,7 @@ function getExecutableSchema({
       );
       return {
         store: initializeStore(mockedQuery),
+        storage: mockedQuery,
         queries: Object.keys(mockedQuery),
       };
     },
@@ -77,11 +78,12 @@ function getExecutableSchema({
     schema: executableSchema,
     mocks: {
       Query: (root, args, context) => {
-        const { queries, store } = getGlobalStore(context);
+        const { queries, store, storage } = getGlobalStore(context);
         return zipObject(
           queries,
           queries.map((queryName) => {
-            const mockedQueryField = store.get(queryName);
+            const mockedQueryField = storage[queryName];
+
             return typeof mockedQueryField === "function"
               ? mockedQueryField
               : // Getting anew in order to make sure
