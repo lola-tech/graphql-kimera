@@ -9,10 +9,10 @@ const features = [
   {
     title: <>Start a mock GraphQL server with zero configuration</>,
     description: (
-      <>
+      <p>
         All you need to get a mock server up and running is your schema, Kimera
         and a GraphQL Server.
-      </>
+      </p>
     ),
     code: `const { ApolloServer, gql } = require("apollo-server");
 const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
@@ -112,14 +112,12 @@ function Home() {
       <main className="home--container container">
         {features && features.length && (
           <section>
-            <div className="row">
-              {features.map((props, idx) => (
-                <>
-                  <Feature key={idx} {...props} />
-                  {idx !== features.length - 1 ? <Hr /> : null}
-                </>
-              ))}
-            </div>
+            {features.map((props, idx) => (
+              <>
+                <Feature key={idx} {...props} />
+                {idx !== features.length - 1 ? <Hr /> : null}
+              </>
+            ))}
           </section>
         )}
       </main>

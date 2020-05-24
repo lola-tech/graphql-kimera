@@ -13,9 +13,6 @@ const propTypes = {
 };
 
 const FlexRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   padding: 1rem 0;
 
   h3 {
@@ -24,6 +21,7 @@ const FlexRow = styled.div`
     font-size: 1.5rem;
     line-height: 1.5;
   }
+
   p {
     line-height: 1.7;
   }
