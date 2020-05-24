@@ -12864,6 +12864,11 @@ const propTypes={imageUrl:prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.stri
   p {
     line-height: 1.7;
   }
+
+  @media screen and (min-width: 966px) {
+    display: flex;
+    flex-direction: row;
+  }
 `;const FlexColumn=_emotion_styled__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].div`
   display: Flex;
   align-items: center;
@@ -12871,7 +12876,7 @@ const propTypes={imageUrl:prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.stri
 `;const FeatureImg=_emotion_styled__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].img`
   height: 200px;
   width: 200px;
-`;function Feature({imageUrl,title,description,code,metastring=""}){return/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FlexRow,{classNames:"row"},/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FlexColumn,{className:"col col--4"},imageUrl&&/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FeatureImg,{src:Object(_docusaurus_useBaseUrl__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"])(imageUrl),alt:title}),/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3",null,title),/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p",null,description)),code&&/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div",{className:"col col--8"},/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_theme_CodeBlock__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"],{metastring:metastring},code)));}Feature.propTypes=propTypes;/* harmony default export */ __webpack_exports__["default"] = (Feature);
+`;function Feature({imageUrl,title,description,code,metastring=""}){return/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FlexRow,{className:"row"},/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FlexColumn,{className:"col col--4"},imageUrl&&/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FeatureImg,{src:Object(_docusaurus_useBaseUrl__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"])(imageUrl),alt:title}),/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3",null,title),/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p",null,description)),code&&/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div",{className:"col col--8"},/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_theme_CodeBlock__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"],{metastring:metastring},code)));}Feature.propTypes=propTypes;/* harmony default export */ __webpack_exports__["default"] = (Feature);
 
 /***/ }),
 /* 55 */
