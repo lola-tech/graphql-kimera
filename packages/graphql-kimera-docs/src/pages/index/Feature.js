@@ -25,6 +25,11 @@ const FlexRow = styled.div`
   p {
     line-height: 1.7;
   }
+
+  @media screen and (min-width: 966px) {
+    display: flex;
+    flex-direction: row;
+  }
 `;
 
 const FlexColumn = styled.div`
@@ -40,7 +45,7 @@ const FeatureImg = styled.img`
 
 function Feature({ imageUrl, title, description, code, metastring = "" }) {
   return (
-    <FlexRow classNames="row">
+    <FlexRow className="row">
       <FlexColumn className="col col--4">
         {imageUrl && <FeatureImg src={useBaseUrl(imageUrl)} alt={title} />}
         <h3>{title}</h3>
