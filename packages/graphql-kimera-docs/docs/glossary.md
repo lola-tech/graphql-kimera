@@ -6,7 +6,7 @@ sidebar_label: Glossary
 
 > _Definitions of terms you find in the documentation._
 
-The terms addressed in on this page are:
+The terms addressed on this page are:
 
 - [Builder](/graphql-kimera/docs/glossary#builder)
 - [Context](/graphql-kimera/docs/glossary#context)

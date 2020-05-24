@@ -186,7 +186,7 @@ The _`Query` type object form_ (or in short the **`Query` object**) would be:
 
 Keeping all of this in mind, the `Query scenario` (or simply "the scenario") is an object that:
 
-- contains mocks for `Query` type;
+- contains mocks for the `Query` type;
 - has the same structure as the `Query` object.
 
 :::note
