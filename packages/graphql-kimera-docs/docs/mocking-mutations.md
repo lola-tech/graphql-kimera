@@ -7,7 +7,7 @@ sidebar_label: Mocking Mutations
 > _Manage change by updating the store in mutation resolvers._
 
 :::note
-This page assumes you know you to setup your app to use the Kimera executable schema. If you don't, check out the [Setup section of the docs](/graphql-kimera/docs/setup).
+This page assumes you know how to setup your app to use the Kimera executable schema. If you don't, check out the [Setup section of the docs](/graphql-kimera/docs/setup).
 :::
 
 Let's start with a schema that has `createRocket` mutation.
@@ -78,7 +78,7 @@ Kimera passes two arguments to `mutationResolversFn`:
 
 - `store`: This is an object which holds all of the mocks for our schema. It defines two methods:
   - `store.get(path = '')`: The `get` method will accept an optional `path` string, and return the mocked value stored at that specific path.
-  - `store.update(path, updateValue)`: The `update` will update the value at the supplied `path` with the new value. If the updated value is an object, the new value will be deeply merged over the existing value.
+  - `store.update(path, updateValue)`: The `update` method will update the value at the supplied `path` with the new value. If the updated value is an object, the new value will be deeply merged over the existing value.
 - `buildMocks('TypeName', scenario)`: This is a function mocks a specific type using existing mock providers, and optionally, a custom scenario that we can provide at execution.
 
 Next we'll look at several examples of using these arguments.
@@ -107,7 +107,7 @@ type Rocket {
 }
 ```
 
-Here are a few ways affect the mocked data in a mutation:
+Here are a few ways to affect the mocked data in a mutation:
 
 ```js
 getExecutableSchema({
