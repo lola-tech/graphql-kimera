@@ -43,7 +43,7 @@ Read more:
 
 ## Executable Schema
 
-A schema that has a schema definition as well as resolver functions, is an executable schema.
+A schema that has a schema definition as well as resolver functions is an executable schema.
 
 Read more:
 
