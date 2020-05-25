@@ -1,4 +1,4 @@
-const { validateFieldScenario } = require("./validation");
+const { validateFieldScenario } = require('./validation');
 const {
   getEnumVal,
   getConcreteType,
@@ -14,28 +14,28 @@ const {
   isNull,
   times,
   get,
-} = require("./helpers");
+} = require('./helpers');
 const {
   mergeScenarios,
   reduceToScenario,
   mockResolver,
   isResolverScenario,
   mergeMockProviders,
-} = require("./mockProviders");
-const { initializeStore } = require("./store");
-const { DEFAULT_LIST_LENGTH, ...constants } = require("./constants");
+} = require('./mockProviders');
+const { initializeStore } = require('./store');
+const { DEFAULT_LIST_LENGTH, ...constants } = require('./constants');
 
 // Used to track a potentially recursive branch so we can warn the user.
-let recursiveBranch = "";
+let recursiveBranch = '';
 const RECURSIVITY_DEPTH_LIMIT = 200;
 
 const defaultMockProviders = {
-  [constants.ID]: "Mocked ID Scalar",
-  [constants.string]: "Mocked String Scalar",
+  [constants.ID]: 'Mocked ID Scalar',
+  [constants.string]: 'Mocked String Scalar',
   [constants.int]: 42,
   [constants.float]: 4.2,
   [constants.boolean]: true,
-  [constants.customScalar]: "Mocked Custom Scalar",
+  [constants.customScalar]: 'Mocked Custom Scalar',
 };
 
 /**
@@ -144,7 +144,7 @@ const getTypename = (type, schema, scenario, meta) => {
   type =
     get(
       scenario,
-      meta.isArray ? `[${meta.arrayIndex}].__typename` : "__typename"
+      meta.isArray ? `[${meta.arrayIndex}].__typename` : '__typename'
     ) || type;
 
   if (isAbstractType(type, schema)) {
@@ -191,7 +191,7 @@ const mockType = memoize(
     meta = {
       type,
       depth: 0,
-      path: "",
+      path: '',
       ...meta,
     };
 
@@ -206,7 +206,7 @@ const mockType = memoize(
     ) {
       throw new TypeError(
         `mockProviders.Root scenario for "${type}" cannot be a function or a ResolverScenario. Supplied a "${
-          isFunction(mockProviders.scenario) ? "function" : "ResolverScenario"
+          isFunction(mockProviders.scenario) ? 'function' : 'ResolverScenario'
         }".`
       );
     }
@@ -287,8 +287,8 @@ const mockType = memoize(
       : type;
 
     return [
-      "__NODE__",
-      fieldKeyPart + (meta.noNull ? "!" : ""),
+      '__NODE__',
+      fieldKeyPart + (meta.noNull ? '!' : ''),
       mockProviders.builders,
       mockProviders.scenario,
     ];

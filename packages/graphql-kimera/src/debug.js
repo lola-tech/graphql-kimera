@@ -5,21 +5,21 @@ const getDebugger = (DEBUGGING) => {
   };
   return function debug(type, field) {
     if (!DEBUGGING) return;
-    console.log("DOES NOT WORK PROPERLY");
+    console.log('DOES NOT WORK PROPERLY');
     const { types, fields } = debuggerState;
-    const getSpaces = (size, char = "-") => {
-      return size ? `${char.repeat(size)}` : "";
+    const getSpaces = (size, char = '-') => {
+      return size ? `${char.repeat(size)}` : '';
     };
     if (type) {
       types.add(type);
       console.log(
-        `L${types.size - 1} ${getSpaces(types.size, "- ")} TYPE: ${type}`
+        `L${types.size - 1} ${getSpaces(types.size, '- ')} TYPE: ${type}`
       );
     } else if (field) {
       fields.add(field);
 
       console.log(
-        `L${types.size - 1} ${getSpaces(types.size, " ")} FIELD: ${field}`
+        `L${types.size - 1} ${getSpaces(types.size, ' ')} FIELD: ${field}`
       );
     }
   };
@@ -42,7 +42,7 @@ const debugCacheDuplicates = (cache, meta = {}) => {
       (key) => key[0] === meta.showDifferenceForType
     );
     if (duplicates.length > 2) {
-      const keyParts = ["type", "names", "types", "scenario"];
+      const keyParts = ['type', 'names', 'types', 'scenario'];
       duplicates.slice(0, -1).forEach((duplicate, index) => {
         duplicates.slice(index + 1).forEach((nextDup, jindex) => {
           duplicate.map((testedKeyPart, i) => {
@@ -57,10 +57,10 @@ const debugCacheDuplicates = (cache, meta = {}) => {
       });
     } else if (duplicates.length) {
       console.log(
-        "Are equal",
+        'Are equal',
         duplicates[0].reduce((res, keyPart, i) => {
           if (keyPart !== duplicates[1][i]) {
-            console.log("DIFFERENT:", { zero: keyPart, one: duplicates[1][i] });
+            console.log('DIFFERENT:', { zero: keyPart, one: duplicates[1][i] });
           }
           return res && keyPart === duplicates[1][i];
         }, true)

@@ -1,4 +1,4 @@
-const MultiKeyMap = require("multikeymap");
+const MultiKeyMap = require('multikeymap');
 const {
   get,
   isFunction,
@@ -15,10 +15,10 @@ const {
   cloneDeep,
   isObjectLike,
   zipObject,
-} = require("lodash");
-const memoize = require("lodash/memoize");
+} = require('lodash');
+const memoize = require('lodash/memoize');
 
-const constants = require("./constants");
+const constants = require('./constants');
 
 // Useful to cache mocking of fields by multiple keys like the Mock Providers
 // and other meta data
@@ -77,8 +77,8 @@ const getConcreteType = (type, schema) => {
 
 /** Appends the path with the currently mocked field name. */
 const getAppendedPath = (path, field, parentType) => {
-  const typePrefix = (!path && `${parentType}:`) || "";
-  return typePrefix + path + (path ? "." : "") + field.name;
+  const typePrefix = (!path && `${parentType}:`) || '';
+  return typePrefix + path + (path ? '.' : '') + field.name;
 };
 
 // Checks if two values have the same type. Considers null the same type as

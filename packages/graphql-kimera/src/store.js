@@ -7,8 +7,8 @@ const {
   isUndefined,
   isNull,
   haveDifferentTypes,
-} = require("./helpers");
-const { isResolverScenario } = require("./mockProviders");
+} = require('./helpers');
+const { isResolverScenario } = require('./mockProviders');
 
 /**
  * Returns a value from store. When it encounters a resolver, it uses the
@@ -23,7 +23,7 @@ const getFromStore = (store, path) => {
     return store;
   }
 
-  return path.split(".").reduce((innerStore, prop) => {
+  return path.split('.').reduce((innerStore, prop) => {
     if (isNil(innerStore)) {
       return undefined;
     }
@@ -41,10 +41,10 @@ const getFromStore = (store, path) => {
 const stringifyStore = (value) => {
   return JSON.stringify(value, (key, value) => {
     if (isFunction(value)) {
-      return "___RESOLVER_FACTORY__";
+      return '___RESOLVER_FACTORY__';
     }
-    if (key === "__mocks") {
-      return "__RESOVLER_MOCKS_STORE__";
+    if (key === '__mocks') {
+      return '__RESOVLER_MOCKS_STORE__';
     }
 
     return value;
@@ -95,8 +95,8 @@ const updateStore = (store, branch) => {
   return mergeWith(clonedStore, branch, (stored, assigned) => {
     if (isResolverScenario(assigned) || isFunction(assigned)) {
       const illegalEntity = isFunction(assigned)
-        ? "function"
-        : "ResolverScenario";
+        ? 'function'
+        : 'ResolverScenario';
 
       throw new Error(`Store update value cannot contain a ${illegalEntity}.`);
     }

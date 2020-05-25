@@ -1,4 +1,4 @@
-const { isUndefined, isNull, isFunction } = require("./helpers");
+const { isUndefined, isNull, isFunction } = require('./helpers');
 
 /**
  * Makes sure a Builder is a function.

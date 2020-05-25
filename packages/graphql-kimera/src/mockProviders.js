@@ -1,4 +1,4 @@
-const { map } = require("lodash/fp");
+const { map } = require('lodash/fp');
 
 const {
   memoize,
@@ -11,9 +11,9 @@ const {
   isNull,
   partial,
   get,
-} = require("./helpers");
-const { validateBuilder } = require("./validation");
-const { DEFAULT_LIST_LENGTH } = require("./constants");
+} = require('./helpers');
+const { validateBuilder } = require('./validation');
+const { DEFAULT_LIST_LENGTH } = require('./constants');
 
 /**
  * The function that needs to be used when defining a resolver in
@@ -88,9 +88,9 @@ const mergeScenarios = memoize(
   },
   (...scenarios) => {
     return [
-      "__MERGED_SCENARIOS__",
+      '__MERGED_SCENARIOS__',
       JSON.stringify(scenarios, (key, value) =>
-        isFunction(value) ? "__RESOLVER__" : value
+        isFunction(value) ? '__RESOLVER__' : value
       ),
     ];
   }
@@ -109,7 +109,7 @@ const mergeBuilders = memoize(
     };
   },
   (customBuilders = {}) => {
-    return ["__MERGED_BUILDERS__", ...Object.keys(customBuilders)];
+    return ['__MERGED_BUILDERS__', ...Object.keys(customBuilders)];
   }
 );
 
@@ -130,7 +130,7 @@ const mergeMockProviders = memoize(
     scenario: mergeScenarios(defaults.scenario, custom.scenario),
     builders: mergeBuilders(defaults.builders, custom.builders),
   }),
-  (defaults, custom) => ["__MERGED_MOCKED_PROVIDERS__", defaults, custom]
+  (defaults, custom) => ['__MERGED_MOCKED_PROVIDERS__', defaults, custom]
 );
 
 /** Executes a Builder for a specific type, and returns the resulting scenario. */
@@ -140,7 +140,7 @@ const getBuilderScenario = memoize(
     return validateBuilder(builder, type) && builder && builder();
   },
   (builders, type) => {
-    return ["__BUILDER_SCENARIO__", type, builders];
+    return ['__BUILDER_SCENARIO__', type, builders];
   }
 );
 
@@ -169,8 +169,8 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
   // Validate the Builder
   if (isFunction(builderScenario) || isResolverScenario(builderScenario)) {
     const illegalEntity = isFunction(builderScenario)
-      ? "function"
-      : "ResolverScenario";
+      ? 'function'
+      : 'ResolverScenario';
 
     throw new TypeError(
       `Builder for type "${meta.type}" returns a ${illegalEntity}. Builder functions cannot return ${illegalEntity}s.`

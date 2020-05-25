@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "@emotion/styled";
-import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import React from 'react';
+import styled from '@emotion/styled';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -54,14 +54,14 @@ const Hero = () => {
     <Header>
       <div className="container">
         <Heading1 className="hero__title">
-          <img src={useBaseUrl("img/kimera-logo.svg")} alt="Kimera logo" />
+          <img src={useBaseUrl('img/kimera-logo.svg')} alt="Kimera logo" />
           <span>{siteConfig.title}</span>
         </Heading1>
         <Subtitle>{siteConfig.tagline}</Subtitle>
         <ButtonContainer>
           <Link
-            className={"button button--lg"}
-            to={useBaseUrl("/docs/getting-started")}
+            className={'button button--lg'}
+            to={useBaseUrl('/docs/getting-started')}
           >
             Get Started
           </Link>
