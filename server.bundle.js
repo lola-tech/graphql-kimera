@@ -18845,13 +18845,15 @@ const customScenario = {
     }
   },
 };
-
-getExecutableSchema(
   typeDefs,
-  () => ({ scenario: defaultScenario }),
-  { scenario: customScenario },
-  getMutationResolvers
-);
+  mockProvidersFn: () => ({}), // optional
+  mutationResolversFn: () => ({}), // optional
+  mockProviders: {}, // optional
+getExecutableSchema({
+  typeDefs,
+  mockProvidersFn: () => ({ scenario: defaultScenario }),
+  mockProviders: { scenario: customScenario },
+});
 `)),Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("p",null,`The code above will result in having the `,Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("inlineCode",{parentName:"p"},`me`),` query have the following shape:`),Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("pre",null,Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_2__[/* mdx */ "b"])("code",Object(_home_runner_work_graphql_kimera_graphql_kimera_packages_graphql_kimera_docs_node_modules_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])({parentName:"pre"},{"className":"language-javascript"}),`const defaultScenario = {
   me: {
     userName: "c10b10", // Default
