@@ -1,9 +1,9 @@
-import React from "react";
-import Layout from "@theme/Layout";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import styled from "@emotion/styled";
-import Feature from "./index/Feature";
-import Hero from "./index/Hero";
+import React from 'react';
+import Layout from '@theme/Layout';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import styled from '@emotion/styled';
+import Feature from './index/Feature';
+import Hero from './index/Hero';
 
 const features = [
   {
@@ -72,7 +72,7 @@ apollo.listen().then(({ url }) => {
       <>
         <p>You can write resolvers, but you don&apos;t need to.</p>
         <p>
-          When you do, you&apos;ll get easy access to the mocks through the{" "}
+          When you do, you&apos;ll get easy access to the mocks through the{' '}
           <code>store</code>.
         </p>
       </>
@@ -113,10 +113,10 @@ function Home() {
         {features && features.length && (
           <section>
             {features.map((props, idx) => (
-              <>
+              <React.Fragment key={idx}>
                 <Feature key={idx} {...props} />
                 {idx !== features.length - 1 ? <Hr /> : null}
-              </>
+              </React.Fragment>
             ))}
           </section>
         )}
