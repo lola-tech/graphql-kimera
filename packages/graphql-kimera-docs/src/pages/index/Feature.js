@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
-import CodeBlock from '@theme/CodeBlock';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import React from "react";
+import PropTypes from "prop-types";
+import styled from "@emotion/styled";
+import CodeBlock from "@theme/CodeBlock";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const propTypes = {
   imageUrl: PropTypes.string,
@@ -43,7 +43,7 @@ const FeatureImg = styled.img`
   width: 200px;
 `;
 
-function Feature({ imageUrl, title, description, code, metastring = '' }) {
+function Feature({ imageUrl, title, description, code, metastring = "" }) {
   return (
     <FlexRow className="row">
       <FlexColumn className="col col--4">
