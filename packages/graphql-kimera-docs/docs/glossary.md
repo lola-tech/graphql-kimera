@@ -31,7 +31,7 @@ Read more about how builders work in the [Mocking types section of the docs](/gr
 
 ## Mock providers
 
-"Mock providers" is just another way of saying "the scenario and all of the builders that were defined" or "collection builders and the scenario defined to customize the mocking in Kimera".
+"Mock providers" is just another way of saying "the scenario and all of the builders that were defined" or "a collection of builders and the scenario defined to customize the mocking in Kimera".
 
 ## Context
 
@@ -63,5 +63,5 @@ Read [more about resolvers in the Apollo docs](https://www.apollographql.com/doc
 
 Read more:
 
-- [Schema basics - Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/essentials/schema.html#sdl)
+- [Schema basics - Apollo Server Docs](https://www.apollographql.com/docs/apollo-server/schema/schema/#the-schema-definition-language)
 - [What is GraphQL SDL - Prisma Blog](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)
