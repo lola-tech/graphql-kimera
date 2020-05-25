@@ -113,10 +113,10 @@ function Home() {
         {features && features.length && (
           <section>
             {features.map((props, idx) => (
-              <>
+              <React.Fragment key={idx}>
                 <Feature key={idx} {...props} />
                 {idx !== features.length - 1 ? <Hr /> : null}
-              </>
+              </React.Fragment>
             ))}
           </section>
         )}
