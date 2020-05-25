@@ -55,8 +55,8 @@ Here's each argument in greater detail:
 `(store) => (info, args, ...) => {...}`
 
 - The argument passed to factory function is the field `store`: an object that contains the mocked data for the field we are defining the resolver for. The store defines a `get` method that returns the mocked data.
-- The `store` `get` method accepts an optional `string` argument, that represents the path.
-- You need to always use the `get` `store` method to retrieve data.
+- The `store.get` method accepts an optional `string` argument, that represents the path.
+- You need to always use the `store.get` method to retrieve data.
 - The factory function needs to return a valid [resolver](/graphql-kimera/docs/glossary#resolver).
 
 You can see an example of this in action on the [Query Resolvers page](/graphql-kimera/docs/query-resolvers#mockresolver-examples).
