@@ -10,7 +10,7 @@ sidebar_label: Abstract Types
 This page assumes familiarity with the concept of _scenario_. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
 :::
 
-**By default**, when Kimera needs to generate mocks for a field which is an interfaces or a union, it will do so as if the field were a concrete type. It will do so by **automatically selecting the first concrete type defined in the schema** for that interface or union.
+**By default**, when Kimera needs to generate mocks for a field which is an interface or a union, it will do so as if the field were a concrete type. It will do so by **automatically selecting the first concrete type defined in the schema** for that interface or union.
 
 Let's use the following schema as an example:
 
