@@ -121,13 +121,15 @@ const customScenario = {
     }
   },
 };
-
-getExecutableSchema(
   typeDefs,
-  () => ({ scenario: defaultScenario }),
-  { scenario: customScenario },
-  getMutationResolvers
-);
+  mockProvidersFn: () => ({}), // optional
+  mutationResolversFn: () => ({}), // optional
+  mockProviders: {}, // optional
+getExecutableSchema({
+  typeDefs,
+  mockProvidersFn: () => ({ scenario: defaultScenario }),
+  mockProviders: { scenario: customScenario },
+});
 ```
 
 The code above will result in having the `me` query have the following shape:
