@@ -1,15 +1,15 @@
-const fs = require("fs");
-const path = require("path");
-const chalk = require("chalk");
-const { ApolloServer } = require("apollo-server");
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
+const { ApolloServer } = require('apollo-server');
 const {
   getExecutableSchema,
   mockResolver,
-} = require("@lola-tech/graphql-kimera");
+} = require('@lola-tech/graphql-kimera');
 
 const typeDefs = fs.readFileSync(
-  path.join(__dirname, "schema.graphql"),
-  "utf8"
+  path.join(__dirname, 'schema.graphql'),
+  'utf8'
 );
 
 const executableSchema = getExecutableSchema({
@@ -26,12 +26,12 @@ const executableSchema = getExecutableSchema({
             : rockets;
         },
         // Optionally define a node scenario
-        [{}, { type: "Starship" }, { type: "Starship" }]
+        [{}, { type: 'Starship' }, { type: 'Starship' }]
       ),
     },
     builders: {
       Rocket: () => ({
-        type: "Shuttle",
+        type: 'Shuttle',
       }),
     },
   }),
@@ -42,14 +42,14 @@ const executableSchema = getExecutableSchema({
     createRocket: (_, { input }) => {
       let newRocket = null;
       // Example of mocking the unhappy path
-      if (input.name !== "Fail") {
-        newRocket = buildMocks("Rocket", { ...input });
-        store.update({ rockets: [...store.get("rockets"), newRocket] });
+      if (input.name !== 'Fail') {
+        newRocket = buildMocks('Rocket', { ...input });
+        store.update({ rockets: [...store.get('rockets'), newRocket] });
       }
 
       return {
-        successful: input.name !== "Fail",
-        rockets: store.get("rockets"),
+        successful: input.name !== 'Fail',
+        rockets: store.get('rockets'),
       };
     },
   }),

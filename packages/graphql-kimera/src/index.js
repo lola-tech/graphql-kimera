@@ -1,13 +1,13 @@
 const {
   makeExecutableSchema,
   addMockFunctionsToSchema,
-} = require("graphql-tools");
-const schemaParser = require("easygraphql-parser");
+} = require('graphql-tools');
+const schemaParser = require('easygraphql-parser');
 
-const { memoize, isUndefined, zipObject } = require("./helpers");
-const { buildMocks } = require("./engine");
-const { mockResolver, mergeBuilders } = require("./mockProviders");
-const { initializeStore } = require("./store");
+const { memoize, isUndefined, zipObject } = require('./helpers');
+const { buildMocks } = require('./engine');
+const { mockResolver, mergeBuilders } = require('./mockProviders');
+const { initializeStore } = require('./store');
 
 /**
  * Generates an executable schema with resolvers which return mocks according to the mock providers definitions.
@@ -43,7 +43,7 @@ function getExecutableSchema({
 
   const getMemoizedDefaultMockProviders = memoize(
     mockProvidersFn,
-    (context) => ["__DEFAULT_MOCK_PROVIDERS__", JSON.stringify(context)]
+    (context) => ['__DEFAULT_MOCK_PROVIDERS__', JSON.stringify(context)]
   );
 
   // Start building the apollo executable schema
@@ -59,7 +59,7 @@ function getExecutableSchema({
   const getGlobalStore = memoize(
     (context) => {
       const mockedQuery = buildMocks(
-        "Query",
+        'Query',
         schema,
         getMemoizedDefaultMockProviders(context),
         mockProviders
@@ -70,7 +70,7 @@ function getExecutableSchema({
         queries: Object.keys(mockedQuery),
       };
     },
-    () => ["__GLOBAL_STORE__"]
+    () => ['__GLOBAL_STORE__']
   );
 
   // Add the mocks to the exectuable schema
@@ -84,7 +84,7 @@ function getExecutableSchema({
           queries.map((queryName) => {
             const mockedQueryField = storage[queryName];
 
-            return typeof mockedQueryField === "function"
+            return typeof mockedQueryField === 'function'
               ? mockedQueryField
               : // Getting anew in order to make sure
                 // changes from mutations will propagate.
