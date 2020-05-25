@@ -33,7 +33,7 @@ const FlexRow = styled.div`
 `;
 
 const FlexColumn = styled.div`
-  display: Flex;
+  display: flex;
   align-items: center;
   flex-direction: column;
 `;
@@ -49,7 +49,7 @@ function Feature({ imageUrl, title, description, code, metastring = '' }) {
       <FlexColumn className="col col--4">
         {imageUrl && <FeatureImg src={useBaseUrl(imageUrl)} alt={title} />}
         <h3>{title}</h3>
-        <p>{description}</p>
+        <>{description}</>
       </FlexColumn>
       {code && (
         <div className="col col--8">
