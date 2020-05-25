@@ -148,7 +148,7 @@ getExecutableSchema({
 
       // Append a list field.
       store.update('launch.rockets', [
-        ...store.get('launch.listField'),
+        ...store.get('launch.rockets'),
         // The `buildMocks` scenario can be omitted, and Kimera will use the
         // 'Rocket' builder, if existing to figure out how to mock this type.
         buildMocks('Rocket')
