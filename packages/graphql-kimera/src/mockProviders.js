@@ -108,7 +108,7 @@ const mergeBuilders = memoize(
       ...customBuilders,
     };
   },
-  (customBuilders = {}) => {
+  (defaultBuilders, customBuilders = {}) => {
     return ['__MERGED_BUILDERS__', ...Object.keys(customBuilders)];
   }
 );
