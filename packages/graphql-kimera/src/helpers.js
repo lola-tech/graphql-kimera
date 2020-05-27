@@ -91,6 +91,41 @@ const haveDifferentTypes = (one, two) => {
   );
 };
 
+/**
+ * Decides on a GraphQL Type "__typename" value by having a strategy for
+ * abstract fields: If a value is set in a mock provider, select that, otherise,
+ * select the first concrete type defined in the schema.
+ *
+ * @see mockType
+ *
+ * @param {String} type The GraphQL Type name for which we need the __typename
+ * @param {Object} schema The parsed schema.
+ * @param {Object} scenario The scenario for field attempted to be mocked.
+ * @returns {string} Returns the __typename value.
+ */
+const getTypename = (type, schema, scenario, meta) => {
+  // Allow selecting concrete types for abstract types
+  type =
+    get(
+      scenario,
+      meta.isArray ? `[${meta.arrayIndex}].__typename` : '__typename'
+    ) || type;
+
+  if (isAbstractType(type, schema)) {
+    const concreteType = getConcreteType(type, schema);
+
+    if (!concreteType) {
+      throw new Error(
+        `Your schema doesn't have any type that implements the Interface "${type}".\n` +
+          `Either remove the unused interface "${type}", or add a concrete implementation of it to the schema.`
+      );
+    }
+    return concreteType;
+  }
+
+  return type;
+};
+
 module.exports = {
   getEnumVal,
   getConcreteType,
@@ -104,6 +139,7 @@ module.exports = {
   isObjectType,
   getAppendedPath,
   haveDifferentTypes,
+  getTypename,
   // lodash
   get,
   memoize,

@@ -1,6 +1,7 @@
 const { map } = require('lodash/fp');
 
 const {
+  getTypename,
   memoize,
   isFunction,
   isUndefined,
@@ -154,7 +155,7 @@ const getBuilderScenario = memoize(
  * @param {Object} meta An object containing meta information about the mocked
  * type. For the complete list of meta keys @see mockType in ./engine.js.
  */
-const reduceToScenario = ({ scenario, builders }, meta) => {
+const reduceToScenario = ({ scenario, builders }, meta, schema) => {
   if (isNull(scenario)) {
     return null;
   }
@@ -166,7 +167,11 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
   }
 
   // Convert the field builder to a scenario by executing it
-  const builderScenario = getBuilderScenario(builders, meta.type);
+  const builderScenario = getBuilderScenario(
+    builders,
+    // Check done so `reduceToScenario` can be tested without the use of schema
+    schema ? getTypename(meta.type, schema, scenario, meta) : meta.type
+  );
 
   // Validate the Builder
   if (isFunction(builderScenario) || isResolverScenario(builderScenario)) {
