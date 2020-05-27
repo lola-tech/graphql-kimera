@@ -38,18 +38,18 @@ const getFromStore = (store, path) => {
 };
 
 /** Used when when generating error messages. */
-const stringifyStore = (value) => {
-  return JSON.stringify(value, (key, value) => {
-    if (isFunction(value)) {
-      return '___RESOLVER_FACTORY__';
-    }
-    if (key === '__mocks') {
-      return '__RESOVLER_MOCKS_STORE__';
-    }
+// const stringifyStore = (value) => {
+//   return JSON.stringify(value, (key, value) => {
+//     if (isFunction(value)) {
+//       return '___RESOLVER_FACTORY__';
+//     }
+//     if (key === '__mocks') {
+//       return '__RESOVLER_MOCKS_STORE__';
+//     }
 
-    return value;
-  });
-};
+//     return value;
+//   });
+// };
 
 /**
  * Throws if the updating value type is different than the stored value type.
@@ -59,11 +59,9 @@ const validateUpdateTypes = (storeValue, updateValue) => {
 
   if (haveDifferentTypes(storeValue, updateValue)) {
     throw new TypeError(
-      `You are attempting to replace the "${stringifyStore(
-        storeValue
-      )}" store value with "${JSON.stringify(
+      `You are attempting to replace store value of type ${typeof storeValue} with "${JSON.stringify(
         updateValue
-      )}". The update value type should match the store value type.`
+      )}" of type "${typeof updateValue}". The update value type should match the store value type.`
     );
   }
 };

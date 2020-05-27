@@ -51,7 +51,7 @@ const isResolverScenario = (node) => {
  * @returns {Object} Returns a scenario object.
  */
 const mergeScenarios = memoize(
-  (baseScenario, assignedScenario) => {
+  (baseScenario, assignedScenario, meta) => {
     if (isUndefined(assignedScenario) || isUndefined(baseScenario)) {
       return assignedScenario || baseScenario;
     }
@@ -62,9 +62,11 @@ const mergeScenarios = memoize(
 
     if (typeof baseScenario !== typeof assignedScenario) {
       console.warn(
-        `The "${JSON.stringify(
+        `${meta ? meta.path + ': ' : ''}The "${JSON.stringify(
           assignedScenario
-        )}" scenario of type "${typeof assignedScenario}" is attempted to be merged with a "${baseScenario}" of type "${typeof baseScenario}". This is most likely a mistake.`
+        )}" scenario of type "${typeof assignedScenario}" is attempted to be merged with a "${JSON.stringify(
+          baseScenario
+        )}" of type "${typeof baseScenario}". This is most likely a mistake.`
       );
     }
 
@@ -83,7 +85,7 @@ const mergeScenarios = memoize(
         return assigned;
       }
 
-      return mergeScenarios(base, assigned);
+      return mergeScenarios(base, assigned, meta);
     });
   },
   (...scenarios) => {
@@ -181,7 +183,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
     if (Array.isArray(scenario)) {
       // If we have a user defined array scenario,
       // merge each array element with the builderScenario
-      return map(partial(mergeScenarios, builderScenario))(scenario);
+      return map(partial(mergeScenarios, builderScenario))(scenario, meta);
     } else if (!isUndefined(scenario)) {
       // If scenario is defined as something other than an array
       // return it so we can throw a TypeError at validation.
@@ -194,7 +196,7 @@ const reduceToScenario = ({ scenario, builders }, meta) => {
       : undefined;
   }
 
-  return mergeScenarios(builderScenario, scenario);
+  return mergeScenarios(builderScenario, scenario, meta);
 };
 
 module.exports = {
