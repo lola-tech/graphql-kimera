@@ -136,14 +136,12 @@ const initializeStore = (initialValue, writable = true) => {
   let storage = initialValue;
   const store = {
     get: (path) => getFromStore(storage, path),
-    ...(writable
-      ? {
-          update: (branch) => {
-            storage = updateStore(storage, branch);
-            return store;
-          },
-        }
-      : {}),
+    ...(writable && {
+      update: (branch) => {
+        storage = updateStore(storage, branch);
+        return store;
+      },
+    }),
   };
 
   return store;
