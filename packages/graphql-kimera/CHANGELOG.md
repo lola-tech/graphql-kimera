@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-alpha.5](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.4...@lola-tech/graphql-kimera@0.10.0-alpha.5) (2020-05-27)
+
+
+### Bug Fixes
+
+* improve error messages for store and scenario type missmatch ([8a4bf7d](https://github.com/lola-tech/graphql-kimera/commit/8a4bf7dd1278aa26fb3924485bc621fc8e9e96fd))
+* make it so reducing the mock provider works for abstract fields ([eb0b770](https://github.com/lola-tech/graphql-kimera/commit/eb0b7701b35a31777b6706750b091398f3aeda30))
+
+
+
+
+
 # [0.10.0-alpha.4](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.3...@lola-tech/graphql-kimera@0.10.0-alpha.4) (2020-05-26)
 
 
