@@ -4,7 +4,7 @@ title: KIMERA_RECURSIVITY_DEPTH_LIMIT
 sidebar_label: process.env configuration
 ---
 
-This is a env variable that controls the depth to which Kimera will recursively mock types that reference each other.
+This is a env variable that controls the depth to which Kimera will recursively mock types that reference each other recursively.
 
 ```bash
 # default value set to 20
@@ -30,7 +30,7 @@ type Launch {
 }
 ```
 
-When automocking the `me` query, Kimera will attempt to
+When automocking the `me` query, Kimera will attempt to:
 
 1. mock the `me` field on the `Query` type which will lead it to
 2. mock the `trip` field on the `User` type which will lead it to
@@ -40,6 +40,6 @@ When automocking the `me` query, Kimera will attempt to
 
 ... and so it keeps going. With no mocking depth limit the process would run out of memory.
 
-Fortunately, Kimera limits the mocking depth. When the depth has been exceeded, Kimera mocks that field at the depth edge with a resolver which throws a `Mocking depth exceeded` error.
+By default Kimera limits the mocking depth to 20. When the depth has been exceeded, Kimera mocks that field at the depth edge with a resolver which throws a `Mocking depth exceeded` error.
 
-By default this happens when mocking is `20` types deep. If you need to change that, you can do so using the `KIMERA_RECURSIVITY_DEPTH_LIMIT` enviornment variable.
+If you need to change the depth to which Kimera allows mocking you can do so using the `KIMERA_RECURSIVITY_DEPTH_LIMIT` enviornment variable.
