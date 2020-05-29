@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-alpha.6](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.5...@lola-tech/graphql-kimera@0.10.0-alpha.6) (2020-05-29)
+
+
+### Features
+
+* automock recursive types ([3e8adba](https://github.com/lola-tech/graphql-kimera/commit/3e8adbabf7ffcb9cc27883720c7948082f12d7fb))
+
+
+
+
+
 # [0.10.0-alpha.5](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.4...@lola-tech/graphql-kimera@0.10.0-alpha.5) (2020-05-27)
 
 
