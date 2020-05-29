@@ -1,11 +1,33 @@
-# How to Contribute
+# Contributing to graphql-kimera
+
+> Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 Kimera is one of [Lola Tech's](https://www.lola.tech) first open source project that is both under very active development and is also being used to ship code to our enterprise customers.
 
-## Code of Conduct
+The main purpose of this repository is to continue to evolve Kimera. Development of Kimera happens in the open on GitHub, and we are grateful to the community for contributing bug fixes and improvements. Read below to learn how you can take part in improving Kimera.
 
-Kimera team has adopted the Contributor Covenant as its Code of Conduct, and we expect project participants to adhere to it. Please read the full text so that you can understand what actions will and will not be tolerated.
+## To get started with the repo:
 
-## Open Development
+```bash
+$ git clone https://github.com/lola-tech/graphql-kimera.git && cd graphql-kimera
+$ npm install # or you can just run yarn
+```
 
-All work on Kimera happens directly on [GitHub](https://github.com/lola-tech/graphql-mirage).
+## Code Structure
+
+Currently the project is managed with lerna and it contains 2 packages
+
+- [graphql-kimera](https://github.com/lola-tech/graphql-kimera/tree/master/packages/graphql-kimera): the source code and tests for the module published on npm
+- [graphql-kimera-docs](https://github.com/lola-tech/graphql-kimera/tree/master/packages/graphql-kimera-docs): a [docusaurus](https://v2.docusaurus.io/) app for managing documentation
+
+## How to Contribute
+
+## Found an Issue?
+
+Thank you for reporting any issues you find. We do our best to test and make graphql-kimera as solid as possible, but any reported issue is a real help.
+
+> When raising an issue please use the template provided as a guideline, provided to you.
+
+## Want a new feature?
+
+> For raising a feature request please use the template provided as a guideline, provided to you.
