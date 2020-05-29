@@ -4,10 +4,10 @@ const {
 } = require('graphql-tools');
 const schemaParser = require('easygraphql-parser');
 
-const { memoize, isUndefined, zipObject } = require('./helpers');
+const { get, memoize, isUndefined, zipObject } = require('./helpers');
 const { buildMocks } = require('./engine');
 const { mockResolver, mergeBuilders } = require('./mockProviders');
-const { initializeStore } = require('./store');
+const { initializeStore, getFromStorage } = require('./store');
 
 /**
  * Generates an executable schema with resolvers which return mocks according to the mock providers definitions.
@@ -58,14 +58,19 @@ function getExecutableSchema({
   // resolvers.
   const getGlobalStore = memoize(
     (context) => {
+      const globalStoreRef = { current: undefined };
       const mockedQuery = buildMocks(
         'Query',
         schema,
         getMemoizedDefaultMockProviders(context),
-        mockProviders
+        mockProviders,
+        (path) => getFromStorage(get(globalStoreRef, 'current').get(), path)
       );
+      const globalStore = initializeStore(mockedQuery);
+      globalStoreRef.current = globalStore;
+
       return {
-        store: initializeStore(mockedQuery),
+        store: globalStore,
         storage: mockedQuery,
         queries: Object.keys(mockedQuery),
       };
