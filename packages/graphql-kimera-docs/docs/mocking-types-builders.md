@@ -27,7 +27,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
   fuel: Fuel
 }
 
@@ -46,7 +46,7 @@ const executableSchema = getExecutableSchema({
   mockProvidersFn: (context) => ({
     scenario: {
       launch: {
-        rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }, {}],
+        rockets: [{ name: 'Saturn V' }, { fuel: 'DILITHIUM' }, {}],
       },
       rockets: [{}],
     },
@@ -104,14 +104,14 @@ const executableSchema = getExecutableSchema({
   mockProvidersFn: (context) => ({
     scenario: {
       launch: {
-        rockets: [{ name: "Saturn V" }, { fuel: "DILITHIUM" }],
+        rockets: [{ name: 'Saturn V' }, { fuel: 'DILITHIUM' }],
       },
       rockets: [{}],
     },
     builders: {
       Rocket: () => ({
-        type: ["Orion", "Apollo"][_.random(0, 1)],
-        name: "Rocket name",
+        model: ['Orion', 'Apollo'][_.random(0, 1)],
+        name: 'Rocket name',
       }),
     },
   }),
@@ -174,7 +174,7 @@ const executableSchema = getExecutableSchema({
   mockProvidersFn: (context) => ({
     builders: {
       Rocket: () => ({
-        type: ["Orion", "Apollo"][_.random(0, 1)],
+        model: ["Orion", "Apollo"][_.random(0, 1)],
         name: "Rocket name",
       }),
       Launch: () => ({
@@ -194,27 +194,27 @@ These are all valid builders for the `Rocket` type.
 
 ```js
 () => ({
-  type: "Exploration Vessel",
-  name: "Enterprise",
+  model: 'Exploration Vessel',
+  name: 'Enterprise',
 });
 ```
 
 ```js
 () => ({
-  type: "Exploration Vessel",
+  model: 'Exploration Vessel',
 });
 ```
 
 ```js
 () => ({
-  name: "Enterprise",
+  name: 'Enterprise',
 });
 ```
 
 ## Builder field mocks are scenarios
 
 :::tip
-**You can think of a builder as a function that returns a collection of mocks for each of a type's fields**. For example, the `Rocket` builder can contain mocks for the `type` and / or `name` field(s).
+**You can think of a builder as a function that returns a collection of mocks for each of a type's fields**. For example, the `Rocket` builder can contain mocks for the `model` and / or `name` field(s).
 :::
 
 The mocks for each of fields in a builder are scenarios. Building on [the `Query` scenario definition from the "Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario#what-is-the-query-scenario) section of the docs, a type `scenario` is an object that:
@@ -222,7 +222,7 @@ The mocks for each of fields in a builder are scenarios. Building on [the `Query
 - contains mocks for that specific type;
 - has the same structure as the type's object form.
 
-For example, these are all valid builders for the `Launch` type:
+For example, these are all valid builders for the `Launch` model:
 
 ```js
 () => ({

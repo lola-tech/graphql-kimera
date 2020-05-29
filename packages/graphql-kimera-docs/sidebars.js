@@ -41,6 +41,7 @@ module.exports = {
         // "api-cache",
         'api-get-executable-schema',
         'api-mock-resolver',
+        'api-recursivity-depth',
         // "api-merge-scenarios",
       ],
     },

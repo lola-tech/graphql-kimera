@@ -1,0 +1,17 @@
+type Query {
+  me: User
+}
+
+type User {
+  # id: ID!
+  # email: String!
+  # profileImage: String
+  trip: Launch
+}
+
+type Launch {
+  # id: ID!
+  # site: String
+  # isBooked: Boolean!
+  pilot: User
+}

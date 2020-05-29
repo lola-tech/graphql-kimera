@@ -6,7 +6,7 @@ const { initializeStore } = require('../store');
 const { mockType, mockResolver } = require('../engine');
 
 const typeDefs = fs.readFileSync(
-  path.join(__dirname, 'example.schema.graphql'),
+  path.join(__dirname, 'testing.schema.graphql'),
   'utf8'
 );
 const schema = schemaParser(typeDefs);

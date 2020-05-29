@@ -40,14 +40,14 @@ yarn add --dev @lola-tech/graphql-kimera
 
 ### Examples
 
-These examples assume the use of the [example schema we are using for testing](https://github.com/lola-tech/graphql-kimera/blob/master/packages/graphql-kimera/src/__test__/example.schema.graphql).
+These examples assume the use of the [schema we are using for testing](https://github.com/lola-tech/graphql-kimera/blob/master/packages/graphql-kimera/src/__test__/testing.schema.graphql).
 
 #### Basic Example
 
-Running the `rockets` query will return four rockets, all of type `Shuttle`, with the first being called `Apollo`.
+Running the `rockets` query will return four rockets, all of the `Shuttle` model, with the first being called `Apollo`.
 
 ```js
-const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
+const { getExecutableSchema } = require('@lola-tech/graphql-kimera');
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -55,11 +55,11 @@ const executableSchema = getExecutableSchema({
   typeDefs,
   mockProvidersFn: () => ({
     scenario: {
-      rockets: [{ name: "Apollo" }, {}, {}, {}],
+      rockets: [{ name: 'Apollo' }, {}, {}, {}],
     },
     builders: {
       Rocket: () => ({
-        type: "Shuttle",
+        model: 'Shuttle',
       }),
     },
   }),
@@ -84,7 +84,7 @@ a resolver uing the `mockResolver` function.
 const {
   getExecutableSchema,
   mockResolver,
-} = require("@lola-tech/graphql-kimera");
+} = require('@lola-tech/graphql-kimera');
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -94,20 +94,20 @@ const executableSchema = getExecutableSchema({
     scenario: {
       rockets: mockResolver(
         // Define a resolver factory
-        (mocks) => (_, { type }) => {
+        (mocks) => (_, { model }) => {
           // `mocks` is a store that contains the mocks for the `rockets` query
           const rockets = mocks.get();
-          return type
-            ? rockets.filter((rocket) => rocket.type === type)
+          return model
+            ? rockets.filter((rocket) => rocket.model === model)
             : rockets;
         },
         // Optionally define a node scenario
-        [{}, { type: "Starship" }, { type: "Starship" }]
+        [{}, { model: 'Starship' }, { model: 'Starship' }]
       ),
     },
     builders: {
       Rocket: () => ({
-        type: "Shuttle",
+        model: 'Shuttle',
       }),
     },
   }),
@@ -120,19 +120,19 @@ Now running:
 
 ```graphql
 query {
-  rockets(type: "Starship") {
+  rockets(model: "Starship") {
     name
     type
   }
 }
 ```
 
-Should return two rockets. Changing the `type` argument to `Shuttle` should return one rocket.
+Should return two rockets. Changing the `model` argument to `Shuttle` should return one rocket.
 
 #### Mutations resolvers example
 
 ```js
-const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
+const { getExecutableSchema } = require('@lola-tech/graphql-kimera');
 
 // Importing the typeDefs from the `schema.graphql` file...
 
@@ -140,19 +140,19 @@ const executableSchema = getExecutableSchema({
   typeDefs,
   mutationResolversFn: (store, buildMocks) => ({
     // Example of how you would use buildMocks to build a node of a specific
-    // type. If the Rocket `type` is omitted from the `input`, the `Shuttle`
+    // type. If the Rocket `model` is omitted from the `input`, the `Shuttle`
     // value defined in the `Rocket` builder is used.
     createRocket: (_, { input }) => {
       let newRocket = null;
       // Example of mocking the unhappy path
-      if (input.name !== "Fail") {
-        newRocket = buildMocks("Rocket", { ...input }, true);
-        store.update({ rockets: [...store.get("rockets"), newRocket] });
+      if (input.name !== 'Fail') {
+        newRocket = buildMocks('Rocket', { ...input }, true);
+        store.update({ rockets: [...store.get('rockets'), newRocket] });
       }
 
       return {
-        successful: input.name !== "Fail",
-        rockets: store.get("rockets"),
+        successful: input.name !== 'Fail',
+        rockets: store.get('rockets'),
       };
     },
   }),

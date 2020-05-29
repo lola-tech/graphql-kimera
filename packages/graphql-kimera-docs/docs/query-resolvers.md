@@ -10,17 +10,17 @@ sidebar_label: Query Resolvers
 This page assumes familiarity with the concept of _scenario_. If you want to learn about scenarios, read the ["Mocking queries"](/graphql-kimera/docs/mocking-queries-scenario) section of the docs.
 :::
 
-Suppose we have a schema with a `rocket` query that can be filtered by passing the a rocket `type` argument.
+Suppose we have a schema with a `rocket` query that can be filtered by passing the a rocket `model` argument.
 
 ```graphql
 type Query {
-  rockets(type: String): [Rocket]
+  rockets(model: String): [Rocket]
 }
 
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
   fuel: Fuel
 }
 ```
@@ -31,7 +31,7 @@ To implement the filtering, Kimera allows us to define resolvers in our scenario
 const {
   getExecutableSchema,
   mockResolver,
-} = require("@lola-tech/graphql-kimera");
+} = require('@lola-tech/graphql-kimera');
 
 const schema = `
   type Query {
@@ -44,16 +44,16 @@ const executableSchema = getExecutableSchema({
     scenario: {
       rockets: mockResolver(
         // First `mockResolver` arg: the resolver factory
-        (store) => (_, { type }) => {
+        (store) => (_, { model }) => {
           // `mocks` is the store containing the mocks for the `rockets` field.
           const mockedRockets = store.get();
 
-          return type
-            ? mockedRockets.filter((rocket) => rocket.type === type)
+          return model
+            ? mockedRockets.filter((rocket) => rocket.model === model)
             : mockedRockets;
         },
         // Second `mockResolver` arg (optional):  the scenario
-        [{ type: "Shuttle" }, {}, { type: "Shuttle" }]
+        [{ model: 'Shuttle' }, {}, { model: 'Shuttle' }]
       ),
     },
   }),
@@ -98,7 +98,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
   fuel: Fuel
 }
 
@@ -120,16 +120,16 @@ const executableSchema = getExecutableSchema({
           const launches = store.get();
 
           // Get rockets from the first launch
-          const firstLaunchRockets = store.get("launches.0.rockets");
+          const firstLaunchRockets = store.get('launches.0.rockets');
 
           // ...
         },
-        [{ site: "Vandenberg Base Space" }, {}, {}, {}, {}]
+        [{ site: 'Vandenberg Base Space' }, {}, {}, {}, {}]
       ),
     },
     builders: {
       Launch: () => ({
-        site: "Kennedy Space Center",
+        site: 'Kennedy Space Center',
       }),
     },
   }),

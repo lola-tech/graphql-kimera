@@ -8,7 +8,7 @@ const { DEFAULT_LIST_LENGTH } = require('../constants');
 const { mockResolver } = require('../mockProviders');
 
 const typeDefs = fs.readFileSync(
-  path.join(__dirname, 'example.schema.graphql'),
+  path.join(__dirname, 'testing.schema.graphql'),
   'utf8'
 );
 const schema = schemaParser(typeDefs);
@@ -128,7 +128,7 @@ describe('Builders', () => {
       builders: {
         User: () => ({
           trips: times(5, () => ({
-            rockets: [{ name: 'Falcon Heavy' }, { type: 'Small' }],
+            rockets: [{ name: 'Falcon Heavy' }, { model: 'Small' }],
           })),
         }),
       },
@@ -137,7 +137,7 @@ describe('Builders', () => {
     expect(actual.me.trips).toHaveLength(5);
     expect(actual.me.trips[0].rockets).toHaveLength(2);
     expect(actual.me.trips[0].rockets[0].name).toBe('Falcon Heavy');
-    expect(actual.me.trips[0].rockets[1].type).toBe('Small');
+    expect(actual.me.trips[0].rockets[1].model).toBe('Small');
   });
 
   it('BUILDER: can set a Builder for Built-in Scalar Types', () => {
@@ -180,7 +180,7 @@ describe('Builders', () => {
   });
 });
 
-describe('Interfaces', () => {
+describe('Abstract fields', () => {
   it('INTERFACE: automatically selects the first concrete type when __typename is missing', () => {
     const actual = mockQuery();
     const concreteTypes = ['Planet', 'Star'];
@@ -203,9 +203,7 @@ describe('Interfaces', () => {
 
     expect(actual.me.trips[0].destination.__typename).toBe('Star');
   });
-});
 
-describe('Unions', () => {
   it('UNION: automatically selects the first concrete type when __typename is missing', () => {
     const actual = mockQuery({
       scenario: {
@@ -233,6 +231,23 @@ describe('Unions', () => {
 
     expect(actual.me.hobbies[0].__typename).toBe('ReadingHobby');
     expect(actual.me.hobbies[1].__typename).toBe('KarateHobby');
+  });
+
+  it('Concrete types builders are actually used', () => {
+    const actual = mockQuery({
+      scenario: {
+        me: {
+          hobbies: [{ __typename: 'KarateHobby' }],
+        },
+      },
+      builders: {
+        KarateHobby: () => ({
+          belt: 'Brown',
+        }),
+      },
+    });
+
+    expect(actual.me.hobbies[0].belt).toBe('Brown');
   });
 });
 
