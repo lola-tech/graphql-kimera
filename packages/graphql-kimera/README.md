@@ -59,7 +59,7 @@ const executableSchema = getExecutableSchema({
     },
     builders: {
       Rocket: () => ({
-        type: 'Shuttle',
+        model: 'Shuttle',
       }),
     },
   }),
@@ -94,20 +94,20 @@ const executableSchema = getExecutableSchema({
     scenario: {
       rockets: mockResolver(
         // Define a resolver factory
-        (mocks) => (_, { type }) => {
+        (mocks) => (_, { model }) => {
           // `mocks` is a store that contains the mocks for the `rockets` query
           const rockets = mocks.get();
-          return type
-            ? rockets.filter((rocket) => rocket.type === type)
+          return model
+            ? rockets.filter((rocket) => rocket.model === model)
             : rockets;
         },
         // Optionally define a node scenario
-        [{}, { type: 'Starship' }, { type: 'Starship' }]
+        [{}, { model: 'Starship' }, { model: 'Starship' }]
       ),
     },
     builders: {
       Rocket: () => ({
-        type: 'Shuttle',
+        model: 'Shuttle',
       }),
     },
   }),
@@ -120,7 +120,7 @@ Now running:
 
 ```graphql
 query {
-  rockets(type: "Starship") {
+  rockets(model: "Starship") {
     name
     type
   }

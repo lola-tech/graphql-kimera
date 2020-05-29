@@ -10,7 +10,7 @@ This is a function with which you can create resolvers for `Query` fields and su
 const {
   getExecutableSchema,
   mockResolver,
-} = require("@lola-tech/graphql-kimera");
+} = require('@lola-tech/graphql-kimera');
 
 const schema = `
   type Query {
@@ -23,16 +23,16 @@ const executableSchema = getExecutableSchema({
     scenario: {
       rockets: mockResolver(
         // 1st argument: `resolverFactoryFn`
-        (store) => (_, { type }) => {
+        (store) => (_, { model }) => {
           // `mocks` is the store containing the mocks for the `rockets` field.
           const mockedRockets = store.get();
 
-          return type
-            ? mockedRockets.filter((rocket) => rocket.type === type)
+          return model
+            ? mockedRockets.filter((rocket) => rocket.model === model)
             : mockedRockets;
         },
         // 2nd argument: `scenario`
-        [{ type: "Shuttle" }, {}, { type: "Shuttle" }] // Optional
+        [{ model: 'Shuttle' }, {}, { model: 'Shuttle' }] // Optional
       ),
     },
   }),
@@ -88,7 +88,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
   fuel: Fuel
 }
 
@@ -112,18 +112,18 @@ const executableSchema = getExecutableSchema({
           const launches = store.get();
 
           // Get rockets from the first launch
-          const firstLaunchRockets = store.get("launches.0.rockets");
+          const firstLaunchRockets = store.get('launches.0.rockets');
 
           // ...
         },
         // `store.get()` will retrieve mocks that
         // are build according to this scenario.
-        [{ site: "Vandenberg Base Space" }, {}, {}, {}, {}]
+        [{ site: 'Vandenberg Base Space' }, {}, {}, {}, {}]
       ),
     },
     builders: {
       Launch: () => ({
-        site: "Kennedy Space Center",
+        site: 'Kennedy Space Center',
       }),
     },
   }),

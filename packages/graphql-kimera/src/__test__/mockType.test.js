@@ -128,7 +128,7 @@ describe('Builders', () => {
       builders: {
         User: () => ({
           trips: times(5, () => ({
-            rockets: [{ name: 'Falcon Heavy' }, { type: 'Small' }],
+            rockets: [{ name: 'Falcon Heavy' }, { model: 'Small' }],
           })),
         }),
       },
@@ -137,7 +137,7 @@ describe('Builders', () => {
     expect(actual.me.trips).toHaveLength(5);
     expect(actual.me.trips[0].rockets).toHaveLength(2);
     expect(actual.me.trips[0].rockets[0].name).toBe('Falcon Heavy');
-    expect(actual.me.trips[0].rockets[1].type).toBe('Small');
+    expect(actual.me.trips[0].rockets[1].model).toBe('Small');
   });
 
   it('BUILDER: can set a Builder for Built-in Scalar Types', () => {

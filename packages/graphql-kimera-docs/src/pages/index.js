@@ -59,7 +59,7 @@ apollo.listen().then(({ url }) => {
       // "Rocket" fields that aren't addressed in the scenario
       // are mocked using the "Rocket" builder:
       Rocket: () => ({
-        type: ["Orion", "Apollo"][_.random(0, 1)],
+        model: ["Orion", "Apollo"][_.random(0, 1)],
         name: "Rocket name",
       }),
     },
@@ -87,7 +87,7 @@ apollo.listen().then(({ url }) => {
           return rockets.filter((r) => r.type === type);
         },
         // You'll even be able to specify how the mocks are built.
-        [{ type: "Shuttle" }, {}, { type: "Shuttle" }]
+        [{ model: "Shuttle" }, {}, { model: "Shuttle" }]
       ),
     },
   }),

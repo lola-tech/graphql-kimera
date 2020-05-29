@@ -35,9 +35,9 @@ To do that you can write a scenario:
 ```js
 {
   rockets: [
-    { type: "Shuttle" },
+    { model: "Shuttle" },
     {}, {}, {},
-    { type: "Shuttle" }
+    { model: "Shuttle" }
   ],
 }
 ```

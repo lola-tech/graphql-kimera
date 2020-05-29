@@ -21,7 +21,7 @@ type Mutation {
 
 input CreateRocketInput {
   name: String!
-  type: String!
+  model: String!
 }
 
 type CreateRocketPayload {
@@ -32,11 +32,11 @@ type CreateRocketPayload {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
 }
 ```
 
-The `createRocket` mutation takes a `name` and a `type` for the new rocket, and returns the complete list of rockets, including the new one if it's successful.
+The `createRocket` mutation takes a `name` and a `model` for the new rocket, and returns the complete list of rockets, including the new one if it's successful.
 
 ## `mutationResolversFn` example
 
@@ -51,21 +51,21 @@ const executableSchema = getExecutableSchema({
   // typeDefs & mockProviders
   mutationResolversFn: (store, buildMocks) => ({
     // Example of how you would use buildMocks to build a node of a specific
-    // type. If the Rocket `type` is omitted from the `input`, the `Shuttle`
+    // type. If the Rocket `model` is omitted from the `input`, the `Shuttle`
     // value defined in the `Rocket` builder is used.
     createRocket: (_, { input }) => {
       let newRocket = null;
       // Example of mocking the unhappy path
-      if (input.name !== "Fail") {
+      if (input.name !== 'Fail') {
         // Mock a new `Rocket` using the `input` arg as a scenario
-        newRocket = buildMocks("Rocket", { ...input });
+        newRocket = buildMocks('Rocket', { ...input });
         // Update the store by appending the new rocket
-        store.update({ rockets: [...store.get("rockets"), newRocket] });
+        store.update({ rockets: [...store.get('rockets'), newRocket] });
       }
 
       return {
-        successful: input.name !== "Fail",
-        rockets: store.get("rockets"),
+        successful: input.name !== 'Fail',
+        rockets: store.get('rockets'),
       };
     },
   }),

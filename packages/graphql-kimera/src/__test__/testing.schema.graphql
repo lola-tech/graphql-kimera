@@ -32,7 +32,7 @@ scalar Markdown
 
 input CreateRocketInput {
   name: String!
-  type: String!
+  model: String!
 }
 
 type CreateRocketPayload {
@@ -69,7 +69,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
 }
 
 type User {
