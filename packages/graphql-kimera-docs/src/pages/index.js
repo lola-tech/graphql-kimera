@@ -82,9 +82,9 @@ apollo.listen().then(({ url }) => {
   mockProvidersFn: (context) => ({
     scenario: {
       rockets: mockResolver(
-        (store) => (_, { type }) => {
+        (store) => (_, { model }) => {
           const rockets = store.get();
-          return rockets.filter((r) => r.type === type);
+          return rockets.filter((r) => r.model === model);
         },
         // You'll even be able to specify how the mocks are built.
         [{ model: "Shuttle" }, {}, { model: "Shuttle" }]
