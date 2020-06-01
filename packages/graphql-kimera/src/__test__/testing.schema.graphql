@@ -16,6 +16,7 @@ type Query {
   launch(id: ID!): Launch
   metadata: Markdown
   rockets: [Rocket]
+  rocket(id: ID!): Rocket
   me: User
 }
 

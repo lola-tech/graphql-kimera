@@ -11,30 +11,31 @@ const {
 const { isResolverScenario } = require('./mockProviders');
 
 /**
- * Returns a value from store. When it encounters a resolver, it uses the
- * `getMocks` function to retrieve the stored mocked value.
+ * Returns a value from a mocked storage object. When it encounters a resolver,
+ * it uses the `getMocks` function to retrieve the stored mocked value.
  *
- * @param {Object} store The mocked data store.
- * @param {Array|string} path The path of value to get. Similar to lodash's get path.
+ * @param {Object} storage The store content.
+ * @param {Array|string} path The path of value to get. Similar to lodash's get
+ * path.
  * @returns {any} The resolved value, or undefined if nothing was found.
  */
-const getFromStore = (store, path) => {
+const getFromStorage = (storage, path) => {
   if (!path) {
-    return store;
+    return storage;
   }
 
-  return path.split('.').reduce((innerStore, prop) => {
-    if (isNil(innerStore)) {
+  return path.split('.').reduce((innerStorage, prop) => {
+    if (isNil(innerStorage)) {
       return undefined;
     }
 
-    const storedMocks = innerStore[prop];
+    const storedMocks = innerStorage[prop];
     if (isFunction(storedMocks)) {
       return storedMocks.__mocks.get();
     }
 
     return storedMocks;
-  }, store);
+  }, storage);
 };
 
 /** Used when when generating error messages. */
@@ -124,7 +125,7 @@ const updateStore = (store, branch) => {
  * Initializes new store object, with a `get` and `update` methods that allow
  * retrieval and updating of store values.
  *
- * @see getFromStore
+ * @see getFromStorage
  * @see updateStore
  *
  * @param {Object} initialValue The initial state of the store.
@@ -135,7 +136,7 @@ const updateStore = (store, branch) => {
 const initializeStore = (initialValue, writable = true) => {
   let storage = initialValue;
   const store = {
-    get: (path) => getFromStore(storage, path),
+    get: (path) => getFromStorage(storage, path),
     ...(writable && {
       update: (branch) => {
         storage = updateStore(storage, branch);
@@ -148,5 +149,6 @@ const initializeStore = (initialValue, writable = true) => {
 };
 
 module.exports = {
+  getFromStorage,
   initializeStore,
 };

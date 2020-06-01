@@ -96,6 +96,7 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
     // make use of the resolver.
     if (resolverFactoryFn) {
       const resolverStore = initializeStore(mockedField);
+      resolverStore.getFromGlobalStore = meta.getFromGlobalStore;
 
       const fieldResolver = resolverFactoryFn(
         resolverStore,
@@ -156,6 +157,9 @@ const mockType = memoize(
       type,
       depth: 1,
       path: '',
+      getFromGlobalStore: () => {
+        throw new Error('Access to global store not available.');
+      },
       ...meta,
     };
 
@@ -277,8 +281,17 @@ const mockType = memoize(
  * @param {Object} custom The overwriting mock providers.
  * @returns {Object} Returns the mocked Object Type.
  */
-const buildMocks = (type, schema, defaults = {}, custom) =>
-  mockType(type, schema, mergeMockProviders(defaults, custom));
+const buildMocks = (
+  type,
+  schema,
+  defaults = {},
+  custom,
+  getFromGlobalStore
+) => {
+  return mockType(type, schema, mergeMockProviders(defaults, custom), {
+    getFromGlobalStore,
+  });
+};
 
 module.exports = {
   mockType,
