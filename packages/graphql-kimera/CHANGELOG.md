@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-alpha.7](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.6...@lola-tech/graphql-kimera@0.10.0-alpha.7) (2020-06-01)
+
+
+### Features
+
+* add global store support in query resolvers ([7513aae](https://github.com/lola-tech/graphql-kimera/commit/7513aae23852710838189c65fbba818c2528cdcd))
+
+
+
+
+
 # [0.10.0-alpha.6](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.5...@lola-tech/graphql-kimera@0.10.0-alpha.6) (2020-05-29)
 
 
