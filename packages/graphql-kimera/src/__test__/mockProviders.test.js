@@ -71,6 +71,12 @@ describe('mergeScenarios', () => {
 
     expect(actual).toBe(false);
   });
+
+  it('handle scenario with value of _""_', () => {
+    const actual = mergeScenarios(undefined, '');
+
+    expect(actual).toBe('');
+  });
 });
 
 describe('mergeBuilders', () => {
