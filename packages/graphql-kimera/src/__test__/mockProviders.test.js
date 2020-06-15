@@ -59,6 +59,18 @@ describe('mergeScenarios', () => {
 
     expect(actual.me.userName).toBe('c10b10');
   });
+
+  it('handle scenario with value of _0_', () => {
+    const actual = mergeScenarios(undefined, 0);
+
+    expect(actual).toBe(0);
+  });
+
+  it('handle scenario with value of _false_', () => {
+    const actual = mergeScenarios(undefined, false);
+
+    expect(actual).toBe(false);
+  });
 });
 
 describe('mergeBuilders', () => {
