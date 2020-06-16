@@ -53,7 +53,7 @@ const isResolverScenario = (node) => {
 const mergeScenarios = memoize(
   (baseScenario, assignedScenario, meta) => {
     if (isUndefined(assignedScenario) || isUndefined(baseScenario)) {
-      return assignedScenario || baseScenario;
+      return !isUndefined(assignedScenario) ? assignedScenario : baseScenario;
     }
 
     if (isNull(assignedScenario) || isNull(baseScenario)) {
