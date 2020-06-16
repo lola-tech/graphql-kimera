@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@lola-tech/graphql-kimera": "^0.10.0-alpha.0",
-    "apollo-server": "2.9.12",
+    "apollo-server": "2.14.4",
     "chalk": "^4.0.0",
     "graphql": "14.1.1"
   },
