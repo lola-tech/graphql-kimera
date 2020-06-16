@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-alpha.8](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.7...@lola-tech/graphql-kimera@0.10.0-alpha.8) (2020-06-16)
+
+
+### Bug Fixes
+
+* return eligible assigned scenario falsy values ([a5a2d3d](https://github.com/lola-tech/graphql-kimera/commit/a5a2d3d2a2d7d6f816bc817dc0d102fd8a57eaba))
+
+
+
+
+
 # [0.10.0-alpha.7](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.6...@lola-tech/graphql-kimera@0.10.0-alpha.7) (2020-06-01)
 
 
