@@ -1,6 +1,7 @@
 const { validateFieldScenario } = require('./validation');
 const {
-  getTypename,
+  getConcreteMeta,
+  getConcreteTypename,
   getEnumVal,
   isEnumType,
   isCustomScalarType,
@@ -22,11 +23,11 @@ const {
   mergeMockProviders,
 } = require('./mockProviders');
 const { initializeStore } = require('./store');
-const { DEFAULT_LIST_LENGTH, ...constants } = require('./constants');
-
-// Used to track a potentially recursive branch so we can warn the user.
-let recursiveBranch = '';
-const RECURSIVITY_DEPTH_LIMIT = 200;
+const {
+  RECURSIVITY_DEPTH_LIMIT,
+  DEFAULT_LIST_LENGTH,
+  ...constants
+} = require('./constants');
 
 const defaultMockProviders = {
   [constants.ID]: 'Mocked ID Scalar',
@@ -62,14 +63,13 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
     // e.g. Query:me.address.city
     const fieldPath = getAppendedPath(meta.path, field, type);
 
-    if (
-      meta.depth > RECURSIVITY_DEPTH_LIMIT &&
-      (!recursiveBranch || !meta.path.includes(recursiveBranch))
-    ) {
-      console.warn(
-        `Risk of "Maximum call stack size exceeded" error. Mocking depth exceeded "${RECURSIVITY_DEPTH_LIMIT}". This might be caused by a recursive field. You need to explicitly mock this in order to limit depth.\nWarning triggered by mocking: "${meta.path}...".`
-      );
-      recursiveBranch = meta.path;
+    if (meta.depth + 1 > RECURSIVITY_DEPTH_LIMIT) {
+      const message = `Mocking depth exceeded '${RECURSIVITY_DEPTH_LIMIT}'. If you want increase depth limit, you need to set the 'KIMERA_RECURSIVITY_DEPTH_LIMIT' environment variable. Mocking stopped at: '${meta.path}'.`;
+      mockedObjectType[field.name] = () => {
+        throw new Error(message);
+      };
+      mockedObjectType[field.name]['__mocks'] = initializeStore(message);
+      return;
     }
 
     let fieldScenario = get(mockProviders.scenario, field.name);
@@ -96,6 +96,7 @@ const mockObjectType = (type, schema, mockProviders, meta) => {
     // make use of the resolver.
     if (resolverFactoryFn) {
       const resolverStore = initializeStore(mockedField);
+      resolverStore.getFromGlobalStore = meta.getFromGlobalStore;
 
       const fieldResolver = resolverFactoryFn(
         resolverStore,
@@ -154,8 +155,11 @@ const mockType = memoize(
   (type, schema, mockProviders = {}, meta = {}) => {
     meta = {
       type,
-      depth: 0,
+      depth: 1,
       path: '',
+      getFromGlobalStore: () => {
+        throw new Error('Access to global store not available.');
+      },
       ...meta,
     };
 
@@ -164,7 +168,7 @@ const mockType = memoize(
     }
 
     if (
-      !meta.depth &&
+      meta.depth === 1 &&
       (isFunction(mockProviders.scenario) ||
         isResolverScenario(mockProviders.scenario))
     ) {
@@ -177,7 +181,13 @@ const mockType = memoize(
 
     // Reduce the Scenario and the Builders to a single scenario which represents
     // the single source of truth for how the user wants to mock this field.
-    const reducedScenario = reduceToScenario(mockProviders, meta, schema);
+    const reducedScenario = reduceToScenario(
+      mockProviders,
+      // Reducing the scenario requires using the builder for the correct type,
+      // which means we need to make use of the current scenario, to determine
+      // which is the concrete type, if this type is abstract.
+      getConcreteMeta(meta, mockProviders.scenario, schema)
+    );
 
     // Validate the reduced scenario
     validateFieldScenario(reducedScenario, meta);
@@ -207,8 +217,8 @@ const mockType = memoize(
       );
     }
 
-    // If an abstract field, select a concrete typename
-    const typename = getTypename(type, schema, reducedScenario, meta);
+    // If an abstract field, select a concrete typename based on the reducedScenario
+    const typename = getConcreteTypename(meta, reducedScenario, schema);
 
     // For types without sub-fields like Scalar and Enumeration types, return the
     // value directly.
@@ -271,8 +281,17 @@ const mockType = memoize(
  * @param {Object} custom The overwriting mock providers.
  * @returns {Object} Returns the mocked Object Type.
  */
-const buildMocks = (type, schema, defaults = {}, custom) =>
-  mockType(type, schema, mergeMockProviders(defaults, custom));
+const buildMocks = (
+  type,
+  schema,
+  defaults = {},
+  custom,
+  getFromGlobalStore
+) => {
+  return mockType(type, schema, mergeMockProviders(defaults, custom), {
+    getFromGlobalStore,
+  });
+};
 
 module.exports = {
   mockType,

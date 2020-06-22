@@ -96,20 +96,19 @@ const haveDifferentTypes = (one, two) => {
  * abstract fields: If a value is set in a mock provider, select that, otherise,
  * select the first concrete type defined in the schema.
  *
- * @see mockType
- *
- * @param {String} type The GraphQL Type name for which we need the __typename
+ * @param {Object} meta An object containing meta information about the mocked
+ * type. For the complete list of meta keys @see mockType in ./engine.js
+ * @param {Object} scenario The scenario for the field attempted to be mocked.
  * @param {Object} schema The parsed schema.
- * @param {Object} scenario The scenario for field attempted to be mocked.
  * @returns {string} Returns the __typename value.
  */
-const getTypename = (type, schema, scenario, meta) => {
+const getConcreteTypename = (meta, scenario, schema) => {
   // Allow selecting concrete types for abstract types
-  type =
+  const type =
     get(
       scenario,
       meta.isArray ? `[${meta.arrayIndex}].__typename` : '__typename'
-    ) || type;
+    ) || meta.type;
 
   if (isAbstractType(type, schema)) {
     const concreteType = getConcreteType(type, schema);
@@ -126,6 +125,30 @@ const getTypename = (type, schema, scenario, meta) => {
   return type;
 };
 
+/**
+ * Rurns a meta object with its `type` prop converted to a concrete typename,
+ * based on the supplied scenario. Uses `getConcreteTypename` to achieve this.
+ *
+ * @see getConcreteTypename
+ *
+ * @param {Object} meta An object containing meta information about the mocked
+ * type. For the complete list of meta keys @see mockType in ./engine.js
+ * @param {Object} scenario The scenario for the field attempted to be mocked.
+ * @param {Object} schema The parsed schema.
+ * @returns {Object} Returns the meta object with the concrete type.
+ */
+const getConcreteMeta = (meta, scenario, schema) => {
+  const concreteTypename = getConcreteTypename(meta, scenario, schema);
+  if (meta.type === concreteTypename) {
+    return meta;
+  }
+
+  return {
+    ...meta,
+    type: concreteTypename,
+  };
+};
+
 module.exports = {
   getEnumVal,
   getConcreteType,
@@ -139,7 +162,8 @@ module.exports = {
   isObjectType,
   getAppendedPath,
   haveDifferentTypes,
-  getTypename,
+  getConcreteTypename,
+  getConcreteMeta,
   // lodash
   get,
   memoize,

@@ -16,6 +16,7 @@ type Query {
   launch(id: ID!): Launch
   metadata: Markdown
   rockets: [Rocket]
+  rocket(id: ID!): Rocket
   me: User
 }
 
@@ -32,7 +33,7 @@ scalar Markdown
 
 input CreateRocketInput {
   name: String!
-  type: String!
+  model: String!
 }
 
 type CreateRocketPayload {
@@ -69,7 +70,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
 }
 
 type User {

@@ -23,7 +23,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
   fuel: Fuel
 }
 
@@ -41,8 +41,8 @@ We have a single query: `launch` which will return information about the ongoing
 To start mocking with Kimera, pass the schema definition to the `getExecutableSchema` function from Kimera as the `typeDefs` option. This will generate mocks for all queries in the schema, with zero configuration.
 
 ```js title="server.js" {2,9,12}
-const { ApolloServer } = require("apollo-server");
-const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
+const { ApolloServer } = require('apollo-server');
+const { getExecutableSchema } = require('@lola-tech/graphql-kimera');
 
 const schema = `
   type Query {
@@ -75,8 +75,8 @@ const executableSchema = getExecutableSchema({
   mockProvidersFn: (context) => ({
     scenario: {
       launch: {
-        site: "Kennedy Space Station",
-        rockets: [{}, { type: "Exploration Vessel", fuel: "DILITHIUM" }],
+        site: 'Kennedy Space Station',
+        rockets: [{}, { model: 'Exploration Vessel', fuel: 'DILITHIUM' }],
         isBooked: true,
       },
     },
@@ -87,7 +87,7 @@ const executableSchema = getExecutableSchema({
 This will make it so the `launch` query is mocked with its:
 
 - `site` field set to `Kennedy Space Station`;
-- `rockets` field containing two rockets, and the second rocket being of type "Exploration Vessel":
+- `rockets` field containing two rockets, and the second rocket being of "Exploration Vessel" model:
 
 All other fields that haven't been explicitly mocked will be mocked with default values.
 
@@ -160,7 +160,7 @@ type Launch {
 type Rocket {
   id: ID!
   name: String
-  type: String
+  model: String
 }
 ```
 
@@ -172,13 +172,13 @@ The _`Query` type object form_ (or in short the **`Query` object**) would be:
     id: "...",
     site: "...",
     rockets: [
-      { id: "...", name: "...", type: "..."},
+      { id: "...", name: "...", model: "..."},
       ...
     ],
     isBooked: "..."
   },
   rockets: [
-    { id: "...", name: "...", type: "..."},
+    { id: "...", name: "...", model: "..."},
     ...
   ],
 }
@@ -205,7 +205,7 @@ These are all valid scenarios:
 {
   launch: {
     site: "Kennedy Space Station",
-    rockets: [{}, { type: "Exploration Vessel" }],
+    rockets: [{}, { model: "Exploration Vessel" }],
     isBooked: true,
   },
 }
@@ -222,7 +222,7 @@ These are all valid scenarios:
 
 ```js
 {
-  rockets: [{ type: "Starship", name: "Enterprise" }],
+  rockets: [{ model: "Starship", name: "Enterprise" }],
 }
 ```
 

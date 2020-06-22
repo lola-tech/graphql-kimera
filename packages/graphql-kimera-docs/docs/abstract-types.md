@@ -16,25 +16,25 @@ Let's use the following schema as an example:
 
 ```graphql
 type Query {
-  ships(type: String!): [Ship]!
+  ships(model: String!): [Ship]!
   assets: [Asset]!
 }
 
 interface Ship {
   id: ID!
-  type: String!
+  model: String!
 }
 
 union Asset = Powerplant | Starship | Rocket
 
 type Rocket implements Ship {
   id: ID!
-  type: String!
+  model: String!
 }
 
 type Starship implements Ship {
   id: ID!
-  type: String!
+  model: String!
   class: String!
 }
 
@@ -57,8 +57,8 @@ const executableSchema = getExecutableSchema({
   typeDefs: schema,
   mockProvidersFn: (context) => ({
     scenario: {
-      ships: [{ __typename: "Starship" }, { __typename: "Rocket" }],
-      assets: [{ __typename: "Starship" }, { __typename: "Rocket" }, {}],
+      ships: [{ __typename: 'Starship' }, { __typename: 'Rocket' }],
+      assets: [{ __typename: 'Starship' }, { __typename: 'Rocket' }, {}],
     },
   }),
 });
