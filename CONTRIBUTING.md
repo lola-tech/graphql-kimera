@@ -39,14 +39,13 @@ If somebody claims an issue but doesn’t follow up for more than two weeks, it�
 
 1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device.
 2. Create a new branch `git checkout -b MY_BRANCH_NAME`
-3. Install yarn: `npm install -g yarn` -- if don't have it already installed.
-4. Install the dependencies: `yarn` and you should be good to go.
-5. Navigate to the module folder from the project root `cd packages/graphql-kimera/`.
+3. Install the dependencies: `npm install` and you should be good to go.
+4. Navigate to the module folder from the project root `cd packages/graphql-kimera/`.
 
 ## Sending a Pull Request
 
 We will review your pull request and either merge it, request changes to it, or close it with an explanation. We’ll do our best to provide updates and feedback throughout the process.
 
-Before submitting a pull request, if you’ve fixed a bug or added code that should be tested, add tests! Ensure the test suite passes (`yarn test`).
+Before submitting a pull request, if you’ve fixed a bug or added code that should be tested, add tests! Ensure the test suite passes (`npm test`).
 
-> Tip: `yarn test --watch TestName` is helpful in development -- if ran from `packages/graphql-kimera`.
+> Tip: `npm test --watch TestName` is helpful in development -- if ran from `packages/graphql-kimera`.

@@ -5,3 +5,5 @@ coverage
 
 # ignore OS files
 .DS_Store
+
+yarn.lock
