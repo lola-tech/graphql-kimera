@@ -14,7 +14,8 @@
 
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
 
-[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) ![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
+[![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
 
 ## Why?
 
@@ -166,6 +167,8 @@ const executableSchema = getExecutableSchema({
 The main purpose of this repository is to continue to evolve Kimera. Development of Kimera happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving Kimera.
 
 ### Contributing Guide
+
+We welcome anyone who wants to contribute or provide constructive feedback, no matter the age or level of experience.
 
 Please read [CONTRIBUTING.md](https://github.com/lola-tech/graphql-kimera/blob/master/CONTRIBUTING.md) for the process for submitting pull requests to us.
 
