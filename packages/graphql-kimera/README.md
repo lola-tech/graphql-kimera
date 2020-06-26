@@ -186,10 +186,10 @@ This project is licensed under the MIT License. See the [LICENSE.md](https://git
 
 ## Acknowledgements
 
-The "Kimera" name has been inspired from greek mythology - [Chimera](<https://en.wikipedia.org/wiki/Chimera_(mythology)>)
+The "Kimera" name has been inspired from greek mythology - [Chimera](<https://en.wikipedia.org/wiki/Chimera_(mythology)>), and the logo harkens back to the graphql logo.
 
 ## Tips (FAQ)
 
-### Currently Kimera mocks ID scalars as a string. Perhaps it is possible to mock them with unique values?
+### Currently, Kimera mocks ID scalars as a string. Perhaps it is possible to mock them with unique values?
 
-Adding different IDs for all types is currently opt in, in the sense that you can do this as a consumer of Kimera in one go by defining a builder for the ID type in which you could use the uuid package ([details here](https://github.com/lola-tech/graphql-kimera/issues/64#issuecomment-636201513)).
+Adding different IDs for all types is currently opt in. You can optionally do this as a consumer of Kimera by defining a builder for the ID type in which you can use the [uuid](https://www.npmjs.com/package/uuid) package - [details here](https://github.com/lola-tech/graphql-kimera/issues/64#issuecomment-636201513).
