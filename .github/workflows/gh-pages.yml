@@ -6,9 +6,10 @@ on:
   push:
     branches:
       - master
+      - ga-wire
     paths:
-      - ".github/workflows/gh-pages.yml"
-      - "packages/graphql-kimera-docs/**"
+      - '.github/workflows/gh-pages.yml'
+      - 'packages/graphql-kimera-docs/**'
 
 jobs:
   deploy:
@@ -22,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: '12.x'
 
       - run: npm ci
       - run: npm run build
