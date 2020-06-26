@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - master
-      - ga-wire
     paths:
       - '.github/workflows/gh-pages.yml'
       - 'packages/graphql-kimera-docs/**'
