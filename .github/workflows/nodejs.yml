@@ -24,11 +24,13 @@ jobs:
         uses: actions/setup-node@v1.4.2
         with:
           node-version: ${{ matrix.node-version }}
-      
+
       - run: npm install
-      
+
+      - run: npm install graphql@14
+
       - run: npm test
-      
+
       # Coveralls Test coverage reports -- to be enabled after we get access to lola-tech org
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v1.1.1
