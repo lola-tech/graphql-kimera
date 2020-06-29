@@ -15,13 +15,13 @@ This page walks you through the steps you need to take in order to get a Kimera 
 To install Kimera you can install it via npm or yarn, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```sh
-npm install --save-dev @lola-tech/graphql-kimera graphql
+npm install --save-dev @lola-tech/graphql-kimera graphql@14
 ```
 
 or if you want to use yarn
 
 ```sh
-yarn add --dev @lola-tech/graphql-kimera graphql
+yarn add --dev @lola-tech/graphql-kimera graphql@14
 ```
 
 ### Using Kimera

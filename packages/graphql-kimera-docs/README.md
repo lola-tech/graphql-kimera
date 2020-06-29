@@ -29,13 +29,13 @@ Kimera is useful to:
 To install Kimera you can install it via `npm` or `yarn`, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```
-npm install --save-dev @lola-tech/graphql-kimera graphql
+npm install --save-dev @lola-tech/graphql-kimera graphql@14
 ```
 
 or if you want to use yarn
 
 ```
-yarn add --dev @lola-tech/graphql-kimera graphql
+yarn add --dev @lola-tech/graphql-kimera graphql@14
 ```
 
 ### Examples
