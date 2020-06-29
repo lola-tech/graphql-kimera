@@ -2,9 +2,6 @@
   "packages": ["packages/*"],
   "version": "independent",
   "command": {
-    "version": {
-      "allowBranch": "master"
-    },
     "noPrivate": true
   }
 }
