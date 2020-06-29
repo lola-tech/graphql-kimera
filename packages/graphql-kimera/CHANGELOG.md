@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-alpha.9](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.8...@lola-tech/graphql-kimera@0.10.0-alpha.9) (2020-06-29)
+
+
+### Bug Fixes
+
+* move graphql to peerDeps - fixes [#77](https://github.com/lola-tech/graphql-kimera/issues/77) ([3cf61fe](https://github.com/lola-tech/graphql-kimera/commit/3cf61fea5875d2962d66d6451a71fb8f19dc0cb2))
+
+
+
+
+
 # [0.10.0-alpha.8](https://github.com/lola-tech/graphql-kimera/compare/@lola-tech/graphql-kimera@0.10.0-alpha.7...@lola-tech/graphql-kimera@0.10.0-alpha.8) (2020-06-16)
 
 

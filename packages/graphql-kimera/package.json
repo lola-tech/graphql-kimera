@@ -1,6 +1,6 @@
 {
   "name": "@lola-tech/graphql-kimera",
-  "version": "0.10.0-alpha.8",
+  "version": "0.10.0-alpha.9",
   "description": "Kimera is a library for mocking GraphQL servers with precision.",
   "main": "src/index.js",
   "scripts": {
