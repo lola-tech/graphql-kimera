@@ -31,25 +31,10 @@ jobs:
 
       - run: npm test
 
-      # Coveralls Test coverage reports -- to be enabled after we get access to lola-tech org
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.1.1
+      - uses: actions/checkout@master
+      - uses: codecov/codecov-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # Path to lcov file
-          path-to-lcov: ./packages/graphql-kimera/coverage/lcov.info # default is ./coverage/lcov.info
-          # Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.
-          parallel: true # optional
-          # The root folder of the project that originally ran the tests
-          base-path: ./packages/graphql-kimera # optional
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v1.1.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./packages/graphql-kimera/coverage/lcov.info # default is ./coverage/lcov.info
-          base-path: ./packages/graphql-kimera # optional
-          parallel-finished: true
+          # file: ./coverage.xml # optional
+          # flags: unittests # optional
+          name: graphql-kimera # optional
+          fail_ci_if_error: true # optional (default = false)
