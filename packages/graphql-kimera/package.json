@@ -15,6 +15,7 @@
   "devDependencies": {
     "apollo-server": "^2.14.1",
     "apollo-server-testing": "^2.14.1",
+    "codecov": "^3.7.0",
     "immutability-helper": "3.0.2",
     "jest": "24.8.0"
   },
