@@ -13,17 +13,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x]
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1.4.2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.0
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '12'
+          check-latest: true
 
       - run: npm install
 
@@ -33,7 +30,7 @@ jobs:
 
       - uses: codecov/codecov-action@v1
         with:
-          file: ./packages/graphql-kimera/coverage/lcov.info # optional
+          file: ./packages/graphql-kimera/coverage/clover.xml # optional
           # flags: unittests # optional
           name: graphql-kimera # optional
           fail_ci_if_error: true # optional (default = false)
