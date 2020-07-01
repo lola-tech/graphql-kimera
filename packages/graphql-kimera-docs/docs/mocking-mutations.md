@@ -130,29 +130,42 @@ getExecutableSchema({
       store.get('launch.rockets.0');
 
       // Partially update the value of an Object Type field.
-      store.update('launch.address', {
-        country: 'Cuba'
+      store.update({
+        launch: {
+          address: {
+            country: 'Cuba',
+          },
+        },
       });
 
       // Completely replace an Object Type.
-      store.update(
-        'launch.address',
-        // When the supplied scenario omits fields, like we do with `line1`
-        // here, Kimera will use a builder to figure out how mock it.
-        // In this case, `buildMocks` will use `Example Street` mock for the `line1` field.
-        buildMocks('Address', { country: 'Cuba' }),
-      );
+      store.update({
+        launch: {
+          // When the supplied scenario omits fields, like we do with `line1`
+          // here, Kimera will use a builder to figure out how mock it.
+          // In this case, `buildMocks` will use `Example Street` mock for the `line1` field.
+          address: buildMocks('Address', { country: 'Cuba' }),
+        },
+      });
 
       // Replace a list field with an empty list.
-      store.update('launch.rockets', [])
+      store.update({
+        launch: {
+          rockets: [],
+        },
+      });
 
       // Append a list field.
-      store.update('launch.rockets', [
-        ...store.get('launch.rockets'),
-        // The `buildMocks` scenario can be omitted, and Kimera will use the
-        // 'Rocket' builder, if existing to figure out how to mock this type.
-        buildMocks('Rocket')
-      ]);
+      store.update({
+        launch: {
+          rockets: [
+            ...store.get('launch.rockets'),
+            // The `buildMocks` scenario can be omitted, and Kimera will use the
+            // 'Rocket' builder, if existing to figure out how to mock this type.
+            buildMocks('Rocket')
+          ],
+        },
+      });
       // ...
     }
   })

@@ -15,13 +15,13 @@ This page walks you through the steps you need to take in order to get a Kimera 
 To install Kimera you can install it via npm or yarn, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```sh
-npm install --save-dev @lola-tech/graphql-kimera
+npm install --save-dev @lola-tech/graphql-kimera graphql@14
 ```
 
 or if you want to use yarn
 
 ```sh
-yarn add --dev @lola-tech/graphql-kimera
+yarn add --dev @lola-tech/graphql-kimera graphql@14
 ```
 
 ### Using Kimera
@@ -31,8 +31,8 @@ To use Kimera, you'll need a GraphQL server, and the schema definitions.
 We'll use Apollo Server for the server, but any GraphQL server would work. See [how to install Apollo Server in the Apollo docs](https://www.apollographql.com/docs/apollo-server/getting-started/#step-2-install-dependencies).
 
 ```javascript title="server.js" {2,26,29}
-const { ApolloServer, gql } = require("apollo-server");
-const { getExecutableSchema } = require("@lola-tech/graphql-kimera");
+const { ApolloServer, gql } = require('apollo-server');
+const { getExecutableSchema } = require('@lola-tech/graphql-kimera');
 
 const schema = gql`
   type User {

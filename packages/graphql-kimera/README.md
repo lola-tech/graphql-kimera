@@ -15,7 +15,7 @@
 Kimera is an automocking library for GraphQL that allows you to be very precise about how mocks should be generated.
 
 [![mit](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue) ![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg)
+![Node.js CI](https://github.com/lola-tech/graphql-kimera/workflows/Node.js%20CI/badge.svg) ![github pages](https://github.com/lola-tech/graphql-kimera/workflows/github%20pages/badge.svg) [![codecov](https://codecov.io/gh/lola-tech/graphql-kimera/branch/master/graph/badge.svg)](https://codecov.io/gh/lola-tech/graphql-kimera)
 
 ## Why?
 
@@ -30,13 +30,13 @@ Kimera is useful to:
 To install Kimera you can install it via `npm` or `yarn`, it's totally up to you. We're guessing that you'll most likely want Kimera to be a dev dependency.
 
 ```
-npm install --save-dev @lola-tech/graphql-kimera
+npm install --save-dev @lola-tech/graphql-kimera graphql@14
 ```
 
 or if you want to use yarn
 
 ```
-yarn add --dev @lola-tech/graphql-kimera
+yarn add --dev @lola-tech/graphql-kimera graphql@14
 ```
 
 ### Examples
@@ -186,10 +186,10 @@ This project is licensed under the MIT License. See the [LICENSE.md](https://git
 
 ## Acknowledgements
 
-The "Kimera" name has been inspired from greek mythology - [Chimera](<https://en.wikipedia.org/wiki/Chimera_(mythology)>)
+The "Kimera" name has been inspired from greek mythology - [Chimera](<https://en.wikipedia.org/wiki/Chimera_(mythology)>), and the logo harkens back to the graphql logo.
 
 ## Tips (FAQ)
 
-### Currently Kimera mocks ID scalars as a string. Perhaps it is possible to mock them with unique values?
+### Currently, Kimera mocks ID scalars as a string. Perhaps it is possible to mock them with unique values?
 
-Adding different IDs for all types is currently opt in, in the sense that you can do this as a consumer of Kimera in one go by defining a builder for the ID type in which you could use the uuid package ([details here](https://github.com/lola-tech/graphql-kimera/issues/64#issuecomment-636201513)).
+Adding different IDs for all types is currently opt in. You can optionally do this as a consumer of Kimera by defining a builder for the ID type in which you can use the [uuid](https://www.npmjs.com/package/uuid) package - [details here](https://github.com/lola-tech/graphql-kimera/issues/64#issuecomment-636201513).

@@ -6,13 +6,16 @@ module.exports = {
   favicon: 'img/favicon.png',
   organizationName: 'lola-tech',
   projectName: 'graphql-kimera',
-  plugins: ['docusaurus-plugin-sass'],
+  plugins: ['docusaurus-plugin-sass', '@docusaurus/plugin-google-analytics'],
   stylesheets: [
     'https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap',
     'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap',
     // "https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap",
   ],
   themeConfig: {
+    googleAnalytics: {
+      trackingID: 'UA-97851260-2',
+    },
     disableDarkMode: true,
     sidebarCollapsible: false,
     image: 'img/kimera-logo.svg',
