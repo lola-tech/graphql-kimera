@@ -30,7 +30,5 @@ jobs:
 
       - uses: codecov/codecov-action@v1
         with:
-          file: ./packages/graphql-kimera/coverage/clover.xml # optional
-          # flags: unittests # optional
-          name: graphql-kimera # optional
+          flags: unittests # optional
           fail_ci_if_error: true # optional (default = false)
