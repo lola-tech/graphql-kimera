@@ -1,7 +1,7 @@
 const {
   makeExecutableSchema,
-  addMockFunctionsToSchema,
-} = require('graphql-tools');
+  addMocksToSchema,
+} = require('@graphql-tools/schema');
 const schemaParser = require('easygraphql-parser');
 
 const { get, memoize, isUndefined, zipObject } = require('./helpers');
@@ -79,7 +79,7 @@ function getExecutableSchema({
   );
 
   // Add the mocks to the exectuable schema
-  addMockFunctionsToSchema({
+  addMocksToSchema({
     schema: executableSchema,
     mocks: {
       Query: (root, args, context) => {
