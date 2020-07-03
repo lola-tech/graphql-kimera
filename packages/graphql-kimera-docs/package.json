@@ -1,6 +1,6 @@
 {
   "name": "@lola-tech/graphql-kimera-docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The documentation for Kimera.",
   "main": "index.js",
   "private": true,
