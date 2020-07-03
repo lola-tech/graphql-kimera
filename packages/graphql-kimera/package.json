@@ -7,7 +7,7 @@
     "test": "jest --verbose --collectCoverage"
   },
   "dependencies": {
-    "easygraphql-parser": "0.0.12",
+    "easygraphql-parser": "0.0.14",
     "graphql-tools": "4.0.5",
     "lodash": "4.17.13",
     "multikeymap": "^1.0.0"
